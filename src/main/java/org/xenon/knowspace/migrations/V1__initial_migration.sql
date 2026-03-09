@@ -1,6 +1,3 @@
--- =========================
--- USERS
--- =========================
 CREATE TABLE users (
                        id BIGSERIAL PRIMARY KEY,
                        name VARCHAR(100) NOT NULL,
@@ -10,10 +7,6 @@ CREATE TABLE users (
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-
--- =========================
--- TOPICS
--- =========================
 CREATE TABLE topics (
                         id BIGSERIAL PRIMARY KEY,
                         name VARCHAR(150) NOT NULL,
@@ -28,10 +21,6 @@ CREATE TABLE topics (
                                 ON DELETE CASCADE
 );
 
-
--- =========================
--- NOTES
--- =========================
 CREATE TABLE notes (
                        id BIGSERIAL PRIMARY KEY,
                        title VARCHAR(255) NOT NULL,
@@ -47,18 +36,11 @@ CREATE TABLE notes (
 );
 
 
--- =========================
--- TAGS
--- =========================
 CREATE TABLE tags (
                       id BIGSERIAL PRIMARY KEY,
                       name VARCHAR(100) UNIQUE NOT NULL
 );
 
-
--- =========================
--- NOTE_TAGS (Many-to-Many)
--- =========================
 CREATE TABLE note_tags (
                            note_id BIGINT NOT NULL,
                            tag_id BIGINT NOT NULL,
@@ -76,10 +58,6 @@ CREATE TABLE note_tags (
                                    ON DELETE CASCADE
 );
 
-
--- =========================
--- MEMORY ITEMS
--- =========================
 CREATE TABLE memory_items (
                               id BIGSERIAL PRIMARY KEY,
                               text TEXT NOT NULL,

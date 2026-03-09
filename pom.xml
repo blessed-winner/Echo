@@ -137,9 +137,9 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>10.22.0</version>
                 <configuration>
-                    <url></url>
+                    <url>jdbc:postgresql://localhost:5432/knowspace</url>
                     <user>postgres</user>
-                    <password></password>
+                    <password>HomesweetHome</password>
                     <cleanDisabled>false</cleanDisabled>
                 </configuration>
             </plugin>
