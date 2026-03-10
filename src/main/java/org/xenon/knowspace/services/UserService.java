@@ -1,5 +1,6 @@
 package org.xenon.knowspace.services;
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import org.xenon.knowspace.repositories.UserRepository;
 import java.util.Collections;
 
 @Service
+@AllArgsConstructor
 public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException{
