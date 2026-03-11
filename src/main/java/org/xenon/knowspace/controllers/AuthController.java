@@ -3,6 +3,7 @@ package org.xenon.knowspace.controllers;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class AuthController {
     private final JwtConfig jwtConfig;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request, HttpServletResponse response){
+    public ResponseEntity<JwtResponse> login(@Valid  @RequestBody LoginRequest request, HttpServletResponse response){
             var authentication = new UsernamePasswordAuthenticationToken(
                     request.getEmail(),
                     request.getPassword()
