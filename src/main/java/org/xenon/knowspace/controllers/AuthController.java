@@ -17,6 +17,7 @@ import org.xenon.knowspace.config.JwtConfig;
 import org.xenon.knowspace.dtos.JwtResponse;
 import org.xenon.knowspace.dtos.LoginRequest;
 import org.xenon.knowspace.dtos.UserDto;
+import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.mappers.UserMapper;
 import org.xenon.knowspace.repositories.UserRepository;
 import org.xenon.knowspace.services.JwtService;
@@ -39,6 +40,8 @@ public class AuthController {
                         request.getPassword()
                 )
         );
+
+        User user = (User) authentication.getPrincipal();
 
             var accessToken = jwtService.generateAccessToken(user);
             var refreshToken = jwtService.generateRefreshToken(user);
