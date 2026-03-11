@@ -7,8 +7,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.xenon.knowspace.config.JwtConfig;
@@ -23,6 +25,7 @@ import org.xenon.knowspace.services.JwtService;
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {
+    private final AuthenticationManager authenticationManager;
     private UserRepository userRepository;
     private final JwtService jwtService;
     private final JwtConfig jwtConfig;
@@ -30,10 +33,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@Valid  @RequestBody LoginRequest request, HttpServletResponse response){
-            var authentication = new UsernamePasswordAuthenticationToken(
-                    request.getEmail(),
-                    request.getPassword()
-            );
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
 
             var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
 
