@@ -71,7 +71,7 @@
         <dependency>
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
-            <scope>annotationProcessor</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -115,7 +115,7 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>10.15.0</version>
+                <version>9.22.0</version>
                 <configuration>
                     <url>jdbc:postgresql://localhost:5432/knowspace</url>
                     <user>postgres</user>
