@@ -1,30 +1,33 @@
 package org.xenon.knowspace.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "topics")
-@Data
+@Getter
+@Setter
+@ToString
+@Builder
 public class Topic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "creation_date")
-    private Date createdAt;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
