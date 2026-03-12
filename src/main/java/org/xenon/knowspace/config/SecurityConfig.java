@@ -33,6 +33,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(){ return new JwtAuthenticationFilter(jwtService);}
 
     @Bean
@@ -42,18 +43,21 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
-        var provider = new DaoAuthenticationProvider(userDetailsService);
+        var provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
     
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
                 .sessionManagement(c-> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf((AbstractHttpConfigurer::disable))
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         c->c.requestMatchers("/auth/**").permitAll()
-                                                          .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                                .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
