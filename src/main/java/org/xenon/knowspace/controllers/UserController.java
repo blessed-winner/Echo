@@ -38,7 +38,7 @@ public class UserController {
          User user = userMapper.toEntity(request);
          user.setPassword(passwordEncoder.encode(user.getPassword()));
          user.setRole(Role.USER);
-
+         user.setCreatedAt(new Date());
          userRepository.save(user);
          var userDto = userMapper.toDto(user);
          var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
