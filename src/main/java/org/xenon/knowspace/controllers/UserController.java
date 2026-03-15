@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.RegisterUserRequest;
 import org.xenon.knowspace.entities.Role;
@@ -45,5 +42,11 @@ public class UserController {
 
          return ResponseEntity.created(uri).body(userDto);
 
+    }
+
+    @GetMapping
+    public ResponseEntity<?>getAllUsers(){
+        var users = userRepository.findAll().stream().map(userMapper::toDto).toList();
+        return ResponseEntity.ok(users);
     }
 }
