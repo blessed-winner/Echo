@@ -2,6 +2,7 @@ package org.xenon.knowspace.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -53,5 +54,10 @@ public class UserController {
                 .toList();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUser(@PathVariable String id){
+        var user = userRepository.findById(id).orElseThrow(()->new RuntimeException("User not found"));
+        return ResponseEntity.ok(userMapper.toDto(user));
 
+    }
 }
