@@ -25,9 +25,9 @@ public class User {
     @Column(name = "creation_date")
     private Date createdAt;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Topic> topics = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch =  FetchType.LAZY, cascade =   CascadeType.ALL)
     private Set<MemoryItem> memoryItems = new HashSet<>();
 }
