@@ -20,5 +20,7 @@ public class Topic {
     @Column(name = "creation_date")
     private Date createdAt;
 
-    private String userid;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private String userId;
 }

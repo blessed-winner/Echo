@@ -3,14 +3,16 @@ package org.xenon.knowspace.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
 @Data
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String name;
@@ -21,4 +23,7 @@ public class User {
 
     @Column(name = "creation-date")
     private Date createdAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Topic> topics = new ArrayList<>();
 }
