@@ -3,9 +3,7 @@ package org.xenon.knowspace.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -25,5 +23,8 @@ public class User {
     private Date createdAt;
 
     @OneToMany(mappedBy = "user")
-    private List<Topic> topics = new ArrayList<>();
+    private Set<Topic> topics = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<MemoryItem> memoryItems = new HashSet<>();
 }

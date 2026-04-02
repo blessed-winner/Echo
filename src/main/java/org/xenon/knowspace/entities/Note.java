@@ -2,7 +2,6 @@ package org.xenon.knowspace.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.boot.convert.DataSizeUnit;
 
 import java.util.*;
 
@@ -16,12 +15,13 @@ public class Note {
 
     private String title;
 
+    @Column(length = 2000)
     private String content;
 
     @Column(name = "creation_date")
     private Date createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
