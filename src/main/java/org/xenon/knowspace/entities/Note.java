@@ -18,5 +18,7 @@ public class Note {
     @Column(name = "creation_date")
     private Date createdAt;
 
-    private Long topicId;
+    @ManyToOne
+    @JoinColumn(name = "topic_id")
+    private Topic topic;
 }

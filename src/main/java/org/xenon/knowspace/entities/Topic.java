@@ -3,7 +3,9 @@ package org.xenon.knowspace.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "topics")
@@ -22,5 +24,8 @@ public class Topic {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private String userId;
+    private User user;
+
+    @OneToMany(mappedBy = "topic")
+    private List<Note> notes = new ArrayList<>();
 }
