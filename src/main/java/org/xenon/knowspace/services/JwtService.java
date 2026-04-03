@@ -50,4 +50,12 @@ public class JwtService {
             return false;
         }
     }
+
+    public String extractUserId(String token){
+        return extractClaims(token).getSubject();
+    }
+
+    public String extractUserRole(String token){
+        return extractClaims(token).get("role",String.class);
+    }
 }
