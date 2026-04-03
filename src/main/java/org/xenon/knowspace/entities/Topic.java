@@ -3,6 +3,7 @@ package org.xenon.knowspace.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -21,7 +22,7 @@ public class Topic {
     private String description;
 
     @Column(name = "creation_date")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

@@ -2,8 +2,7 @@ package org.xenon.knowspace.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "memory_items")
@@ -21,7 +20,7 @@ public class MemoryItem {
 
     private String source;
 
-    private Date lastReviewed;
+    private LocalDateTime lastReviewed;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

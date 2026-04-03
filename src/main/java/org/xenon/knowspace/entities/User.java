@@ -3,6 +3,7 @@ package org.xenon.knowspace.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -23,11 +24,14 @@ public class User {
     private String password;
 
     @Column(name = "creation_date")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Topic> topics = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch =  FetchType.LAZY, cascade =   CascadeType.ALL)
     private Set<MemoryItem> memoryItems = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
