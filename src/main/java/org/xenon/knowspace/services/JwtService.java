@@ -33,4 +33,14 @@ public class JwtService {
                 .signWith(jwtConfig.getSecretKey())
                 .compact();
     }
+
+    public Claims extractClaims(String token){
+        return Jwts.parser()
+                .verifyWith(jwtConfig.getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+
 }
