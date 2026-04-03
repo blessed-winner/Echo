@@ -13,17 +13,15 @@ import java.util.Date;
 @AllArgsConstructor
 public class JwtService {
     private final JwtConfig jwtConfig;
-
-    private String generateAccessToken(User user){}
-
-    public Jwt generateToken(User user, Long tokenExpiration){
-             var claims = Jwts.claims()
-                     .subject(user.getId())
-                     .add("email",user.getEmail())
-                     .add("role",user.getRole())
-                     .issuedAt(new Date())
-                     .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
-                     .build();
-             return new Jwt(jwtConfig.getSecretKey(), claims);
+    private String buildToken(User user, long tokenExpiration){
+        Date expiry = new Date(new Date().getTime() + tokenExpiration * 1000);
+        return Jwts.builder()
+                .subject(user.getId())
+                .claim("email",user.getEmail())
+                .claim("role",user.getRole())
+                .issuedAt(new Date())
+                .expiration(expiry)
+                .signWith(jwtConfig.getSecretKey())
+                .compact();
     }
 }
