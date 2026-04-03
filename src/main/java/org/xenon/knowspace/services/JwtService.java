@@ -13,6 +13,15 @@ import java.util.Date;
 @AllArgsConstructor
 public class JwtService {
     private final JwtConfig jwtConfig;
+
+    public String generateAccessToken(User user){
+        return buildToken(user, jwtConfig.getAccessTokenExpiration());
+    }
+
+    public String generateRefreshtoken(User user){
+        return buildToken(user, jwtConfig.getRefreshTokenExpiration());
+    }
+
     private String buildToken(User user, long tokenExpiration){
         Date expiry = new Date(new Date().getTime() + tokenExpiration * 1000);
         return Jwts.builder()
