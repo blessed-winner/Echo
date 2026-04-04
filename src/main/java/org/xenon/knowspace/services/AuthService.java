@@ -57,6 +57,5 @@ public class AuthService {
             HttpServletResponse response,
             UriComponentsBuilder uriBuilder
             ){
-
     }
 }
