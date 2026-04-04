@@ -7,10 +7,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.xenon.knowspace.filters.JwtAuthenticationFilter;
 import org.xenon.knowspace.repositories.UserRepository;
 import org.xenon.knowspace.services.JwtService;
@@ -41,5 +45,16 @@ public class SecurityConfig {
         provider.setUserDetailsService(userDetailsService);
 
         return provider;
+    }
+
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+        http
+                .sessionManagement(c->c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(
+                        c-> c.anyRequest().authenticated()
+                );
+
+        return http.build();
     }
 }
