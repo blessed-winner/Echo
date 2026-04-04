@@ -32,7 +32,7 @@ public class AuthService {
         );
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshtoken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         Cookie cookie = new Cookie("refreshToken",refreshToken);
         cookie.setHttpOnly(true);
