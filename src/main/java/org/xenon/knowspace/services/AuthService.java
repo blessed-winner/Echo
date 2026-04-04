@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.config.JwtConfig;
@@ -32,7 +33,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<JwtResponse> login(
-            @Valid @RequestBody LoginRequest request,
+            LoginRequest request,
             HttpServletResponse response
     ){
         try{
@@ -60,7 +61,7 @@ public class AuthService {
     }
 
     public ResponseEntity<?> register(
-            @Valid @RequestBody RegisterUserRequest request,
+            RegisterUserRequest request,
             HttpServletResponse response,
             UriComponentsBuilder uriBuilder
             ){
