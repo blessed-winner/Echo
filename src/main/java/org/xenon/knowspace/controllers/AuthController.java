@@ -1,5 +1,6 @@
 package org.xenon.knowspace.controllers;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,14 @@ public class AuthController {
             UriComponentsBuilder uriBuilder
             ){
         return authService.register(request,response,uriBuilder);
+    }
+
+    private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken){
+        var cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/auth/refresh");
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        response.addCookie(cookie);
     }
 }
