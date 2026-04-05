@@ -1,5 +1,6 @@
 package org.xenon.knowspace.filters;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,7 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        }catch(Exception e){}
+        }catch(JwtException | IllegalArgumentException e){
+            SecurityContextHolder.clearContext();
+            logger.debug("JWT authentication failed: {}",e);
+        }
 
         filterChain.doFilter(request,response);
 
