@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.xenon.knowspace.config.JwtConfig;
 import org.xenon.knowspace.dtos.JwtResponse;
 import org.xenon.knowspace.dtos.LoginRequest;
 import org.xenon.knowspace.dtos.RegisterUserRequest;
@@ -20,6 +21,7 @@ import org.xenon.knowspace.services.AuthService;
 @AllArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final JwtConfig jwtConfig;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(
@@ -48,7 +50,7 @@ public class AuthController {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/auth/refresh");
-        cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration()); // 7 days
         response.addCookie(cookie);
     }
 }
