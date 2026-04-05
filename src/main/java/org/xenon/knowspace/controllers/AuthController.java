@@ -22,11 +22,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public AuthResult login(
+    public ResponseEntity<JwtResponse> login(
             LoginRequest request,
             HttpServletResponse response
     ){
-        return authService.login(request,response);
+        var result = authService.login(request);
+        addRefreshTokenCookie(response, result.refreshToken());
+        return ResponseEntity.ok(new JwtResponse(result.accessToken()));
     }
 
     public ResponseEntity<?> register(
@@ -34,7 +36,10 @@ public class AuthController {
             HttpServletResponse response,
             UriComponentsBuilder uriBuilder
             ){
-        return authService.register(request,response,uriBuilder);
+     var result = authService.register(request);
+     addRefreshTokenCookie(response, result.refreshToken());
+     var uri = uriBuilder.path("/auth").buildAndExpand(result.userId()).toUri();
+     return ResponseEntity.created(uri).body(new JwtResponse(result.accessToken()));
     }
 
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken){
