@@ -31,6 +31,7 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(result.accessToken()));
     }
 
+    @PostMapping("/register")
     public ResponseEntity<?> register(
             @Valid @RequestBody RegisterUserRequest request,
             HttpServletResponse response,
