@@ -2,7 +2,7 @@
 -- USERS
 -- =========================
 CREATE TABLE users (
-   id VARCHAR(255) PRIMARY KEY,
+   id UUID PRIMARY KEY,
    name VARCHAR(100),
    email VARCHAR(150) UNIQUE NOT NULL,
    password VARCHAR(255) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE topics (
     description TEXT,
     creation_date TIMESTAMP,
 
-    user_id VARCHAR(255) NOT NULL,
+    user_id UUID NOT NULL,
 
     CONSTRAINT fk_topics_user
         FOREIGN KEY (user_id)
@@ -80,7 +80,7 @@ CREATE TABLE memory_items (
   source VARCHAR(150),
   last_reviewed TIMESTAMP,
 
-  user_id VARCHAR(255) NOT NULL,
+  user_id UUID NOT NULL,
 
   CONSTRAINT fk_memory_items_user
       FOREIGN KEY (user_id)
