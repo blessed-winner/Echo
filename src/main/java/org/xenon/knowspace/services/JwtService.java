@@ -8,6 +8,7 @@ import org.xenon.knowspace.config.JwtConfig;
 import org.xenon.knowspace.entities.User;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class JwtService {
     private String buildToken(User user, long tokenExpiration){
         Date expiry = new Date(new Date().getTime() + tokenExpiration * 1000);
         return Jwts.builder()
-                .subject(user.getId())
+                .subject(user.getId().toString())
                 .claim("email",user.getEmail())
                 .claim("role",user.getRole())
                 .issuedAt(new Date())
@@ -51,8 +52,8 @@ public class JwtService {
         }
     }
 
-    public String extractUserId(String token){
-        return extractClaims(token).getSubject();
+    public UUID extractUserId(String token){
+        return UUID.fromString(extractClaims(token).getSubject());
     }
 
     public String extractUserRole(String token){

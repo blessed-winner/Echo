@@ -20,7 +20,7 @@ import org.xenon.knowspace.entities.Role;
 import org.xenon.knowspace.mappers.UserMapper;
 import org.xenon.knowspace.repositories.UserRepository;
 
-import java.util.Map;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -35,7 +35,7 @@ public class AuthService {
     public record AuthResult(
             String accessToken,
             String refreshToken,
-            String userId
+            UUID userId
     ){}
 
     public AuthResult login(LoginRequest request){

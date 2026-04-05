@@ -14,6 +14,7 @@ import org.xenon.knowspace.services.JwtService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -26,10 +27,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         String token = authHeader.replace("Bearer ", "");
         try{
-            String userId = jwtService.extractUserId(token);
+            UUID userId = jwtService.extractUserId(token);
             String role = jwtService.extractUserRole(token);
             var authentication = new UsernamePasswordAuthenticationToken(
-                    userId,
+                    userId.toString(),
                     null,
                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
