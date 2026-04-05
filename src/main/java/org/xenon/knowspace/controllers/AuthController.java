@@ -25,7 +25,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(
-            LoginRequest request,
+            @Valid @RequestBody LoginRequest request,
             HttpServletResponse response
     ){
         var result = authService.login(request);
