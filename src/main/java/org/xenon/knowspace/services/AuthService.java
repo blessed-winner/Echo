@@ -32,11 +32,13 @@ public class AuthService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<JwtResponse> login(
-            LoginRequest request,
-            HttpServletResponse response
-    ){
-        try{
+    public record AuthResult(
+            String accessToken,
+            String refreshToken,
+            String userId
+    ){}
+
+    public AuthResult login(LoginRequest request){
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
@@ -47,26 +49,13 @@ public class AuthService {
             String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
-            Cookie cookie = new Cookie("refreshToken",refreshToken);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/auth");
-            cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
 
-            response.addCookie(cookie);
-
-            return ResponseEntity.ok(new JwtResponse(accessToken));
-        }catch (Exception e){
-            return ResponseEntity.status(401).build();
-        }
+            return new AuthResult(accessToken, refreshToken, user.getId());
     }
 
-    public ResponseEntity<?> register(
-            RegisterUserRequest request,
-            HttpServletResponse response,
-            UriComponentsBuilder uriBuilder
-            ){
+    public AuthResult register(RegisterUserRequest request){
         if(userRepository.existsByEmail(request.getEmail())){
-            return ResponseEntity.badRequest().body(Map.of("Email", "Email is already in use"));
+            throw new IllegalArgumentException("Email already exists");
         }
 
         var user = userMapper.toEntity(request);
@@ -74,17 +63,9 @@ public class AuthService {
         user.setRole(Role.USER);
         userRepository.save(user);
 
-        var accessToken = jwtService.generateAccessToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        Cookie cookie = new Cookie("refreshToken",refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/auth");
-        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
-        response.addCookie(cookie);
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
-        var userDto = userMapper.toDto(user);
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new JwtResponse(accessToken));
+        return new AuthResult(accessToken, refreshToken, user.getId());
     }
 }
