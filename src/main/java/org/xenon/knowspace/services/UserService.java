@@ -1,10 +1,12 @@
 package org.xenon.knowspace.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.UserDto;
 import org.xenon.knowspace.entities.Role;
 import org.xenon.knowspace.entities.User;
+import org.xenon.knowspace.exceptions.UserNotFoundException;
 import org.xenon.knowspace.mappers.UserMapper;
 import org.xenon.knowspace.repositories.UserRepository;
 
@@ -37,5 +39,14 @@ public class UserService {
       }
 
       return userMapper.toDto(user);
+  }
+
+  public void deleteUser(UUID id){
+      var user = userRepository.findById(id).orElse(null);
+      if(user == null){
+          throw new UserNotFoundException("User Not Found");
+      }
+
+      userRepository.delete(user);
   }
 }

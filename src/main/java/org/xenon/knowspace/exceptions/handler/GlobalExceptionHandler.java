@@ -1,4 +1,4 @@
-package org.xenon.knowspace.exceptions;
+package org.xenon.knowspace.exceptions.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
