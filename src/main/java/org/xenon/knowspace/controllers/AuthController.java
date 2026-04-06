@@ -60,4 +60,9 @@ public class AuthController {
         }
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponse> refreshToken(){
+        return null;
+    }
 }

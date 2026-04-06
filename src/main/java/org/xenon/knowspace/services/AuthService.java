@@ -82,4 +82,18 @@ public class AuthService {
 
         return userMapper.toDto(user);
     }
+
+    public AuthResult refresh(String refreshToken){
+       if(!jwtService.isTokenValid(refreshToken)){
+           throw new IllegalArgumentException("Refresh token is invalid");
+       }
+
+       var userId = jwtService.extractUserId(refreshToken);
+       var user = userRepository.findById(userId).orElseThrow();
+
+       var accessToken = jwtService.generateAccessToken(user);
+       var newRefreshToken = jwtService.generateRefreshToken(user);
+
+       return new AuthResult(accessToken, newRefreshToken, user.getId());
+    }
 }
