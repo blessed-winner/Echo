@@ -49,4 +49,18 @@ public class UserService {
 
       userRepository.delete(user);
   }
+
+  public UserDto updateUser(UUID id, UserDto userDto){
+      var user = userRepository.findById(id).orElse(null);
+      if(user == null){
+          throw new UserNotFoundException("User Not Found");
+      }
+
+      user.setName(userDto.getName());
+      user.setRole(user.getRole());
+      user.setEmail(userDto.getEmail());
+
+      var updatedUser = userRepository.save(user);
+      return userMapper.toDto(updatedUser);
+  }
 }
