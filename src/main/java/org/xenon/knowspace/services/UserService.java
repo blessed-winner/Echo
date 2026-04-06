@@ -30,7 +30,7 @@ public class UserService {
               .collect(Collectors.toList());
   }
 
-  private UserDto getUserById(UUID id){
+  public UserDto getUserById(UUID id){
       var user = userRepository.findById(id).orElse(null);
       if(user == null){
           return null;
