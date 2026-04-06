@@ -35,5 +35,7 @@ public class UserService {
       if(user == null){
           return null;
       }
+
+      return userMapper.toDto(user);
   }
 }
