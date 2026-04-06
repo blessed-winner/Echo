@@ -11,6 +11,7 @@ import org.xenon.knowspace.config.JwtConfig;
 import org.xenon.knowspace.dtos.JwtResponse;
 import org.xenon.knowspace.dtos.LoginRequest;
 import org.xenon.knowspace.dtos.RegisterUserRequest;
+import org.xenon.knowspace.dtos.UserDto;
 import org.xenon.knowspace.services.AuthService;
 
 @RestController
@@ -52,7 +53,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> me(){
+    public ResponseEntity<UserDto> me(){
         var result = authService.getMe();
         if(result == null){
             return ResponseEntity.notFound().build();
