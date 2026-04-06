@@ -62,7 +62,13 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtResponse> refreshToken(){
-        return null;
+    public ResponseEntity<JwtResponse> refreshToken(
+            @CookieValue(name = "refreshToken") String refreshToken
+    ){
+        var result = authService.refresh(refreshToken);
+        if(result == null){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(new JwtResponse(result.accessToken()));
     }
 }
