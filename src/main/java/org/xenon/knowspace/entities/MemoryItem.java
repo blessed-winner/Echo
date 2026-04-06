@@ -36,6 +36,12 @@ public class MemoryItem {
 
     private int reviewCount;
 
+    @ManyToMany
+    @JoinTable(
+            name = "memory_item_links",
+            joinColumns = @JoinColumn(name = "memory_item_id"),
+            inverseJoinColumns = @JoinColumn(name = "related_item_id")
+    )
     private Set<MemoryItem> relatedItems = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
