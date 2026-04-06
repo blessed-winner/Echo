@@ -66,9 +66,6 @@ public class AuthController {
             @CookieValue(name = "refreshToken") String refreshToken
     ){
         var result = authService.refresh(refreshToken);
-        if(result == null){
-            return ResponseEntity.badRequest().build();
-        }
         return ResponseEntity.ok(new JwtResponse(result.accessToken()));
     }
 }
