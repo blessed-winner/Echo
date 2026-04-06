@@ -56,9 +56,9 @@ public class UserService {
           throw new UserNotFoundException("User Not Found");
       }
 
-      user.setName(userDto.getName());
-      user.setRole(user.getRole());
-      user.setEmail(userDto.getEmail());
+      if(userDto.getName() != null) user.setName(userDto.getName());
+      if(userDto.getRole() != null) user.setRole(user.getRole());
+      if(userDto.getEmail() != null) user.setEmail(userDto.getEmail());
 
       var updatedUser = userRepository.save(user);
       return userMapper.toDto(updatedUser);

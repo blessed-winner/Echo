@@ -3,6 +3,7 @@ package org.xenon.knowspace.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.xenon.knowspace.entities.Role;
 
 import java.util.UUID;
 
@@ -13,4 +14,5 @@ public class UserDto {
     private UUID id;
     private String name;
     private String email;
+    private Role role;
 }
