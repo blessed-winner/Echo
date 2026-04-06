@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.xenon.knowspace.config.JwtConfig;
 import org.xenon.knowspace.dtos.JwtResponse;
 import org.xenon.knowspace.dtos.LoginRequest;
 import org.xenon.knowspace.dtos.RegisterUserRequest;
+import org.xenon.knowspace.dtos.UserDto;
 import org.xenon.knowspace.entities.Role;
 import org.xenon.knowspace.mappers.UserMapper;
 import org.xenon.knowspace.repositories.UserRepository;
@@ -67,5 +69,17 @@ public class AuthService {
         String refreshToken = jwtService.generateRefreshToken(user);
 
         return new AuthResult(accessToken, refreshToken, user.getId());
+    }
+
+    public UserDto getMe(){
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userId = (UUID) authentication.getPrincipal();
+
+        var user = userRepository.findById(userId).orElse(null);
+        if(user == null){
+            return null;
+        }
+
+        return userMapper.toDto(user);
     }
 }
