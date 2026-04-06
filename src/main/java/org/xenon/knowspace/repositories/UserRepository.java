@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
     List<User> findByRoleAndIdNot(Role role, UUID excludeUserId);
+
+    List<User> findAllByIdNot(UUID excludeUserId);
 }

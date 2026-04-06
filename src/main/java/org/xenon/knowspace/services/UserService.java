@@ -9,6 +9,7 @@ import org.xenon.knowspace.repositories.UserRepository;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +19,12 @@ public class UserService {
   public List<UserDto> getAllUsers(Role role, UUID excludeUserId){
       if(role != null){
           users = userRepository.findByRoleAndIdNot(role,excludeUserId);
+      } else {
+          users = userRepository.findAllByIdNot(excludeUserId);
       }
+
+      return users.stream()
+              .map(user->new UserDto(user.getId(), user.getEmail(), user.getPassword()))
+              .collect(Collectors.toList());
   }
 }
