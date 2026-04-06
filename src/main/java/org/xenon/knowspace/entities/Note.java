@@ -36,4 +36,7 @@ public class Note {
     )
     private Set<Tag> tags = new HashSet<>();
 
+    @OneToMany(mappedBy = "note", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<MemoryItem> memoryItems = new HashSet<>();
+
 }

@@ -24,4 +24,7 @@ public class Tag {
 
     @ManyToMany(fetch = FetchType.LAZY,mappedBy = "tags")
     private Set<Note> notes = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "tags")
+    private Set<MemoryItem> memoryItems = new HashSet<>();
 }
