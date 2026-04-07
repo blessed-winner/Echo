@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UUID userId = jwtService.extractUserId(token);
             String role = jwtService.extractUserRole(token);
             var authentication = new UsernamePasswordAuthenticationToken(
-                    userId.toString(),
+                    userId,
                     null,
                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         }catch(JwtException | IllegalArgumentException e){
             SecurityContextHolder.clearContext();
-            logger.debug("JWT authentication failed: {}",e);
+            logger.debug("JWT authentication failed: ", e);
         }
 
         filterChain.doFilter(request,response);
