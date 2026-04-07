@@ -2,7 +2,9 @@ package org.xenon.knowspace.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class CreateMemoryItemDto {
+import java.util.Set;
+
+public class MemoryItemRequest {
     @NotBlank(message = "Text is required")
     private String text;
 
@@ -10,5 +12,6 @@ public class CreateMemoryItemDto {
 
     @NotBlank(message = "Each memory item must have a note")
     private Long NoteId;
-    private Long[] tagIds;
+
+    private Set<Long> tagIds;
 }
