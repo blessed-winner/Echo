@@ -22,7 +22,7 @@ public class Tag {
 
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_tags")
     private User user;
 
