@@ -34,4 +34,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany
+    private Set<Tag> tags = new HashSet<>();
 }

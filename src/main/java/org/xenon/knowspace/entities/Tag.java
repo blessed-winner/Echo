@@ -22,6 +22,10 @@ public class Tag {
 
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "user_tags")
+    private User user;
+
     @ManyToMany(fetch = FetchType.LAZY,mappedBy = "tags")
     private Set<Note> notes = new HashSet<>();
 
