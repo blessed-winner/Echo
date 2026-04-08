@@ -14,6 +14,7 @@ import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.entities.Tag;
 import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.exceptions.ForbiddenException;
+import org.xenon.knowspace.exceptions.MemoryItemNotFoundException;
 import org.xenon.knowspace.exceptions.UserNotFoundException;
 import org.xenon.knowspace.mappers.MemoryItemMapper;
 import org.xenon.knowspace.repositories.MemoryItemRepository;
@@ -21,6 +22,7 @@ import org.xenon.knowspace.repositories.NoteRepository;
 import org.xenon.knowspace.repositories.TagRepository;
 import org.xenon.knowspace.repositories.UserRepository;
 
+import java.security.Security;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -70,5 +72,14 @@ public class MemoryItemService {
         Pageable pageable = PageRequest.of(page,size, Sort.by("nextReviewDate").ascending());
         Page<MemoryItem> memoryItemsPage = memoryItemRepository.findAllByUserId(userId,pageable);
         return memoryItemsPage.map(memoryItemMapper::toDto);
+    }
+
+    public MemoryItemDto getMemoryItem(Long memoryId){
+        var memoryItem = memoryItemRepository.findById(memoryId).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!memoryItem.getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot get this memory item");
+        }
+        return memoryItemMapper.toDto(memoryItem);
     }
 }
