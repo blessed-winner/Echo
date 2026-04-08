@@ -37,4 +37,11 @@ public class MemoryItemController {
         var result = memoryItemService.getAllMemoryItems(userId,page,size);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MemoryItemDto> getMemoryItem(
+            @PathVariable Long id
+    ){
+        return ResponseEntity.ok(memoryItemService.getMemoryItem(id));
+    }
 }
