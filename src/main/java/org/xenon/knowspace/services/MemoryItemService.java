@@ -1,6 +1,10 @@
 package org.xenon.knowspace.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.MemoryItemDto;
@@ -62,10 +66,9 @@ public class MemoryItemService {
          return memoryItemMapper.toDto(memoryItem);
     }
 
-    public List<MemoryItemDto> getAllMemoryItems(UUID userId){
-        var memoryItems = memoryItemRepository.findAllByUserId(userId);
-        return memoryItems.stream()
-                .map(memoryItemMapper::toDto)
-                .toList();
+    public Page<MemoryItemDto> getAllMemoryItems(UUID userId,int page, int size){
+        Pageable pageable = PageRequest.of(page,size, Sort.by("nextReviewDate").ascending());
+        Page<MemoryItem> memoryItemsPage = memoryItemRepository.findAllByUserId(userId,pageable);
+        return memoryItemsPage.map(memoryItemMapper::toDto);
     }
 }
