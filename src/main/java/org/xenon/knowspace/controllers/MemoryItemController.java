@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
 import org.xenon.knowspace.services.MemoryItemService;
@@ -17,8 +18,12 @@ import org.xenon.knowspace.services.MemoryItemService;
 public class MemoryItemController {
     private final MemoryItemService memoryItemService;
     @PostMapping
-    public ResponseEntity<MemoryItemDto> createMemoryItem(@Valid @RequestBody MemoryItemRequest request){
+    public ResponseEntity<MemoryItemDto> createMemoryItem(
+            @Valid @RequestBody MemoryItemRequest request,
+            UriComponentsBuilder uriBuilder
+    ){
         var result = memoryItemService.createMemoryItem(request);
-        return ResponseEntity.ok().body(result);
+        var uri = uriBuilder.path("/memories/{id}").buildAndExpand(result.getId()).toUri();
+        return ResponseEntity.created(uri).body(result);
     }
 }
