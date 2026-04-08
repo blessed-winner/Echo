@@ -7,7 +7,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class TagDTO {
+public class TagDto {
     private Long id;
     private String name;
 }

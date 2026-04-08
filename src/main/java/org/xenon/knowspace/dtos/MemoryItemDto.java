@@ -32,5 +32,5 @@ public class MemoryItemDto {
 
         private Long noteId;
 
-        private Set<TagDTO> tags;
+        private Set<TagDto> tags;
 }

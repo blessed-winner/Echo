@@ -3,11 +3,14 @@ package org.xenon.knowspace.mappers;
 import org.mapstruct.Mapper;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
+import org.xenon.knowspace.dtos.TagDto;
 import org.xenon.knowspace.entities.MemoryItem;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {TagMapper.class})
 public interface MemoryItemMapper {
     default MemoryItemDto toDto(MemoryItem memoryItem){
         MemoryItemDto dto = new MemoryItemDto();
@@ -23,7 +26,12 @@ public interface MemoryItemMapper {
         dto.setInterval(memoryItem.getInterval());
         dto.setDue(memoryItem.getNextReviewDate().isBefore(LocalDateTime.now()));
         dto.setNoteId(memoryItem.getNote().getId());
-        dto.setTags(memoryItem.getTags());
+
+        Set<TagDto> tagDtos = memoryItem.getTags().stream()
+                        .map(tag -> new TagDto(tag.getId(), tag.getName()))
+                        .collect(Collectors.toSet());
+
+        dto.setTags(tagDtos);
         return dto;
     }
     MemoryItem toEntity(MemoryItemRequest request);
