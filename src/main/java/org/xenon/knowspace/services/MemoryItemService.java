@@ -84,6 +84,10 @@ public class MemoryItemService {
     }
 
     public MemoryItemDto updateMemoryItem(Long id, MemoryItemRequest request){
-        var memoryItem = memoryItemRepository.
+        var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(!memoryItem.getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot update this memory item");
     }
+
 }
