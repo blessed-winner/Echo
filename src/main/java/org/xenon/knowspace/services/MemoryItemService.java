@@ -82,4 +82,8 @@ public class MemoryItemService {
         }
         return memoryItemMapper.toDto(memoryItem);
     }
+
+    public MemoryItemDto updateMemoryItem(Long id, MemoryItemRequest request){
+        var memoryItem = memoryItemRepository.
+    }
 }
