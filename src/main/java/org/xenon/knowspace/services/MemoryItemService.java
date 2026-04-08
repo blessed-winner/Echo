@@ -3,7 +3,6 @@ package org.xenon.knowspace.services;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
 import org.xenon.knowspace.entities.Note;
@@ -19,6 +18,7 @@ import org.xenon.knowspace.repositories.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -59,5 +59,12 @@ public class MemoryItemService {
          memoryItemRepository.save(memoryItem);
 
          return memoryItemMapper.toDto(memoryItem);
+    }
+
+    public List<MemoryItemDto> getAllMemoryItems(UUID userId){
+        var memoryItems = memoryItemRepository.findAllByUserId(userId);
+        return memoryItems.stream()
+                .map(memoryItemMapper::toDto)
+                .toList();
     }
 }
