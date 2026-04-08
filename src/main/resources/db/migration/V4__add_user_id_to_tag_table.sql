@@ -4,7 +4,7 @@
 
 -- 1. Add column (initially nullable to avoid breaking existing data)
 ALTER TABLE tags
-    ADD COLUMN user_id VARCHAR;
+    ADD COLUMN user_id UUID;
 
 ALTER TABLE tags
     ALTER COLUMN user_id SET NOT NULL;
