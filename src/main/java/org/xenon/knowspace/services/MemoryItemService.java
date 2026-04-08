@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
+import org.xenon.knowspace.entities.MemoryItem;
 import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.entities.Tag;
 import org.xenon.knowspace.entities.User;
