@@ -2,6 +2,7 @@ package org.xenon.knowspace.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
+import org.xenon.knowspace.dtos.MemoryItemUpdateRequest;
 import org.xenon.knowspace.services.MemoryItemService;
 
 import java.util.UUID;
@@ -43,5 +45,13 @@ public class MemoryItemController {
             @PathVariable Long id
     ){
         return ResponseEntity.ok(memoryItemService.getMemoryItem(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MemoryItemDto> updateMemoryItem(
+            @PathVariable Long id,
+            @Valid @RequestBody MemoryItemUpdateRequest request
+    ){
+        return ResponseEntity.ok(memoryItemService.updateMemoryItem(id,request));
     }
 }

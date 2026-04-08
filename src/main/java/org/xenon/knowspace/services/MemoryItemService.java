@@ -93,7 +93,7 @@ public class MemoryItemService {
 
         if(request.getText() != null && !request.getText().isBlank()){memoryItem.setText(request.getText());}
         if(request.getSource() != null && !request.getSource().isBlank()){memoryItem.setSource(request.getSource());}
-        if(request.getTagIds() != null && !request.getTagIds().isEmpty(){
+        if(request.getTagIds() != null && !request.getTagIds().isEmpty()){
             for (Long tagId:request.getTagIds()){
                 var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
                 if(!tag.getUser().getId().equals(userId)){
@@ -106,5 +106,9 @@ public class MemoryItemService {
         memoryItemRepository.save(memoryItem);
 
         return memoryItemMapper.toDto(memoryItem);
+    }
+
+    public void deleteMemoryItem(Long id){
+
     }
 }
