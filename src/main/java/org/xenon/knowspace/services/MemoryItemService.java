@@ -18,6 +18,8 @@ import org.xenon.knowspace.repositories.TagRepository;
 import org.xenon.knowspace.repositories.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -42,6 +44,18 @@ public class MemoryItemService {
          memoryItem.setEaseFactor(2.5F);
          memoryItem.setReviewCount(0);
          memoryItem.setNextReviewDate(LocalDateTime.now());
+         memoryItemRepository.save(memoryItem);
+
+        Set<Tag> tags = new HashSet<>();
+
+         for (Long tagId:memoryItemRequest.getTagIds()){
+             var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
+             if(!tag.getUser().equals(currentUser)){
+                    throw new ForbiddenException("Cannot add this tag to memory item");
+             }
+             tags.add(tag);
+         }
+
          memoryItemRepository.save(memoryItem);
 
          return memoryItemMapper.toDto(memoryItem);
