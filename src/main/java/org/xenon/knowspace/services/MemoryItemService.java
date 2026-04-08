@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
+import org.xenon.knowspace.dtos.MemoryItemUpdateRequest;
 import org.xenon.knowspace.entities.MemoryItem;
 import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.entities.Tag;
@@ -22,10 +23,8 @@ import org.xenon.knowspace.repositories.NoteRepository;
 import org.xenon.knowspace.repositories.TagRepository;
 import org.xenon.knowspace.repositories.UserRepository;
 
-import java.security.Security;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -83,11 +82,29 @@ public class MemoryItemService {
         return memoryItemMapper.toDto(memoryItem);
     }
 
-    public MemoryItemDto updateMemoryItem(Long id, MemoryItemRequest request){
+    public MemoryItemDto updateMemoryItem(Long id, MemoryItemUpdateRequest request){
         var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(!memoryItem.getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot update this memory item");
-    }
+        }
 
+        Set<Tag> tags = new HashSet<>();
+
+        if(request.getText() != null && !request.getText().isBlank()){memoryItem.setText(request.getText());}
+        if(request.getSource() != null && !request.getSource().isBlank()){memoryItem.setSource(request.getSource());}
+        if(request.getTagIds() != null && !request.getTagIds().isEmpty(){
+            for (Long tagId:request.getTagIds()){
+                var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
+                if(!tag.getUser().getId().equals(userId)){
+                    throw new ForbiddenException("Cannot add this tag to memory item");
+                }
+                tags.add(tag);
+            }
+            memoryItem.setTags(tags);
+        }
+        memoryItemRepository.save(memoryItem);
+
+        return memoryItemMapper.toDto(memoryItem);
+    }
 }
