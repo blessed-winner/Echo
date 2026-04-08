@@ -1,12 +1,14 @@
 package org.xenon.knowspace.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class MemoryItemDto {
@@ -33,4 +35,5 @@ public class MemoryItemDto {
         private Long noteId;
 
         private Set<TagDto> tags;
+
 }
