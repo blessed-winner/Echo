@@ -39,18 +39,18 @@ public class MemoryItemService {
              throw new ForbiddenException("Cannot add memory to this note");
          }
          var memoryItem = memoryItemMapper.toEntity(memoryItemRequest);
+         memoryItem.setUser(currentUser);
          memoryItem.setNote(note);
          memoryItem.setInterval(1);
          memoryItem.setEaseFactor(2.5F);
          memoryItem.setReviewCount(0);
          memoryItem.setNextReviewDate(LocalDateTime.now());
-         memoryItemRepository.save(memoryItem);
 
-        Set<Tag> tags = new HashSet<>();
+         Set<Tag> tags = new HashSet<>();
 
          for (Long tagId:memoryItemRequest.getTagIds()){
              var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
-             if(!tag.getUser().equals(currentUser)){
+             if(!tag.getUser().getId().equals(currentUser.getId())){
                     throw new ForbiddenException("Cannot add this tag to memory item");
              }
              tags.add(tag);
