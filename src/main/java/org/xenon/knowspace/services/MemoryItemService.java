@@ -109,6 +109,11 @@ public class MemoryItemService {
     }
 
     public void deleteMemoryItem(Long id){
-
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
+        if(!memoryItem.getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot delete this memory item");
+    }
+        memoryItemRepository.delete(memoryItem);
     }
 }
