@@ -116,7 +116,17 @@ public class MemoryItemService {
     }
 
     public MemoryItemDto review(Long id, ReviewRating rating){
+         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+         var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
+         if(!memoryItem.getUser().getId().equals(userId)){
+                throw new ForbiddenException("Cannot review this memory item");
+         }
 
+         applyReviewLogic(memoryItem,rating);
+
+         memoryItemRepository.save(memoryItem);
+
+         return memoryItemMapper.toDto(memoryItem);
     }
 
     private void applyReviewLogic(MemoryItem item, ReviewRating rating){
