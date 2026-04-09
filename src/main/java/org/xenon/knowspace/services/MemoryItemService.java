@@ -34,9 +34,15 @@ public class MemoryItemService {
     private final NoteRepository noteRepository;
     private final MemoryItemMapper memoryItemMapper;
     private final TagRepository tagRepository;
+
+    private UUID getCurrentUser(){
+        return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+
     public MemoryItemDto createMemoryItem(MemoryItemRequest memoryItemRequest) {
-         var authentication = SecurityContextHolder.getContext().getAuthentication();
-         UUID userId = (UUID) authentication.getPrincipal();
+
+         UUID userId = getCurrentUser();
          User currentUser = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User Not Found"));
          Note note = noteRepository.findById(memoryItemRequest.getNoteId()).orElseThrow();
          if(note.getTopic() == null || !note.getTopic().getUser().getId().equals(currentUser.getId())){
@@ -73,7 +79,7 @@ public class MemoryItemService {
 
     public MemoryItemDto getMemoryItem(Long memoryId){
         var memoryItem = memoryItemRepository.findById(memoryId).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
-        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID userId = getCurrentUser();
         if(!memoryItem.getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot get this memory item");
         }
@@ -82,7 +88,7 @@ public class MemoryItemService {
 
     public MemoryItemDto updateMemoryItem(Long id, MemoryItemUpdateRequest request){
         var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
-        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID userId = getCurrentUser();
         if(!memoryItem.getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot update this memory item");
         }
@@ -107,7 +113,7 @@ public class MemoryItemService {
     }
 
     public void deleteMemoryItem(Long id){
-        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID userId = getCurrentUser();
         var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
         if(!memoryItem.getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot delete this memory item");
@@ -116,7 +122,7 @@ public class MemoryItemService {
     }
 
     public MemoryItemDto review(Long id, ReviewRating rating){
-         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+         UUID userId = getCurrentUser();
          var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
          if(!memoryItem.getUser().getId().equals(userId)){
                 throw new ForbiddenException("Cannot review this memory item");
@@ -136,7 +142,6 @@ public class MemoryItemService {
         Page<MemoryItem> memoryItemsPage = memoryItemRepository.findByUserIdAndNextReviewDateLessThanOrEqual(userId, LocalDateTime.now(), pageable);
         return memoryItemsPage.map(memoryItemMapper::toDto);
     }
-
 
     private void applyReviewLogic(MemoryItem item, ReviewRating rating){
         int interval = item.getInterval();
