@@ -54,4 +54,12 @@ public class MemoryItemController {
     ){
         return ResponseEntity.ok(memoryItemService.updateMemoryItem(id,request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMemoryItem(
+            @PathVariable Long id
+    ){
+        memoryItemService.deleteMemoryItem(id);
+        return ResponseEntity.noContent().build();
+    }
 }
