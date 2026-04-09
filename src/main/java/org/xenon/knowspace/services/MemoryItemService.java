@@ -120,13 +120,35 @@ public class MemoryItemService {
 
     private void applyReviewLogic(MemoryItem item, ReviewRating rating){
         int interval = item.getInterval();
-        float easeFactor = item.getEaseFactor();
+        double easeFactor = item.getEaseFactor();
         switch (rating){
             case AGAIN -> {
                 interval = 1;
                 item.setReviewCount(0);
-                easeFactor = (float) Math.max(1.3,easeFactor - 0.2);
+                easeFactor = Math.max(1.3,easeFactor - 0.2);
+            }
+
+            case HARD -> {
+                interval = Math.max(1,(int)(interval*1.2));
+                easeFactor = Math.max(1.3,easeFactor - 0.15);
+                item.setReviewCount(item.getReviewCount() + 1);
+            }
+
+            case GOOD -> {
+                interval = (int)(interval * easeFactor);
+                item.setReviewCount(item.getReviewCount() + 1);
+            }
+
+            case EASY -> {
+                interval = (int) (interval * easeFactor * 1.3);
+                easeFactor += 0.1;
+                item.setReviewCount(item.getReviewCount() + 1);
             }
         }
+
+        item.setInterval(interval);
+        item.setEaseFactor(easeFactor);
+        item.setNextReviewDate(LocalDateTime.now().plusDays(interval));
+        item.setLastReviewed(LocalDateTime.now());
     }
 }
