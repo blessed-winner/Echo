@@ -71,4 +71,11 @@ public class MemoryItemController {
     ){
         return ResponseEntity.ok(memoryItemService.review(id, request.getRating()));
     }
+
+    @GetMapping("/due")
+    public ResponseEntity<Page<MemoryItemDto>> dueMemoryItems(
+            @RequestParam(defaultValue = "20") int limit
+    ){
+        return ResponseEntity.ok(memoryItemService.getDueMemoryItems(limit));
+    }
 }
