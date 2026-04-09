@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
 import org.xenon.knowspace.dtos.MemoryItemUpdateRequest;
-import org.xenon.knowspace.entities.MemoryItem;
-import org.xenon.knowspace.entities.Note;
-import org.xenon.knowspace.entities.Tag;
-import org.xenon.knowspace.entities.User;
+import org.xenon.knowspace.entities.*;
 import org.xenon.knowspace.enums.ReviewRating;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.exceptions.MemoryItemNotFoundException;
@@ -116,6 +113,10 @@ public class MemoryItemService {
             throw new ForbiddenException("Cannot delete this memory item");
     }
         memoryItemRepository.delete(memoryItem);
+    }
+
+    public MemoryItemDto review(Long id, ReviewRating rating){
+
     }
 
     private void applyReviewLogic(MemoryItem item, ReviewRating rating){
