@@ -6,6 +6,6 @@ import org.xenon.knowspace.enums.ReviewRating;
 
 @Getter
 @Setter
-public class RatingRequest {
+public class ReviewRequest {
     private ReviewRating rating;
 }

@@ -11,6 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
 import org.xenon.knowspace.dtos.MemoryItemUpdateRequest;
+import org.xenon.knowspace.dtos.ReviewRequest;
 import org.xenon.knowspace.services.MemoryItemService;
 
 import java.util.UUID;
@@ -61,5 +62,13 @@ public class MemoryItemController {
     ){
         memoryItemService.deleteMemoryItem(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/review")
+    public ResponseEntity<MemoryItemDto> reviewMemoryItem(
+            @PathVariable Long id,
+            @RequestParam ReviewRequest request
+    ){
+        return ResponseEntity.ok(memoryItemService.review(id, request.getRating()));
     }
 }
