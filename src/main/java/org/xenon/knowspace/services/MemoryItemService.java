@@ -129,6 +129,15 @@ public class MemoryItemService {
          return memoryItemMapper.toDto(memoryItem);
     }
 
+    public Page<MemoryItemDto> getDueMemoryItems(int limit){
+        int safeLimit = Math.min(limit,50);
+        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("nextReviewDate").ascending());
+        Page<MemoryItem> memoryItemsPage = memoryItemRepository.findByUserIdAndNextReviewDateLessThanOrEqual(userId, LocalDateTime.now(), pageable);
+        return memoryItemsPage.map(memoryItemMapper::toDto);
+    }
+
+
     private void applyReviewLogic(MemoryItem item, ReviewRating rating){
         int interval = item.getInterval();
         double easeFactor = item.getEaseFactor();
