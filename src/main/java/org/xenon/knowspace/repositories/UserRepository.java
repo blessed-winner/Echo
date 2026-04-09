@@ -1,7 +1,7 @@
 package org.xenon.knowspace.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.xenon.knowspace.entities.Role;
+import org.xenon.knowspace.enums.Role;
 import org.xenon.knowspace.entities.User;
 
 import java.util.List;

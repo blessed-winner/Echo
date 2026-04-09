@@ -1,4 +1,4 @@
-package org.xenon.knowspace.entities;
+package org.xenon.knowspace.enums;
 
 public enum Role {
     USER,

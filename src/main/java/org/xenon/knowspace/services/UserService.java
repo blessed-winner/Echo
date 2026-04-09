@@ -1,10 +1,9 @@
 package org.xenon.knowspace.services;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.UserDto;
-import org.xenon.knowspace.entities.Role;
+import org.xenon.knowspace.enums.Role;
 import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.exceptions.UserNotFoundException;
 import org.xenon.knowspace.mappers.UserMapper;

@@ -2,6 +2,7 @@ package org.xenon.knowspace.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.xenon.knowspace.enums.Role;
 
 import java.time.LocalDateTime;
 import java.util.*;

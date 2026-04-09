@@ -10,7 +10,7 @@ import org.xenon.knowspace.config.JwtConfig;
 import org.xenon.knowspace.dtos.LoginRequest;
 import org.xenon.knowspace.dtos.RegisterUserRequest;
 import org.xenon.knowspace.dtos.UserDto;
-import org.xenon.knowspace.entities.Role;
+import org.xenon.knowspace.enums.Role;
 import org.xenon.knowspace.mappers.UserMapper;
 import org.xenon.knowspace.repositories.UserRepository;
 

@@ -3,7 +3,7 @@ package org.xenon.knowspace.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.xenon.knowspace.entities.Role;
+import org.xenon.knowspace.enums.Role;
 
 import java.util.UUID;
 
