@@ -14,6 +14,7 @@ import org.xenon.knowspace.entities.MemoryItem;
 import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.entities.Tag;
 import org.xenon.knowspace.entities.User;
+import org.xenon.knowspace.enums.ReviewRating;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.exceptions.MemoryItemNotFoundException;
 import org.xenon.knowspace.exceptions.UserNotFoundException;
@@ -115,5 +116,17 @@ public class MemoryItemService {
             throw new ForbiddenException("Cannot delete this memory item");
     }
         memoryItemRepository.delete(memoryItem);
+    }
+
+    private void applyReviewLogic(MemoryItem item, ReviewRating rating){
+        int interval = item.getInterval();
+        float easeFactor = item.getEaseFactor();
+        switch (rating){
+            case AGAIN -> {
+                interval = 1;
+                item.setReviewCount(0);
+                easeFactor = (float) Math.max(1.3,easeFactor - 0.2);
+            }
+        }
     }
 }

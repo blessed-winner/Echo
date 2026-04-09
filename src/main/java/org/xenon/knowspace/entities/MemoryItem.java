@@ -32,7 +32,7 @@ public class MemoryItem {
 
     private int interval;
 
-    private float easeFactor;
+    private double easeFactor;
 
     private int reviewCount;
 
