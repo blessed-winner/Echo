@@ -23,4 +23,9 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
             SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.nextReviewDate > :now
           """)
     long countUpcoming(UUID userId, LocalDateTime now);
+
+    @Query("""
+            SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.nextReviewDate <= :now
+          """)
+    long countOverdue(UUID userId,  LocalDateTime now);
 }
