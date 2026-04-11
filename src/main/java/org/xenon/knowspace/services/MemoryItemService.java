@@ -21,6 +21,7 @@ import org.xenon.knowspace.repositories.NoteRepository;
 import org.xenon.knowspace.repositories.TagRepository;
 import org.xenon.knowspace.repositories.UserRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -175,5 +176,11 @@ public class MemoryItemService {
         item.setEaseFactor(easeFactor);
         item.setNextReviewDate(LocalDateTime.now().plusDays(interval));
         item.setLastReviewed(LocalDateTime.now());
+    }
+
+    private int calculateStreak(){
+        LocalDate today = LocalDate.now();
+        int streak = 0;
+
     }
 }

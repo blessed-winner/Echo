@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.xenon.knowspace.entities.MemoryItem;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
@@ -28,4 +30,9 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
             SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.nextReviewDate <= :now
           """)
     long countOverdue(UUID userId,  LocalDateTime now);
+
+    @Query("""
+           SELECT m.lastReviewed FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed IS NOT NULL ORDER BY m.lastReviewed DESC
+          """)
+    List<LocalDate> findLastReviewedDates(UUID userId);
 }
