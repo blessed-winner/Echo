@@ -24,6 +24,7 @@ import org.xenon.knowspace.repositories.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -178,9 +179,17 @@ public class MemoryItemService {
         item.setLastReviewed(LocalDateTime.now());
     }
 
-    private int calculateStreak(){
+    private int calculateStreak(User user){
         LocalDate today = LocalDate.now();
         int streak = 0;
-
+        List<LocalDate> reviewDates = memoryItemRepository.findLastReviewedDates(user.getId());
+        for(LocalDate date : reviewDates){
+            if(!today.isBefore(date.minusDays(streak))){
+                streak++;
+            }else{
+                break;
+            }
+        }
+        return streak;
     }
 }
