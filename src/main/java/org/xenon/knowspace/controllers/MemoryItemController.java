@@ -73,9 +73,10 @@ public class MemoryItemController {
 
     @GetMapping("/due")
     public ResponseEntity<Page<MemoryItemDto>> dueMemoryItems(
-            @RequestParam(defaultValue = "20") int limit
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(required = false) Long tagId
     ){
-        return ResponseEntity.ok(memoryItemService.getDueMemoryItems(limit));
+        return ResponseEntity.ok(memoryItemService.getDueMemoryItems(limit,tagId));
     }
 
     @GetMapping("/stats")
