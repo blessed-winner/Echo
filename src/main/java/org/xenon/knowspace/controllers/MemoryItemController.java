@@ -1,5 +1,6 @@
 package org.xenon.knowspace.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.apache.coyote.Response;
@@ -13,6 +14,7 @@ import org.xenon.knowspace.services.MemoryItemService;
 
 import java.util.UUID;
 
+@Tag(name = "Memory")
 @RestController
 @RequestMapping("/memories")
 @AllArgsConstructor

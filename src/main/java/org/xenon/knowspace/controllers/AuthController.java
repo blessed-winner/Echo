@@ -1,5 +1,6 @@
 package org.xenon.knowspace.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.xenon.knowspace.dtos.RegisterUserRequest;
 import org.xenon.knowspace.dtos.UserDto;
 import org.xenon.knowspace.services.AuthService;
 
+@Tag(name = "Auth")
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
