@@ -142,7 +142,7 @@ public class MemoryItemService {
         int safeLimit = Math.min(limit,50);
         UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pageable pageable = PageRequest.of(0, limit, Sort.by("nextReviewDate").ascending());
-        Page<MemoryItem> memoryItemsPage = memoryItemRepository.findByUserIdAndNextReviewDateLessThanOrEqual(userId, LocalDateTime.now(), pageable);
+        Page<MemoryItem> memoryItemsPage = memoryItemRepository.findByUserIdAndNextReviewDateLessThanEqual(userId, LocalDateTime.now(), pageable);
         return memoryItemsPage.map(memoryItemMapper::toDto);
     }
 

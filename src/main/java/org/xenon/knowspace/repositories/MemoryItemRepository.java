@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     Page<MemoryItem> findAllByUserId(UUID userId, Pageable pageable);
 
-    Page<MemoryItem> findByUserIdAndNextReviewDateLessThanOrEqual(UUID userId, LocalDateTime referenceTime, Pageable pageable);
+    Page<MemoryItem> findByUserIdAndNextReviewDateLessThanEqual(UUID userId, LocalDateTime referenceTime, Pageable pageable);
 
     @Query("""
              SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed BETWEEN :todayStart AND :todayEnd
@@ -36,8 +36,4 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
            SELECT m.lastReviewed FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed IS NOT NULL ORDER BY m.lastReviewed DESC
           """)
     List<LocalDate> findLastReviewedDates(UUID userId);
-
-    UUID user(User user);
-
-    UUID user(User user);
 }
