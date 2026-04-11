@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.xenon.knowspace.entities.MemoryItem;
+import org.xenon.knowspace.entities.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,4 +36,8 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
            SELECT m.lastReviewed FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed IS NOT NULL ORDER BY m.lastReviewed DESC
           """)
     List<LocalDate> findLastReviewedDates(UUID userId);
+
+    UUID user(User user);
+
+    UUID user(User user);
 }

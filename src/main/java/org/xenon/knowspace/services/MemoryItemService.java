@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.MemoryItemDto;
 import org.xenon.knowspace.dtos.MemoryItemRequest;
 import org.xenon.knowspace.dtos.MemoryItemUpdateRequest;
+import org.xenon.knowspace.dtos.MemoryStatsDto;
 import org.xenon.knowspace.entities.*;
 import org.xenon.knowspace.enums.ReviewRating;
 import org.xenon.knowspace.exceptions.ForbiddenException;
@@ -178,6 +179,28 @@ public class MemoryItemService {
         item.setNextReviewDate(LocalDateTime.now().plusDays(interval));
         item.setLastReviewed(LocalDateTime.now());
     }
+
+    public MemoryStatsDto getStats(){
+        UUID userId = getCurrentUser();
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime todayEnd = todayStart.plusDays(1);
+
+        var user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User Not Found"));
+
+        long todayReviewed = memoryItemRepository.countReviewedToday(userId,todayStart,todayEnd);
+        long upcoming = memoryItemRepository.countUpcoming(userId, LocalDateTime.now());
+        long overdue = memoryItemRepository.countOverdue(userId, LocalDateTime.now());
+        int streak = calculateStreak(user);
+
+        MemoryStatsDto dto = new MemoryStatsDto();
+        dto.setTodayReviewed(todayReviewed);
+        dto.setOverdue(overdue);
+        dto.setStreak(streak);
+        dto.setUpcoming(upcoming);
+
+        return dto;
+    }
+
 
     private int calculateStreak(User user){
         LocalDate today = LocalDate.now();
