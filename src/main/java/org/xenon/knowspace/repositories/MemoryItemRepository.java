@@ -16,6 +16,7 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     Page<MemoryItem> findAllByUserId(UUID userId, Pageable pageable);
 
     Page<MemoryItem> findByUserIdAndNextReviewDateLessThanEqual(UUID userId, LocalDateTime referenceTime, Pageable pageable);
+    Page<MemoryItem> findByUserIdAndTagIdAndNextReviewDateLessThanEqual(UUID userId,Long tagId, LocalDateTime referenceTime, Pageable pageable);
 
     @Query("""
              SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed BETWEEN :todayStart AND :todayEnd
