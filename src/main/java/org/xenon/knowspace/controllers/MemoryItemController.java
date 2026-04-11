@@ -2,15 +2,13 @@ package org.xenon.knowspace.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.xenon.knowspace.dtos.MemoryItemDto;
-import org.xenon.knowspace.dtos.MemoryItemRequest;
-import org.xenon.knowspace.dtos.MemoryItemUpdateRequest;
-import org.xenon.knowspace.dtos.ReviewRequest;
+import org.xenon.knowspace.dtos.*;
 import org.xenon.knowspace.services.MemoryItemService;
 
 import java.util.UUID;
@@ -78,5 +76,8 @@ public class MemoryItemController {
         return ResponseEntity.ok(memoryItemService.getDueMemoryItems(limit));
     }
 
-    
+    @GetMapping("/stats")
+    public ResponseEntity<MemoryStatsDto> getMemoryItemStats(){
+        return ResponseEntity.ok(memoryItemService.getStats());
+    }
 }
