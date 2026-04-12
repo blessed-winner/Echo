@@ -22,6 +22,7 @@ import org.xenon.knowspace.repositories.TagRepository;
 import org.xenon.knowspace.repositories.TopicRepository;
 import org.xenon.knowspace.repositories.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,6 +47,7 @@ public class NoteService {
         }
         Note note = noteMapper.toEntity(noteRequest);
         note.setTopic(topic);
+        note.setCreatedAt(LocalDateTime.now());
         Set<Tag> tags = new HashSet<>();
         for(Long tagId : noteRequest.getTagIds()){
             Tag tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));

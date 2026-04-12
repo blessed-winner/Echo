@@ -14,6 +14,7 @@ import org.xenon.knowspace.enums.Role;
 import org.xenon.knowspace.mappers.UserMapper;
 import org.xenon.knowspace.repositories.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -55,6 +56,7 @@ public class AuthService {
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
+        user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
 
         String accessToken = jwtService.generateAccessToken(user);
