@@ -7,10 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.xenon.knowspace.dtos.NoteDto;
-import org.xenon.knowspace.dtos.NoteRequest;
-import org.xenon.knowspace.dtos.NoteSummaryDto;
-import org.xenon.knowspace.dtos.NoteUpdateRequest;
+import org.xenon.knowspace.dtos.*;
 import org.xenon.knowspace.services.NoteService;
 
 @Tag(name = "Note")
@@ -61,5 +58,14 @@ public class NoteController {
             @PathVariable Long id
     ){
         return ResponseEntity.ok(noteService.getNoteSummary(id));
+    }
+
+    @GetMapping("/{noteId}/due")
+    public ResponseEntity<Page<MemoryItemDto>> getDueItemPerNote(
+            @PathVariable Long noteId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(noteService.getDueMemoryItemsPerNote(noteId,page,size));
     }
 }
