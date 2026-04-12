@@ -3,11 +3,9 @@ package org.xenon.knowspace.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.NoteDto;
 import org.xenon.knowspace.dtos.NoteRequest;
@@ -27,5 +25,12 @@ public class NoteController {
         NoteDto result = noteService.createNote(request);
         var uri = uriBuilder.path("/notes/{id}").buildAndExpand(result).toUri();
         return ResponseEntity.created(uri).body(result);
+    }
+
+    public ResponseEntity<Page<NoteDto>> getAllNotes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(noteService.getAllNotes(page, size));
     }
 }
