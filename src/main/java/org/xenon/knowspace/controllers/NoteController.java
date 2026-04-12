@@ -34,4 +34,9 @@ public class NoteController {
     ){
         return ResponseEntity.ok(noteService.getAllNotes(page, size));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<NoteDto> getNoteById(@PathVariable Long id){
+        return ResponseEntity.ok(noteService.getNote(id));
+    }
 }
