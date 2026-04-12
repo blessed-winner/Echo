@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
         tags = {
                 @Tag(name = "Auth", description = "Authentication endpoints"),
                 @Tag(name = "Memory", description = "Memory management"),
+                @Tag(name = "Note", description = "Note management"),
                 @Tag(name = "Tags", description = "Tag operations"),
                 @Tag(name = "User", description = "User operations")
         }
