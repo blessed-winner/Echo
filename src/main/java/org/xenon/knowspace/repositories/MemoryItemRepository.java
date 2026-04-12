@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.xenon.knowspace.entities.MemoryItem;
-import org.xenon.knowspace.entities.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
