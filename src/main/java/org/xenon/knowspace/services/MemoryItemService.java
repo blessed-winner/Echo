@@ -144,7 +144,7 @@ public class MemoryItemService {
         Pageable pageable = PageRequest.of(0, safeLimit, Sort.by("nextReviewDate").ascending());
         Page<MemoryItem> memoryItemsPage;
         if(tagId != null){
-            memoryItemsPage = memoryItemRepository.findByUserIdAndTagIdAndNextReviewDateLessThanEqual(userId,tagId, LocalDateTime.now(), pageable);
+            memoryItemsPage = memoryItemRepository.findByUserIdAndTagsIdAndNextReviewDateLessThanEqual(userId,tagId, LocalDateTime.now(), pageable);
         } else {
             memoryItemsPage = memoryItemRepository.findByUserIdAndNextReviewDateLessThanEqual(userId, LocalDateTime.now(), pageable);
         }
