@@ -1,6 +1,10 @@
 package org.xenon.knowspace.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.NoteDto;
@@ -54,5 +58,12 @@ public class NoteService {
 
         return noteMapper.toDto(note);
 
+    }
+
+    public Page<NoteDto> getAllNotes(int page, int size){
+        User currentUser = getCurrentUser();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        var notesPage = noteRepository.findAllByUserId(currentUser.getId(), pageable);
+        return notesPage.map(noteMapper::toDto);
     }
 }
