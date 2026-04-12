@@ -27,6 +27,7 @@ public class NoteController {
         return ResponseEntity.created(uri).body(result);
     }
 
+    @GetMapping
     public ResponseEntity<Page<NoteDto>> getAllNotes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
