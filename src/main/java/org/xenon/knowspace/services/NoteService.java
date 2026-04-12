@@ -27,12 +27,13 @@ public class NoteService {
     private final TopicRepository topicRepository;
     private final NoteRepository noteRepository;
     private final TagRepository tagRepository;
+
     private User getCurrentUser(){
         return (User) SecurityContextHolder.getContext().getAuthentication();
     }
+
     public NoteDto createNote(NoteRequest noteRequest){
         User currentUser = getCurrentUser();
-        User user = userRepository.findById(currentUser.getId()).orElseThrow(()->new UserNotFoundException("User not found"));
         var topic = topicRepository.findById(noteRequest.getTopicId()).orElseThrow();
         if(!topic.getUser().getId().equals(currentUser.getId())){
             throw new ForbiddenException("Cannot add note to this topic");
