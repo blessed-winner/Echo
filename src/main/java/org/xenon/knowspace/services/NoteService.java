@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.NoteDto;
 import org.xenon.knowspace.dtos.NoteRequest;
+import org.xenon.knowspace.dtos.NoteUpdateRequest;
 import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.entities.Tag;
 import org.xenon.knowspace.entities.User;
@@ -75,4 +76,31 @@ public class NoteService {
         }
         return noteMapper.toDto(note);
     }
+
+    public NoteDto updateNote(Long id, NoteUpdateRequest request){
+        User currentUser = getCurrentUser();
+        var note = noteRepository.findById(id).orElseThrow();
+        if(!note.getTopic().getUser().getId().equals(currentUser.getId())){
+            throw new ForbiddenException("Cannot access this note");
+        }
+
+        Set<Tag> tags = new HashSet<>();
+        if(request.getTitle() != null){note.setTitle(request.getTitle());}
+        if(request.getContent() != null){note.setContent(request.getContent());}
+        if(request.getTagIds() != null){
+            for(Long tagId : request.getTagIds()){
+                var tag = tagRepository.findById(tagId).orElseThrow();
+                if(!tag.getUser().getId().equals(currentUser.getId())){
+                    throw new ForbiddenException("Cannot update note with this tag");
+                }
+
+                tags.add(tag);
+            }
+
+            note.setTags(tags);
+        }
+
+        return noteMapper.toDto(noteRepository.save(note));
+    }
+
 }
