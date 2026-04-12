@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.NoteDto;
 import org.xenon.knowspace.dtos.NoteRequest;
+import org.xenon.knowspace.dtos.NoteSummaryDto;
 import org.xenon.knowspace.dtos.NoteUpdateRequest;
 import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.entities.Tag;
@@ -25,6 +26,7 @@ import org.xenon.knowspace.repositories.UserRepository;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -35,14 +37,14 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final TagRepository tagRepository;
 
-    private User getCurrentUser(){
-        return (User) SecurityContextHolder.getContext().getAuthentication();
+    private UUID getCurrentUser(){
+        return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public NoteDto createNote(NoteRequest noteRequest){
-        User currentUser = getCurrentUser();
+        UUID userId = getCurrentUser();
         var topic = topicRepository.findById(noteRequest.getTopicId()).orElseThrow();
-        if(!topic.getUser().getId().equals(currentUser.getId())){
+        if(!topic.getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot add note to this topic");
         }
         Note note = noteMapper.toEntity(noteRequest);
@@ -51,7 +53,7 @@ public class NoteService {
         Set<Tag> tags = new HashSet<>();
         for(Long tagId : noteRequest.getTagIds()){
             Tag tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
-            if(!tag.getUser().getId().equals(currentUser.getId())){
+            if(!tag.getUser().getId().equals(userId)){
                 throw new ForbiddenException("Cannot add this tag to note" + tag.getName());
             }
             tags.add(tag);
@@ -65,25 +67,25 @@ public class NoteService {
     }
 
     public Page<NoteDto> getAllNotes(int page, int size){
-        User currentUser = getCurrentUser();
+        UUID userId = getCurrentUser();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
-        var notesPage = noteRepository.findAllByUserId(currentUser.getId(), pageable);
+        var notesPage = noteRepository.findAllByUserId(userId, pageable);
         return notesPage.map(noteMapper::toDto);
     }
 
     public NoteDto getNote(Long id){
-        User currentUser = getCurrentUser();
+        UUID userId = getCurrentUser();
         var note = noteRepository.findById(id).orElseThrow();
-        if(!note.getTopic().getUser().getId().equals(currentUser.getId())){
+        if(!note.getTopic().getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot access this note");
         }
         return noteMapper.toDto(note);
     }
 
     public NoteDto updateNote(Long id, NoteUpdateRequest request){
-        User currentUser = getCurrentUser();
+        UUID userId = getCurrentUser();
         var note = noteRepository.findById(id).orElseThrow();
-        if(!note.getTopic().getUser().getId().equals(currentUser.getId())){
+        if(!note.getTopic().getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot access this note");
         }
 
@@ -93,7 +95,7 @@ public class NoteService {
         if(request.getTagIds() != null){
             for(Long tagId : request.getTagIds()){
                 var tag = tagRepository.findById(tagId).orElseThrow();
-                if(!tag.getUser().getId().equals(currentUser.getId())){
+                if(!tag.getUser().getId().equals(userId)){
                     throw new ForbiddenException("Cannot update note with this tag");
                 }
 
@@ -107,14 +109,19 @@ public class NoteService {
     }
 
     public void deleteNote(Long id){
-        User currentUser = getCurrentUser();
+        UUID userId = getCurrentUser();
         var note = noteRepository.findById(id).orElseThrow();
-        if(!note.getTopic().getUser().getId().equals(currentUser.getId())){
+        if(!note.getTopic().getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot delete this note");
         }
         noteRepository.delete(note);
     }
 
-    public
+    public NoteSummaryDto getNoteSummary(Long id){
+        UUID userId = getCurrentUser();
+        var note = noteRepository.findById(id).orElseThrow();
+        long totalItems = noteRepository.countAllItemsByNoteIdAndUserId(note.getId(), currentUser.getId());
+
+    }
 
 }
