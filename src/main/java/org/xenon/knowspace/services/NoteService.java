@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.NoteDto;
@@ -102,5 +103,15 @@ public class NoteService {
 
         return noteMapper.toDto(noteRepository.save(note));
     }
+
+    public void deleteNote(Long id){
+        User currentUser = getCurrentUser();
+        var note = noteRepository.findById(id).orElseThrow();
+        if(!note.getTopic().getUser().getId().equals(currentUser.getId())){
+            throw new ForbiddenException("Cannot delete this note");
+        }
+        noteRepository.delete(note);
+    }
+
 
 }
