@@ -66,4 +66,13 @@ public class NoteService {
         var notesPage = noteRepository.findAllByUserId(currentUser.getId(), pageable);
         return notesPage.map(noteMapper::toDto);
     }
+
+    public NoteDto getNote(Long id){
+        User currentUser = getCurrentUser();
+        var note = noteRepository.findById(id).orElseThrow();
+        if(!note.getTopic().getUser().getId().equals(currentUser.getId())){
+            throw new ForbiddenException("Cannot access this note");
+        }
+        return noteMapper.toDto(note);
+    }
 }
