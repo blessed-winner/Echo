@@ -143,4 +143,11 @@ public class NoteService {
         return memoryItemsPage.map(memoryItemMapper::toDto);
     }
 
+    public Page<NoteDto> searchNotes(String query, int page, int size){
+        UUID userId = getCurrentUser();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        var notesPage = noteRepository.findByTitleContainingIgnoreCaseAndTopicUserId(query, userId, pageable);
+        return notesPage.map(noteMapper::toDto);
+    }
+
 }
