@@ -54,5 +54,6 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     """)
     Long countReviewedTodayByNoteIdAndUserId(Long noteId, UUID userId, LocalDateTime now);
 
+    Page<MemoryItem> findByNoteIdAndNoteTopicUserIdAndNextReviewDateLessThanEqual(Long noteId, UUID noteTopicUserId,LocalDateTime now, Pageable pageable);
 
 }

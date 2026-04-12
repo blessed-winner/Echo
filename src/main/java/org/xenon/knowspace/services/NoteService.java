@@ -14,6 +14,7 @@ import org.xenon.knowspace.entities.Tag;
 import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.exceptions.UserNotFoundException;
+import org.xenon.knowspace.mappers.MemoryItemMapper;
 import org.xenon.knowspace.mappers.NoteMapper;
 import org.xenon.knowspace.repositories.*;
 
@@ -32,6 +33,7 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final TagRepository tagRepository;
     private final MemoryItemRepository memoryItemRepository;
+    private final MemoryItemMapper memoryItemMapper;
 
     private UUID getCurrentUser(){
         return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -67,7 +69,7 @@ public class NoteService {
     public Page<NoteDto> getAllNotes(int page, int size){
         UUID userId = getCurrentUser();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        var notesPage = noteRepository.findAllByUserId(userId, pageable);
+        var notesPage = noteRepository.findAllByTopicUserId(userId, pageable);
         return notesPage.map(noteMapper::toDto);
     }
 
@@ -130,8 +132,15 @@ public class NoteService {
         return dto;
     }
 
-    public List<MemoryItemDto> getDueMemoryItemsPerNote(Long id){
-
+    public Page<MemoryItemDto> getDueMemoryItemsPerNote(Long id, int page, int size){
+        UUID userId = getCurrentUser();
+        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
+        if(!note.getTopic().getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot access this note");
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("nextReviewDate").ascending());
+        var memoryItemsPage = memoryItemRepository.findByNoteIdAndNoteTopicUserIdAndNextReviewDateLessThanEqual(note.getId(), userId, LocalDateTime.now(), pageable);
+        return memoryItemsPage.map(memoryItemMapper::toDto);
     }
 
 }
