@@ -115,5 +115,6 @@ public class NoteService {
         noteRepository.delete(note);
     }
 
+    public
 
 }
