@@ -8,23 +8,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.xenon.knowspace.dtos.NoteDto;
-import org.xenon.knowspace.dtos.NoteRequest;
-import org.xenon.knowspace.dtos.NoteSummaryDto;
-import org.xenon.knowspace.dtos.NoteUpdateRequest;
+import org.xenon.knowspace.dtos.*;
 import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.entities.Tag;
 import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.exceptions.UserNotFoundException;
 import org.xenon.knowspace.mappers.NoteMapper;
-import org.xenon.knowspace.repositories.NoteRepository;
-import org.xenon.knowspace.repositories.TagRepository;
-import org.xenon.knowspace.repositories.TopicRepository;
-import org.xenon.knowspace.repositories.UserRepository;
+import org.xenon.knowspace.repositories.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,6 +31,7 @@ public class NoteService {
     private final TopicRepository topicRepository;
     private final NoteRepository noteRepository;
     private final TagRepository tagRepository;
+    private final MemoryItemRepository memoryItemRepository;
 
     private UUID getCurrentUser(){
         return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -122,9 +118,9 @@ public class NoteService {
     public NoteSummaryDto getNoteSummary(Long id){
         UUID userId = getCurrentUser();
         var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
-        long totalItems = noteRepository.countAllItemsByNoteIdAndUserId(note.getId(), userId);
-        long dueItems = noteRepository.countDueItemsByNoteIdAndUserId(note.getId(), userId, LocalDateTime.now());
-        long reviewedToday = noteRepository.countReviewedTodayByNoteIdAndUserId(note.getId(), userId, LocalDateTime.now());
+        long totalItems = memoryItemRepository.countAllItemsByNoteIdAndUserId(note.getId(), userId);
+        long dueItems = memoryItemRepository.countDueItemsByNoteIdAndUserId(note.getId(), userId, LocalDateTime.now());
+        long reviewedToday = memoryItemRepository.countReviewedTodayByNoteIdAndUserId(note.getId(), userId, LocalDateTime.now());
 
         NoteSummaryDto dto = new NoteSummaryDto();
         dto.setTotalItems(totalItems);
@@ -132,6 +128,10 @@ public class NoteService {
         dto.setReviewedToday(reviewedToday);
 
         return dto;
+    }
+
+    public List<MemoryItemDto> getDueMemoryItemsPerNote(Long id){
+
     }
 
 }
