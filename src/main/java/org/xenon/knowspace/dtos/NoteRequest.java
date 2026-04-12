@@ -2,9 +2,13 @@ package org.xenon.knowspace.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
+@Getter
+@Setter
 public class NoteRequest {
     @NotBlank(message = "Title is required")
     @Size(min = 2, max = 200)
