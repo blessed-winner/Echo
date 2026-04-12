@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.NoteDto;
 import org.xenon.knowspace.dtos.NoteRequest;
+import org.xenon.knowspace.dtos.NoteSummaryDto;
 import org.xenon.knowspace.dtos.NoteUpdateRequest;
 import org.xenon.knowspace.services.NoteService;
 
@@ -53,5 +54,12 @@ public class NoteController {
     public ResponseEntity<Void> deleteNoteById(@PathVariable Long id){
         noteService.deleteNote(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<NoteSummaryDto> getNoteStats(
+            @PathVariable Long id
+    ){
+        return ResponseEntity.ok(noteService.getNoteSummary(id));
     }
 }
