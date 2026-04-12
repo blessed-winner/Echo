@@ -43,7 +43,7 @@ public class NoteService {
 
     public NoteDto createNote(NoteRequest noteRequest){
         UUID userId = getCurrentUser();
-        var topic = topicRepository.findById(noteRequest.getTopicId()).orElseThrow();
+        var topic = topicRepository.findById(noteRequest.getTopicId()).orElseThrow(()->new RuntimeException("Topic Not Found"));
         if(!topic.getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot add note to this topic");
         }
@@ -77,7 +77,7 @@ public class NoteService {
 
     public NoteDto getNote(Long id){
         UUID userId = getCurrentUser();
-        var note = noteRepository.findById(id).orElseThrow();
+        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
         if(!note.getTopic().getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot access this note");
         }
@@ -86,7 +86,7 @@ public class NoteService {
 
     public NoteDto updateNote(Long id, NoteUpdateRequest request){
         UUID userId = getCurrentUser();
-        var note = noteRepository.findById(id).orElseThrow();
+        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
         if(!note.getTopic().getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot access this note");
         }
@@ -96,7 +96,7 @@ public class NoteService {
         if(request.getContent() != null){note.setContent(request.getContent());}
         if(request.getTagIds() != null){
             for(Long tagId : request.getTagIds()){
-                var tag = tagRepository.findById(tagId).orElseThrow();
+                var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
                 if(!tag.getUser().getId().equals(userId)){
                     throw new ForbiddenException("Cannot update note with this tag");
                 }
@@ -112,7 +112,7 @@ public class NoteService {
 
     public void deleteNote(Long id){
         UUID userId = getCurrentUser();
-        var note = noteRepository.findById(id).orElseThrow();
+        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
         if(!note.getTopic().getUser().getId().equals(userId)){
             throw new ForbiddenException("Cannot delete this note");
         }
@@ -121,9 +121,17 @@ public class NoteService {
 
     public NoteSummaryDto getNoteSummary(Long id){
         UUID userId = getCurrentUser();
-        var note = noteRepository.findById(id).orElseThrow();
+        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
         long totalItems = noteRepository.countAllItemsByNoteIdAndUserId(note.getId(), userId);
+        long dueItems = noteRepository.countDueItemsByNoteIdAndUserId(note.getId(), userId, LocalDateTime.now());
+        long reviewedToday = noteRepository.countReviewedTodayByNoteIdAndUserId(note.getId(), userId, LocalDateTime.now());
 
+        NoteSummaryDto dto = new NoteSummaryDto();
+        dto.setTotalItems(totalItems);
+        dto.setDueItems(dueItems);
+        dto.setReviewedToday(reviewedToday);
+
+        return dto;
     }
 
 }
