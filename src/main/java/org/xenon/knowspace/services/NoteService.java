@@ -51,12 +51,14 @@ public class NoteService {
         note.setTopic(topic);
         note.setCreatedAt(LocalDateTime.now());
         Set<Tag> tags = new HashSet<>();
-        for(Long tagId : noteRequest.getTagIds()){
-            Tag tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
-            if(!tag.getUser().getId().equals(userId)){
-                throw new ForbiddenException("Cannot add this tag to note" + tag.getName());
+        if(noteRequest.getTagIds() != null) {
+            for (Long tagId : noteRequest.getTagIds()) {
+                Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new RuntimeException("Tag Not Found"));
+                if (!tag.getUser().getId().equals(userId)) {
+                    throw new ForbiddenException("Cannot add this tag to note" + tag.getName());
+                }
+                tags.add(tag);
             }
-            tags.add(tag);
         }
 
         note.setTags(tags);
@@ -68,7 +70,7 @@ public class NoteService {
 
     public Page<NoteDto> getAllNotes(int page, int size){
         UUID userId = getCurrentUser();
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         var notesPage = noteRepository.findAllByUserId(userId, pageable);
         return notesPage.map(noteMapper::toDto);
     }
@@ -120,7 +122,7 @@ public class NoteService {
     public NoteSummaryDto getNoteSummary(Long id){
         UUID userId = getCurrentUser();
         var note = noteRepository.findById(id).orElseThrow();
-        long totalItems = noteRepository.countAllItemsByNoteIdAndUserId(note.getId(), currentUser.getId());
+        long totalItems = noteRepository.countAllItemsByNoteIdAndUserId(note.getId(), userId);
 
     }
 
