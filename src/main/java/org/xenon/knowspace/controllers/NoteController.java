@@ -56,7 +56,7 @@ public class NoteController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/summary")
     public ResponseEntity<NoteSummaryDto> getNoteStats(
             @PathVariable Long id
     ){
