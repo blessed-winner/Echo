@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.NoteDto;
 import org.xenon.knowspace.dtos.NoteRequest;
+import org.xenon.knowspace.dtos.NoteUpdateRequest;
 import org.xenon.knowspace.services.NoteService;
 
 @Tag(name = "Note")
@@ -38,5 +39,13 @@ public class NoteController {
     @GetMapping("/{id}")
     public ResponseEntity<NoteDto> getNoteById(@PathVariable Long id){
         return ResponseEntity.ok(noteService.getNote(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<NoteDto> updateNote(
+            @PathVariable Long id,
+            @Valid @RequestBody NoteUpdateRequest request
+    ){
+        return ResponseEntity.ok(noteService.updateNote(id, request));
     }
 }
