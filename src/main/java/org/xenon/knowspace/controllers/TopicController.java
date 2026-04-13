@@ -70,4 +70,13 @@ public class TopicController {
     ){
         return ResponseEntity.ok(topicService.getDueMemoryItemsPerTopic(id, limit));
     }
+
+    @GetMapping("/{id}/memories")
+    public ResponseEntity<Page<MemoryItemDto>> getMemoriesPerTopic(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(topicService.getMemoryItemsPerTopic(id, page, size));
+    }
 }
