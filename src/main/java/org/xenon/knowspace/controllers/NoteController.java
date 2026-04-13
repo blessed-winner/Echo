@@ -74,7 +74,7 @@ public class NoteController {
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-    ) {
+    ){
         return ResponseEntity.ok(noteService.searchNotes(query, page, size));
     }
 }
