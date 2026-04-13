@@ -49,4 +49,10 @@ public class TopicController {
     ){
         return ResponseEntity.ok(topicService.updateTopic(id, request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTopic(@PathVariable Long id){
+        topicService.deleteTopic(id);
+        return ResponseEntity.noContent().build();
+    }
 }
