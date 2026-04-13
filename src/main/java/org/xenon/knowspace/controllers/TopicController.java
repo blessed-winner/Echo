@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.xenon.knowspace.dtos.NoteDto;
 import org.xenon.knowspace.dtos.TopicDto;
 import org.xenon.knowspace.dtos.TopicRequest;
 import org.xenon.knowspace.dtos.TopicUpdateRequest;
@@ -54,5 +55,14 @@ public class TopicController {
     public ResponseEntity<Void> deleteTopic(@PathVariable Long id){
         topicService.deleteTopic(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/notes")
+    public ResponseEntity<Page<NoteDto>> getAllNotesPerTopic(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(topicService.getNotesPerTopic(id, page, size));
     }
 }
