@@ -16,5 +16,5 @@ public interface NoteRepository extends JpaRepository<Note,Long> {
     @Query("""
     SELECT COUNT(n) FROM Note n WHERE n.topic.id = :topicId AND n.topic.user.id = :userId
     """)
-    long countByTopicIdAndTopicUserId(Long topicId, UUID userId);
+    Long countByTopicIdAndTopicUserId(Long topicId, UUID userId);
 }

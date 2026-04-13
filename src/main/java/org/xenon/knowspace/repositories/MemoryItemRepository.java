@@ -21,17 +21,17 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     @Query("""
              SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed BETWEEN :todayStart AND :todayEnd
            """)
-    long countReviewedToday(UUID userId, LocalDateTime todayStart, LocalDateTime todayEnd);
+    Long countReviewedToday(UUID userId, LocalDateTime todayStart, LocalDateTime todayEnd);
 
     @Query("""
             SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.nextReviewDate > :now
           """)
-    long countUpcoming(UUID userId, LocalDateTime now);
+    Long countUpcoming(UUID userId, LocalDateTime now);
 
     @Query("""
             SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.nextReviewDate <= :now
           """)
-    long countOverdue(UUID userId,  LocalDateTime now);
+    Long countOverdue(UUID userId,  LocalDateTime now);
 
     @Query("""
            SELECT m.lastReviewed FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed IS NOT NULL ORDER BY m.lastReviewed DESC
