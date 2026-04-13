@@ -7,16 +7,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.xenon.knowspace.dtos.NoteDto;
-import org.xenon.knowspace.dtos.TopicDto;
-import org.xenon.knowspace.dtos.TopicRequest;
-import org.xenon.knowspace.dtos.TopicUpdateRequest;
+import org.xenon.knowspace.dtos.*;
 import org.xenon.knowspace.entities.Topic;
 import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.exceptions.UserNotFoundException;
+import org.xenon.knowspace.mappers.MemoryItemMapper;
 import org.xenon.knowspace.mappers.NoteMapper;
 import org.xenon.knowspace.mappers.TopicMapper;
+import org.xenon.knowspace.repositories.MemoryItemRepository;
 import org.xenon.knowspace.repositories.NoteRepository;
 import org.xenon.knowspace.repositories.TopicRepository;
 import org.xenon.knowspace.repositories.UserRepository;
@@ -33,6 +32,8 @@ public class TopicService {
   private final UserRepository userRepository;
   private final NoteRepository noteRepository;
   private final NoteMapper noteMapper;
+    private final MemoryItemRepository memoryItemRepository;
+    private final MemoryItemMapper memoryItemMapper;
 
     public UUID getCurrentUser(){
       return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -98,5 +99,16 @@ public class TopicService {
       Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
       var notesPage = noteRepository.findAllByTopicId(id, pageable);
       return notesPage.map(noteMapper::toDto);
+  }
+
+  public Page<MemoryItemDto> getDueMemoryItemsPerTopic(Long id, int limit){
+        UUID userId = getCurrentUser();
+        var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
+        if(!topic.getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot access this topic");
+        }
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("nextReviewDate").ascending());
+        var memoryItemsPage = memoryItemRepository.findByNoteTopicIdAndNoteTopicUserIdAndNextReviewDateLessThanEqual(id, userId, LocalDateTime.now(), pageable);
+        return memoryItemsPage.map(memoryItemMapper::toDto);
   }
 }
