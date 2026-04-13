@@ -2,6 +2,7 @@ package org.xenon.knowspace.mappers;
 
 import org.mapstruct.Mapper;
 import org.xenon.knowspace.dtos.TagDto;
+import org.xenon.knowspace.dtos.TagRequest;
 import org.xenon.knowspace.entities.Tag;
 
 import java.util.Set;
@@ -9,5 +10,5 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public interface TagMapper {
     TagDto toDto(Tag tag);
-    Tag toEntity(TagDto tagDto);
+    Tag toEntity(TagRequest request);
 }
