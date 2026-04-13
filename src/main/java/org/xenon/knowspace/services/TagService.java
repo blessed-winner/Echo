@@ -34,4 +34,13 @@ public class TagService {
 
         return tagMapper.toDto(tagRepository.save(tag));
     }
+
+    public void deleteTag(Long tagId){
+        UUID userId = getCurrentUser();
+        var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
+        if(!tag.getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot delete this tag");
+        }
+        tagRepository.delete(tag);
+    }
 }
