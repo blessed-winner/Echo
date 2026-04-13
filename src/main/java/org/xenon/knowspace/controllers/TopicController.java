@@ -6,10 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.xenon.knowspace.dtos.NoteDto;
-import org.xenon.knowspace.dtos.TopicDto;
-import org.xenon.knowspace.dtos.TopicRequest;
-import org.xenon.knowspace.dtos.TopicUpdateRequest;
+import org.xenon.knowspace.dtos.*;
 import org.xenon.knowspace.entities.Topic;
 import org.xenon.knowspace.services.TopicService;
 
@@ -64,5 +61,13 @@ public class TopicController {
             @RequestParam(defaultValue = "10") int size
     ){
         return ResponseEntity.ok(topicService.getNotesPerTopic(id, page, size));
+    }
+
+    @GetMapping("/{id}/due")
+    public ResponseEntity<Page<MemoryItemDto>> getDueItemsPerTopic(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "20") int limit
+    ){
+        return ResponseEntity.ok(topicService.getDueMemoryItemsPerTopic(id, limit));
     }
 }
