@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.xenon.knowspace.dtos.NoteDto;
 import org.xenon.knowspace.dtos.TopicDto;
 import org.xenon.knowspace.dtos.TopicRequest;
 import org.xenon.knowspace.dtos.TopicUpdateRequest;
@@ -14,7 +15,9 @@ import org.xenon.knowspace.entities.Topic;
 import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.exceptions.UserNotFoundException;
+import org.xenon.knowspace.mappers.NoteMapper;
 import org.xenon.knowspace.mappers.TopicMapper;
+import org.xenon.knowspace.repositories.NoteRepository;
 import org.xenon.knowspace.repositories.TopicRepository;
 import org.xenon.knowspace.repositories.UserRepository;
 
@@ -28,8 +31,10 @@ public class TopicService {
   private final TopicRepository topicRepository;
   private final TopicMapper topicMapper;
   private final UserRepository userRepository;
+  private final NoteRepository noteRepository;
+  private final NoteMapper noteMapper;
 
-  public UUID getCurrentUser(){
+    public UUID getCurrentUser(){
       return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
   }
 
@@ -82,5 +87,16 @@ public class TopicService {
             throw new ForbiddenException("Cannot access this topic");
         }
         topicRepository.delete(topic);
+  }
+
+  public Page<NoteDto> getNotesPerTopic(Long id, int page, int size){
+      UUID userId = getCurrentUser();
+      var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
+      if(!topic.getUser().getId().equals(userId)){
+          throw new ForbiddenException("Cannot access this topic");
+      }
+      Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+      var notesPage = noteRepository.findAllByTopicId(id, pageable);
+      return notesPage.map(noteMapper::toDto);
   }
 }

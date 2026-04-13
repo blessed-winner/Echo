@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface NoteRepository extends JpaRepository<Note,Long> {
     Page<Note> findAllByTopicUserId(UUID userId, Pageable pageable);
     Page<Note> findByTitleContainingIgnoreCaseAndTopicUserId(String title, UUID userId, Pageable pageable);
+    Page<Note> findAllByTopicId(Long id, Pageable pageable);
 }
