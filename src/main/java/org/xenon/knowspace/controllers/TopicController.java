@@ -79,4 +79,11 @@ public class TopicController {
     ) {
         return ResponseEntity.ok(topicService.getMemoryItemsPerTopic(id, page, size));
     }
+
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<TopicSummaryDto> getTopicSummary(
+            @PathVariable Long id
+    ){
+        return ResponseEntity.ok(topicService.getTopicSummary(id));
+    }
 }
