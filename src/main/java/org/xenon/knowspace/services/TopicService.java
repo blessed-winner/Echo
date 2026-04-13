@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.TopicDto;
 import org.xenon.knowspace.dtos.TopicRequest;
+import org.xenon.knowspace.dtos.TopicUpdateRequest;
 import org.xenon.knowspace.entities.Topic;
 import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.exceptions.ForbiddenException;
@@ -60,5 +61,17 @@ public class TopicService {
           throw new ForbiddenException("Cannot access this topic");
       }
       return topicMapper.toDto(topic);
+  }
+
+  public TopicDto updateTopic(Long id, TopicUpdateRequest request){
+      UUID userId = getCurrentUser();
+      var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
+      if(!topic.getUser().getId().equals(userId)){
+          throw new ForbiddenException("Cannot access this topic");
+      }
+      if(request.getName() != null){topic.setName(request.getName());}
+      if(request.getDescription() != null){topic.setDescription(request.getDescription());}
+
+      return topicMapper.toDto(topicRepository.save(topic));
   }
 }
