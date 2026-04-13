@@ -57,4 +57,14 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     Page<MemoryItem> findByNoteTopicIdAndNoteTopicUserIdAndNextReviewDateLessThanEqual(Long noteId, UUID userId, LocalDateTime now, Pageable pageable);
     Page<MemoryItem> findByNoteTopicIdAndNoteTopicUserId(Long noteId, UUID userId, Pageable pageable);
 
+    @Query("""
+     SELECT COUNT(m) FROM MemoryItem m WHERE m.note.topic.id = :topicId AND m.note.topic.user.id = :userId
+    """)
+    Long countAllItemsByTopicIdAndUserId(Long topicId, UUID userId);
+
+    @Query("""
+     SELECT COUNT(m) FROM MemoryItem m WHERE m.note.topic.id = :topicId AND m.note.topic.user.id = :userId AND m.nextReviewDate <= :now
+    """)
+    Long countDueItemsByTopicIdAndUserId(Long topicId, UUID userId);
+
 }
