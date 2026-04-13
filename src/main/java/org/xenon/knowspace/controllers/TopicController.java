@@ -20,8 +20,8 @@ public class TopicController {
             @Valid @RequestBody TopicRequest request,
             UriComponentsBuilder uriBuilder
     ){
-        TopicDto result = topicService.createTopic(request);
-        var uri = uriBuilder.path("/topics/{id}").buildAndExpand(result).toUri();
+        var result = topicService.createTopic(request);
+        var uri = uriBuilder.path("/topics/{id}").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(uri).body(result);
     }
 

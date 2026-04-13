@@ -22,7 +22,7 @@ public class NoteController {
             UriComponentsBuilder uriBuilder
     ){
         NoteDto result = noteService.createNote(request);
-        var uri = uriBuilder.path("/notes/{id}").buildAndExpand(result).toUri();
+        var uri = uriBuilder.path("/notes/{id}").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(uri).body(result);
     }
 
