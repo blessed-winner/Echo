@@ -86,4 +86,13 @@ public class TopicController {
     ){
         return ResponseEntity.ok(topicService.getTopicSummary(id));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<TopicDto>> searchTopics(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(topicService.searchTopics(query, page, size));
+    }
 }

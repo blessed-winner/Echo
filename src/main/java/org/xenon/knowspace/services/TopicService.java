@@ -136,4 +136,11 @@ public class TopicService {
 
         return dto;
   }
+
+  public Page<TopicDto> searchTopics(String query, int page, int size){
+      UUID userId = getCurrentUser();
+      Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+      var topicsPage = topicRepository.findByNameContainingIgnoreCaseAndUserId(query, userId, pageable);
+      return topicsPage.map(topicMapper::toDto);
+  }
 }

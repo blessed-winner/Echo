@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface TopicRepository extends JpaRepository<Topic,Long> {
     Optional<Topic> findByNameIgnoreCaseAndUserId(String name, UUID user_id);
     Page<Topic> findByUserId(UUID userId, Pageable pageable);
+
+    Page<Topic> findByNameContainingIgnoreCaseAndUserId(String query, UUID userId, Pageable pageable);
 }
