@@ -33,4 +33,10 @@ public class TagController {
     public ResponseEntity<Set<TagResponseDto>> getAllTags(){
         return ResponseEntity.ok(tagService.getAllTags());
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTag(@PathVariable Long id){
+        tagService.deleteTag(id);
+        return ResponseEntity.noContent().build();
+    }
 }
