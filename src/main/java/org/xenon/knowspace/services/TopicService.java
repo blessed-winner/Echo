@@ -54,7 +54,7 @@ public class TopicService {
       return topicsPage.map(topicMapper::toDto);
   }
 
-  public TopicDto findTopicById(Long id){
+  public TopicDto getTopicById(Long id){
       UUID userId = getCurrentUser();
       var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
       if(!topic.getUser().getId().equals(userId)){

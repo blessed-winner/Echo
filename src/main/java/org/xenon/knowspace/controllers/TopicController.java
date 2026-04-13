@@ -1,11 +1,9 @@
 package org.xenon.knowspace.controllers;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.TopicDto;
 import org.xenon.knowspace.dtos.TopicRequest;
@@ -25,5 +23,20 @@ public class TopicController {
         TopicDto result = topicService.createTopic(request);
         var uri = uriBuilder.path("/topics/{id}").buildAndExpand(result).toUri();
         return ResponseEntity.created(uri).body(result);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<TopicDto>> getAllTopics(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(topicService.getTopics(page, size));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TopicDto> getTopic(
+            @PathVariable Long id
+    ){
+        return ResponseEntity.ok(topicService.getTopicById(id));
     }
 }
