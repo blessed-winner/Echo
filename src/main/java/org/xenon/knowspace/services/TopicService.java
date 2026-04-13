@@ -122,4 +122,18 @@ public class TopicService {
         var memoryItemsPage = memoryItemRepository.findByNoteTopicIdAndNoteTopicUserId(id, userId, pageable);
         return memoryItemsPage.map(memoryItemMapper::toDto);
   }
+
+  public TopicSummaryDto getTopicSummary(Long id){
+        UUID userId = getCurrentUser();
+        var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
+        if(!topic.getUser().getId().equals(userId)) {
+            throw new ForbiddenException("Cannot access this topic");
+        }
+        TopicSummaryDto dto = new TopicSummaryDto();
+        dto.setTotalNotes(noteRepository.countByTopicIdAndTopicUserId(id, userId));
+        dto.setTotalMemoryItems(memoryItemRepository.countAllItemsByTopicIdAndUserId(id, userId));
+        dto.setDueItems(memoryItemRepository.countDueItemsByTopicIdAndUserId(id, userId));
+
+        return dto;
+  }
 }
