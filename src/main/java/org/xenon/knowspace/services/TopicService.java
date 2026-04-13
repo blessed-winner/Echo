@@ -52,4 +52,13 @@ public class TopicService {
       Page<Topic> topicsPage = topicRepository.findByUserId(userId, pageable);
       return topicsPage.map(topicMapper::toDto);
   }
+
+  public TopicDto findTopicById(Long id){
+      UUID userId = getCurrentUser();
+      var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
+      if(!topic.getUser().getId().equals(userId)){
+          throw new ForbiddenException("Cannot access this topic");
+      }
+      return topicMapper.toDto(topic);
+  }
 }
