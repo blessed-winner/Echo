@@ -1,6 +1,10 @@
 package org.xenon.knowspace.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.TopicDto;
@@ -40,5 +44,12 @@ public class TopicService {
       topic.setCreatedAt(LocalDateTime.now());
 
       return topicMapper.toDto(topicRepository.save(topic));
+  }
+
+  public Page<TopicDto> getTopics(int page, int size){
+      UUID userId = getCurrentUser();
+      Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+      Page<Topic> topicsPage = topicRepository.findByUserId(userId, pageable);
+      return topicsPage.map(topicMapper::toDto);
   }
 }
