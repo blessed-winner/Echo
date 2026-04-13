@@ -111,4 +111,15 @@ public class TopicService {
         var memoryItemsPage = memoryItemRepository.findByNoteTopicIdAndNoteTopicUserIdAndNextReviewDateLessThanEqual(id, userId, LocalDateTime.now(), pageable);
         return memoryItemsPage.map(memoryItemMapper::toDto);
   }
+
+  public Page<MemoryItemDto> getMemoryItemsPerTopic(Long id, int page, int size){
+        UUID userId = getCurrentUser();
+        var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
+        if(!topic.getUser().getId().equals(userId)) {
+            throw new ForbiddenException("Cannot access this topic");
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("nextReviewDate").ascending());
+        var memoryItemsPage = memoryItemRepository.findByNoteTopicIdAndNoteTopicUserId(id, userId, pageable);
+        return memoryItemsPage.map(memoryItemMapper::toDto);
+  }
 }

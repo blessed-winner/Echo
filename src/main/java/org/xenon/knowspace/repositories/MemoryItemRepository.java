@@ -55,5 +55,6 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
 
     Page<MemoryItem> findByNoteIdAndNoteTopicUserIdAndNextReviewDateLessThanEqual(Long noteId, UUID noteTopicUserId,LocalDateTime now, Pageable pageable);
     Page<MemoryItem> findByNoteTopicIdAndNoteTopicUserIdAndNextReviewDateLessThanEqual(Long noteId, UUID userId, LocalDateTime now, Pageable pageable);
+    Page<MemoryItem> findByNoteTopicIdAndNoteTopicUserId(Long noteId, UUID userId, Pageable pageable);
 
 }
