@@ -74,4 +74,13 @@ public class TopicService {
 
       return topicMapper.toDto(topicRepository.save(topic));
   }
+
+  public void deleteTopic(Long id){
+      UUID userId = getCurrentUser();
+        var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
+        if(!topic.getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot access this topic");
+        }
+        topicRepository.delete(topic);
+  }
 }
