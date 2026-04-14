@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.TagDto;
 import org.xenon.knowspace.dtos.TagRequest;
 import org.xenon.knowspace.dtos.TagResponseDto;
+import org.xenon.knowspace.dtos.TagSummaryDto;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.mappers.TagMapper;
 import org.xenon.knowspace.repositories.TagRepository;
@@ -60,6 +61,19 @@ public class TagService {
         tag.setName(tagRequest.getName());
         return tagMapper.toDto(tagRepository.save(tag));
     }
+
+    public TagSummaryDto getTagSummary(Long tagId){
+        UUID userId = getCurrentUser();
+        var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
+        if(!tag.getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot access this tag");
+        }
+        var tagSummaryDto = new TagSummaryDto();
+        tagSummaryDto.setId(tag.getId());
+        tagSummaryDto.setName(tag.getName());
+        tagSummaryDto.setCount(tagRepository.countTagsByUserId(userId, tag.getId()));
+        return tagSummaryDto;
+    }}
 
     public void deleteTag(Long tagId){
         UUID userId = getCurrentUser();
