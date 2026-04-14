@@ -9,6 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.TagDto;
 import org.xenon.knowspace.dtos.TagRequest;
 import org.xenon.knowspace.dtos.TagResponseDto;
+import org.xenon.knowspace.dtos.TagSummaryDto;
 import org.xenon.knowspace.services.TagService;
 
 import java.util.Set;
@@ -46,5 +47,10 @@ public class TagController {
     public ResponseEntity<Void> deleteTag(@PathVariable Long id){
         tagService.deleteTag(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<TagSummaryDto> getTagSummary(@PathVariable Long id){
+        return ResponseEntity.ok(tagService.getTagSummary(id));
     }
 }
