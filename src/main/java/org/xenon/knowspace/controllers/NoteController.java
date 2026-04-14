@@ -87,4 +87,12 @@ public class NoteController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{noteId}/tags")
+    public ResponseEntity<Void> removeTagsFromNote(
+            @PathVariable Long noteId,
+            @RequestBody TagIdsRequest request
+    ) {
+        noteService.removeTagsFromNote(noteId, request.getTagIds());
+        return ResponseEntity.noContent().build();
+    }
 }
