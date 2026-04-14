@@ -150,4 +150,23 @@ public class NoteService {
         return notesPage.map(noteMapper::toDto);
     }
 
+    public void addTagsToNote(Long id, Set<Long> tagIds){
+        UUID userId = getCurrentUser();
+        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
+        if(!note.getTopic().getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot access this note");
+        }
+        Set<Tag> tags = note.getTags();
+        for(Long tagId : tagIds){
+            var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
+            if(!tag.getUser().getId().equals(userId)){
+                throw new ForbiddenException("Cannot add this tag to note" + tag.getName());
+            }
+            tags.add(tag);
+        }
+        note.setTags(tags);
+        noteRepository.save(note);
+
+    }
+
 }
