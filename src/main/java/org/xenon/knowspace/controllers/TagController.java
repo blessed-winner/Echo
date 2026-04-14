@@ -3,7 +3,7 @@ package org.xenon.knowspace.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -53,5 +53,11 @@ public class TagController {
     }
 
     @GetMapping("/{id}/notes")
-    public ResponseEntity<Page<NoteDto>> getNotesByTag(@PathVariable
+    public ResponseEntity<Page<NoteDto>> getNotesByTag(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(tagService.getNotesByTag(id, page, size));
+    }
 }
