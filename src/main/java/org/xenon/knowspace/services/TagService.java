@@ -9,6 +9,8 @@ import org.xenon.knowspace.dtos.TagResponseDto;
 import org.xenon.knowspace.dtos.TagSummaryDto;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.mappers.TagMapper;
+import org.xenon.knowspace.repositories.MemoryItemRepository;
+import org.xenon.knowspace.repositories.NoteRepository;
 import org.xenon.knowspace.repositories.TagRepository;
 import org.xenon.knowspace.repositories.UserRepository;
 
@@ -22,6 +24,8 @@ public class TagService {
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
     private final UserRepository userRepository;
+    private final NoteRepository noteRepository;
+    private final MemoryItemRepository memoryItemRepository;
 
     private UUID getCurrentUser(){
         return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -71,16 +75,11 @@ public class TagService {
         var tagSummaryDto = new TagSummaryDto();
         tagSummaryDto.setId(tag.getId());
         tagSummaryDto.setName(tag.getName());
-        tagSummaryDto.setCount(tagRepository.countTagsByUserId(userId, tag.getId()));
-        return tagSummaryDto;
-    }}
+        tagSummaryDto.setTotalNotes(noteRepository.countNotesByTag(tag.getId(), userId));
+        tagSummaryDto.setTotalItems(memoryItemRepository.countMemoryItemsByTag(tag.getId(), userId));
 
-    public void deleteTag(Long tagId){
-        UUID userId = getCurrentUser();
-        var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
-        if(!tag.getUser().getId().equals(userId)){
-            throw new ForbiddenException("Cannot delete this tag");
-        }
-        tagRepository.delete(tag);
+        return tagSummaryDto;
     }
+
 }
+
