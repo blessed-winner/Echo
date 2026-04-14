@@ -164,9 +164,25 @@ public class NoteService {
             }
             tags.add(tag);
         }
-        note.setTags(tags);
+        note.getTags().addAll(tags);
         noteRepository.save(note);
-
     }
 
+    public void removeTagsFromNote(Long id, Set<Long> tagIds){
+        UUID userId = getCurrentUser();
+        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
+        if(!note.getTopic().getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot access this note");
+        }
+        Set<Tag> tags = note.getTags();
+        for(Long tagId : tagIds){
+            var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
+            if(!tag.getUser().getId().equals(userId)){
+                throw new ForbiddenException("Cannot remove this tag from note" + tag.getName());
+            }
+            tags.remove(tag);
+        }
+        note.getTags().removeAll(tags);
+        noteRepository.save(note);
+    }
 }
