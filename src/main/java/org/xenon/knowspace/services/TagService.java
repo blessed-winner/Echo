@@ -3,14 +3,13 @@ package org.xenon.knowspace.services;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.xenon.knowspace.dtos.TagDto;
-import org.xenon.knowspace.dtos.TagRequest;
-import org.xenon.knowspace.dtos.TagResponseDto;
-import org.xenon.knowspace.dtos.TagSummaryDto;
+import org.xenon.knowspace.dtos.*;
 import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.exceptions.ForbiddenException;
+import org.xenon.knowspace.mappers.NoteMapper;
 import org.xenon.knowspace.mappers.TagMapper;
 import org.xenon.knowspace.repositories.MemoryItemRepository;
 import org.xenon.knowspace.repositories.NoteRepository;
@@ -29,6 +28,7 @@ public class TagService {
     private final UserRepository userRepository;
     private final NoteRepository noteRepository;
     private final MemoryItemRepository memoryItemRepository;
+    private final NoteMapper noteMapper;
 
     private UUID getCurrentUser(){
         return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -93,13 +93,15 @@ public class TagService {
         tagRepository.delete(tag);
     }
 
-    public Page<Note> getNotesByTag(Long tagId, int page, int size){
+    public Page<NoteDto> getNotesByTag(Long tagId, int page, int size){
         UUID userId = getCurrentUser();
         var tag = tagRepository.findById(tagId).orElseThrow(() -> new RuntimeException("Tag Not Found"));
         if (!tag.getUser().getId().equals(userId)) {
             throw new ForbiddenException("Cannot access this tag");
         }
-        return noteRepository.findByTagsIdAndTopicUserId(tagId, userId, PageRequest.of(page, size));
+        Pageable pageable = PageRequest.of(page, size);
+        var notesPage = noteRepository.findByTagsIdAndTopicUserId(tagId, userId, pageable);
+        return notesPage.map(noteMapper::toDto);
     }
 }
 

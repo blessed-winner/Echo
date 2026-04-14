@@ -3,13 +3,11 @@ package org.xenon.knowspace.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.hibernate.query.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.xenon.knowspace.dtos.TagDto;
-import org.xenon.knowspace.dtos.TagRequest;
-import org.xenon.knowspace.dtos.TagResponseDto;
-import org.xenon.knowspace.dtos.TagSummaryDto;
+import org.xenon.knowspace.dtos.*;
 import org.xenon.knowspace.services.TagService;
 
 import java.util.Set;
@@ -53,4 +51,7 @@ public class TagController {
     public ResponseEntity<TagSummaryDto> getTagSummary(@PathVariable Long id){
         return ResponseEntity.ok(tagService.getTagSummary(id));
     }
+
+    @GetMapping("/{id}/notes")
+    public ResponseEntity<Page<NoteDto>> getNotesByTag(@PathVariable
 }
