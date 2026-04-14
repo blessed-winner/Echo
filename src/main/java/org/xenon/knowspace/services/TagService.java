@@ -51,6 +51,16 @@ public class TagService {
         }).collect(Collectors.toSet());
     }
 
+    public TagDto updateTag(Long tagId, TagRequest tagRequest){
+        UUID userId = getCurrentUser();
+        var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
+        if(!tag.getUser().getId().equals(userId)){
+            throw new ForbiddenException("Cannot update this tag");
+        }
+        tag.setName(tagRequest.getName());
+        return tagMapper.toDto(tagRepository.save(tag));
+    }
+
     public void deleteTag(Long tagId){
         UUID userId = getCurrentUser();
         var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
