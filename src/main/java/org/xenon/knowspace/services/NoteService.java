@@ -5,24 +5,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.*;
 import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.entities.Tag;
-import org.xenon.knowspace.entities.User;
 import org.xenon.knowspace.exceptions.ForbiddenException;
-import org.xenon.knowspace.exceptions.UserNotFoundException;
 import org.xenon.knowspace.mappers.MemoryItemMapper;
 import org.xenon.knowspace.mappers.NoteMapper;
 import org.xenon.knowspace.repositories.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -150,39 +147,50 @@ public class NoteService {
         return notesPage.map(noteMapper::toDto);
     }
 
-    public void addTagsToNote(Long id, Set<Long> tagIds){
+    public void addTagsToNote(Long id, Set<Long> tagIds) {
         UUID userId = getCurrentUser();
-        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
-        if(!note.getTopic().getUser().getId().equals(userId)){
+
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Note Not Found"));
+
+        if (!note.getTopic().getUser().getId().equals(userId)) {
             throw new ForbiddenException("Cannot access this note");
         }
-        Set<Tag> tags = note.getTags();
-        for(Long tagId : tagIds){
-            var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
-            if(!tag.getUser().getId().equals(userId)){
+
+        for (Long tagId : tagIds) {
+            Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new RuntimeException("Tag Not Found"));
+
+            if (!tag.getUser().getId().equals(userId)) {
                 throw new ForbiddenException("Cannot add this tag to note");
             }
-            tags.add(tag);
+
+            note.getTags().add(tag);
         }
-        note.getTags().addAll(tags);
+
         noteRepository.save(note);
     }
 
-    public void removeTagsFromNote(Long id, Set<Long> tagIds){
+    public void removeTagsFromNote(Long id, Set<Long> tagIds) {
         UUID userId = getCurrentUser();
-        var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
-        if(!note.getTopic().getUser().getId().equals(userId)){
+
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Note Not Found"));
+
+        if (!note.getTopic().getUser().getId().equals(userId)) {
             throw new ForbiddenException("Cannot access this note");
         }
-        Set<Tag> tags = note.getTags();
-        for(Long tagId : tagIds){
-            var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
-            if(!tag.getUser().getId().equals(userId)){
-                throw new ForbiddenException("Cannot remove this tag from note");
-            }
-            tags.remove(tag);
-        }
-        note.getTags().removeAll(tags);
+
+        Set<Tag> tagsToRemove = tagRepository.findAllById(tagIds)
+                .stream()
+                .peek(tag -> {
+                    if (!tag.getUser().getId().equals(userId)) {
+                        throw new ForbiddenException("Cannot remove this tag");
+                    }
+                })
+                .collect(Collectors.toSet());
+
+        note.getTags().removeAll(tagsToRemove);
         noteRepository.save(note);
     }
 }

@@ -77,4 +77,14 @@ public class NoteController {
     ){
         return ResponseEntity.ok(noteService.searchNotes(query, page, size));
     }
+
+    @PostMapping("/{noteId}/tags")
+    public ResponseEntity<Void> addTagsToNote(
+            @PathVariable Long noteId,
+            @RequestBody TagIdsRequest request
+    ){
+        noteService.addTagsToNote(noteId, request.getTagIds());
+        return ResponseEntity.noContent().build();
+    }
+
 }
