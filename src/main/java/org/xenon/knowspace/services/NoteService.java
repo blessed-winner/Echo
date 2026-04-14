@@ -160,7 +160,7 @@ public class NoteService {
         for(Long tagId : tagIds){
             var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
             if(!tag.getUser().getId().equals(userId)){
-                throw new ForbiddenException("Cannot add this tag to note" + tag.getName());
+                throw new ForbiddenException("Cannot add this tag to note");
             }
             tags.add(tag);
         }
@@ -178,7 +178,7 @@ public class NoteService {
         for(Long tagId : tagIds){
             var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
             if(!tag.getUser().getId().equals(userId)){
-                throw new ForbiddenException("Cannot remove this tag from note" + tag.getName());
+                throw new ForbiddenException("Cannot remove this tag from note");
             }
             tags.remove(tag);
         }
