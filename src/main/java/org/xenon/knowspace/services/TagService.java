@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.knowspace.dtos.*;
-import org.xenon.knowspace.entities.Note;
 import org.xenon.knowspace.exceptions.ForbiddenException;
 import org.xenon.knowspace.mappers.NoteMapper;
 import org.xenon.knowspace.mappers.TagMapper;
