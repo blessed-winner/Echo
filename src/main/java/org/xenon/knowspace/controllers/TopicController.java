@@ -1,13 +1,11 @@
 package org.xenon.knowspace.controllers;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.knowspace.dtos.*;
-import org.xenon.knowspace.entities.Topic;
 import org.xenon.knowspace.services.TopicService;
 
 @RestController
