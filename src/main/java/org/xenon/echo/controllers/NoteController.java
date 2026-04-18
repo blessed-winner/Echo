@@ -1,0 +1,98 @@
+package org.xenon.echo.controllers;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.xenon.echo.dtos.*;
+import org.xenon.echo.services.NoteService;
+
+@Tag(name = "Note")
+@RestController
+@RequestMapping("/notes")
+@AllArgsConstructor
+public class NoteController {
+    private final NoteService noteService;
+    @PostMapping
+    public ResponseEntity<NoteDto> createNote(
+            @Valid @RequestBody NoteRequest request,
+            UriComponentsBuilder uriBuilder
+    ){
+        NoteDto result = noteService.createNote(request);
+        var uri = uriBuilder.path("/notes/{id}").buildAndExpand(result.getId()).toUri();
+        return ResponseEntity.created(uri).body(result);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<NoteDto>> getAllNotes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(noteService.getAllNotes(page, size));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<NoteDto> getNoteById(@PathVariable Long id){
+        return ResponseEntity.ok(noteService.getNote(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<NoteDto> updateNote(
+            @PathVariable Long id,
+            @Valid @RequestBody NoteUpdateRequest request
+    ){
+        return ResponseEntity.ok(noteService.updateNote(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNoteById(@PathVariable Long id){
+        noteService.deleteNote(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<NoteSummaryDto> getNoteStats(
+            @PathVariable Long id
+    ){
+        return ResponseEntity.ok(noteService.getNoteSummary(id));
+    }
+
+    @GetMapping("/{noteId}/due")
+    public ResponseEntity<Page<MemoryItemDto>> getDueItemsPerNote(
+            @PathVariable Long noteId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(noteService.getDueMemoryItemsPerNote(noteId,page,size));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<NoteDto>> search(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(noteService.searchNotes(query, page, size));
+    }
+
+    @PostMapping("/{noteId}/tags")
+    public ResponseEntity<Void> addTagsToNote(
+            @PathVariable Long noteId,
+            @RequestBody TagIdsRequest request
+    ){
+        noteService.addTagsToNote(noteId, request.getTagIds());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{noteId}/tags")
+    public ResponseEntity<Void> removeTagsFromNote(
+            @PathVariable Long noteId,
+            @RequestBody TagIdsRequest request
+    ) {
+        noteService.removeTagsFromNote(noteId, request.getTagIds());
+        return ResponseEntity.noContent().build();
+    }
+}

@@ -11,8 +11,8 @@
     <groupId>com.codewithmosh</groupId>
     <artifactId>store</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>knowspace</name>
-    <description>knowspace</description>
+    <name>echo</name>
+    <description>echo</description>
     <url/>
     <licenses>
         <license/>
