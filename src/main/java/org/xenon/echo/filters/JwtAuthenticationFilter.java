@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
 
+            //Authentication details are used to store additional information about the authentication request, such as the remote IP address and session ID. This can be useful for auditing and logging purposes, as well as for implementing additional security measures based on the context of the authentication.
             authentication.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request)
             );
