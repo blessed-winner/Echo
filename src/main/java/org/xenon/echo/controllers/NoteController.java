@@ -34,6 +34,15 @@ public class NoteController {
         return ResponseEntity.ok(noteService.getAllNotes(page, size));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<NoteDto>> search(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(noteService.searchNotes(query, page, size));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<NoteDto> getNoteById(@PathVariable Long id){
         return ResponseEntity.ok(noteService.getNote(id));
@@ -67,15 +76,6 @@ public class NoteController {
             @RequestParam(defaultValue = "10") int size
     ){
         return ResponseEntity.ok(noteService.getDueMemoryItemsPerNote(noteId,page,size));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Page<NoteDto>> search(
-            @RequestParam String query,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ){
-        return ResponseEntity.ok(noteService.searchNotes(query, page, size));
     }
 
     @PostMapping("/{noteId}/tags")

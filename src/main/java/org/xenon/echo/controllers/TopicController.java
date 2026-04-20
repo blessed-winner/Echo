@@ -33,6 +33,15 @@ public class TopicController {
         return ResponseEntity.ok(topicService.getTopics(page, size));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<TopicDto>> searchTopics(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(topicService.searchTopics(query, page, size));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TopicDto> getTopic(
             @PathVariable Long id
@@ -85,14 +94,5 @@ public class TopicController {
             @PathVariable Long id
     ){
         return ResponseEntity.ok(topicService.getTopicSummary(id));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Page<TopicDto>> searchTopics(
-            @RequestParam String query,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ){
-        return ResponseEntity.ok(topicService.searchTopics(query, page, size));
     }
 }
