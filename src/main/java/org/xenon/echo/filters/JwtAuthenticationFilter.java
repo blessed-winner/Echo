@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         }catch(JwtException | IllegalArgumentException e){
             SecurityContextHolder.clearContext();
-            logger.debug("JWT authentication failed: ", e);
+            logger.error("JWT authentication failed: ", e);
         }
 
         filterChain.doFilter(request,response);

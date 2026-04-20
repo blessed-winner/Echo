@@ -39,6 +39,19 @@ public class MemoryItemController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/due")
+    public ResponseEntity<Page<MemoryItemDto>> dueMemoryItems(
+            @RequestParam(defaultValue = "20") int limit,
+            @RequestParam(required = false) Long tagId
+    ){
+        return ResponseEntity.ok(memoryItemService.getDueMemoryItems(limit,tagId));
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<MemoryStatsDto> getMemoryItemStats(){
+        return ResponseEntity.ok(memoryItemService.getStats());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MemoryItemDto> getMemoryItem(
             @PathVariable Long id
@@ -68,18 +81,5 @@ public class MemoryItemController {
             @RequestBody ReviewRequest request
     ){
         return ResponseEntity.ok(memoryItemService.review(id, request.getRating()));
-    }
-
-    @GetMapping("/due")
-    public ResponseEntity<Page<MemoryItemDto>> dueMemoryItems(
-            @RequestParam(defaultValue = "20") int limit,
-            @RequestParam(required = false) Long tagId
-    ){
-        return ResponseEntity.ok(memoryItemService.getDueMemoryItems(limit,tagId));
-    }
-
-    @GetMapping("/stats")
-    public ResponseEntity<MemoryStatsDto> getMemoryItemStats(){
-        return ResponseEntity.ok(memoryItemService.getStats());
     }
 }
