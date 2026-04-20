@@ -65,4 +65,9 @@ public class AuthController {
         addRefreshTokenCookie(response, result.refreshToken());
         return ResponseEntity.ok(new JwtResponse(result.accessToken(), result.refreshToken()));
     }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyEmail(@RequestParam String token){
+        return ResponseEntity.ok(authService.handleVerification(token));
+    }
 }
