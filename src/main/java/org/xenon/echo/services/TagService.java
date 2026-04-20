@@ -29,9 +29,14 @@ public class TagService {
     private final MemoryItemRepository memoryItemRepository;
     private final NoteMapper noteMapper;
 
-    private UUID getCurrentUser(){
-        return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private UUID getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ForbiddenException("User is not authenticated");
+        }
+        return (UUID) authentication.getPrincipal();
     }
+
     public TagDto createTag(TagRequest tagRequest) {
         UUID userId = getCurrentUser();
         var user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User Not Found"));
@@ -103,4 +108,3 @@ public class TagService {
         return notesPage.map(noteMapper::toDto);
     }
 }
-

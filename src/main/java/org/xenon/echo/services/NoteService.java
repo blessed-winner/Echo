@@ -32,8 +32,12 @@ public class NoteService {
     private final MemoryItemRepository memoryItemRepository;
     private final MemoryItemMapper memoryItemMapper;
 
-    private UUID getCurrentUser(){
-        return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private UUID getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ForbiddenException("User is not authenticated");
+        }
+        return (UUID) authentication.getPrincipal();
     }
 
     public NoteDto createNote(NoteRequest noteRequest){

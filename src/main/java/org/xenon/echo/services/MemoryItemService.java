@@ -38,8 +38,12 @@ public class MemoryItemService {
     private final MemoryItemMapper memoryItemMapper;
     private final TagRepository tagRepository;
 
-    private UUID getCurrentUser(){
-        return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private UUID getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ForbiddenException("User is not authenticated");
+        }
+        return (UUID) authentication.getPrincipal();
     }
 
 
@@ -140,7 +144,7 @@ public class MemoryItemService {
 
     public Page<MemoryItemDto> getDueMemoryItems(int limit, Long tagId){
         int safeLimit = Math.min(limit,50);
-        UUID userId = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID userId = getCurrentUser();
         Pageable pageable = PageRequest.of(0, safeLimit, Sort.by("nextReviewDate").ascending());
         Page<MemoryItem> memoryItemsPage;
         if(tagId != null){

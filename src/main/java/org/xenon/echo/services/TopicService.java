@@ -35,9 +35,13 @@ public class TopicService {
     private final MemoryItemRepository memoryItemRepository;
     private final MemoryItemMapper memoryItemMapper;
 
-    public UUID getCurrentUser(){
-      return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-  }
+    private UUID getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ForbiddenException("User is not authenticated");
+        }
+        return (UUID) authentication.getPrincipal();
+    }
 
   public TopicDto createTopic(TopicRequest topicRequest){
       UUID userId = getCurrentUser();
