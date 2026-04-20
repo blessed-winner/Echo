@@ -26,6 +26,7 @@ public class AuthService {
     private final JwtConfig jwtConfig;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     public record AuthResult(
             String accessToken,
@@ -62,8 +63,12 @@ public class AuthService {
         user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
 
+        String verificationToken = jwtService.generateVerificationToken(user);
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
+
+        emailService.sendVerificationEmail(user.getEmail(),verificationToken);
+        user.setVerified(true);
 
         return new AuthResult(accessToken, refreshToken, user.getId());
     }
