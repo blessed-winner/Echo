@@ -82,4 +82,13 @@ public class MemoryItemController {
     ){
         return ResponseEntity.ok(memoryItemService.review(id, request.getRating()));
     }
+
+    @PostMapping("/{id}/reschedule")
+    public ResponseEntity<Void> rescheduleItem(
+            @PathVariable Long id,
+            @RequestBody RescheduleRequest request
+    ){
+        memoryItemService.reschedule(id,request.getType());
+        return ResponseEntity.noContent().build();
+    }
 }
