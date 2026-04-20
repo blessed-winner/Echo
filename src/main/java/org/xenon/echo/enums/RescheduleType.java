@@ -1,4 +1,4 @@
-package org.xenon.echo.dtos;
+package org.xenon.echo.enums;
 
 public enum RescheduleType {
     IN_1_HOUR,

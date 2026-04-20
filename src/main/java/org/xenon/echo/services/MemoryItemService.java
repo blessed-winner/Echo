@@ -1,17 +1,16 @@
 package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.xenon.echo.dtos.MemoryItemDto;
-import org.xenon.echo.dtos.MemoryItemRequest;
-import org.xenon.echo.dtos.MemoryItemUpdateRequest;
-import org.xenon.echo.dtos.MemoryStatsDto;
+import org.xenon.echo.dtos.*;
 import org.xenon.echo.entities.*;
+import org.xenon.echo.enums.RescheduleType;
 import org.xenon.echo.enums.ReviewRating;
 import org.xenon.echo.exceptions.ForbiddenException;
 import org.xenon.echo.exceptions.MemoryItemNotFoundException;
@@ -225,5 +224,24 @@ public class MemoryItemService {
             }
         }
         return streak;
+    }
+
+    public void reschedule(Long id, RescheduleType type){
+       UUID userId = getCurrentUser();
+       var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
+       if(!memoryItem.getNote().getTopic().getUser().getId().equals(userId)){
+           throw new ForbiddenException("Cannot access this item");
+       }
+       LocalDateTime now = LocalDateTime.now();
+       LocalDateTime newDate = switch(type){
+           case IN_1_HOUR -> now.plusHours(1);
+           case IN_3_HOURS -> now.plusHours(3);
+           case IN_1_DAY -> now.plusDays(1);
+           case IN_3_DAYS -> now.plusDays(3);
+           case IN_1_WEEK ->  now.plusDays(7);
+       };
+
+       memoryItem.setNextReviewDate(newDate);
+       memoryItemRepository.save(memoryItem);
     }
 }
