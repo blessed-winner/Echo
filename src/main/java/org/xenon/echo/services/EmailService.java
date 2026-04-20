@@ -12,24 +12,15 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 public class EmailService {
     private final JavaMailSender mailSender;
+    public void sendVerificationEmail(String to, String token){
+        String verifyUrl = "https//echo.com/verify?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+        String message = "Click the link below to verify:\n" + verifyUrl;
 
-    public void sendVerificationEmail(String to, String token) {
-        String verifyUrl = "https://echo/verify?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
-        
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject("Verify your email");
-        message.setText("Click below to verify your email:\n" + verifyUrl);
-        
-        mailSender.send(message);
-    }
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(to);
+        mail.setSubject("Email Verification");
+        mail.setText(message);
 
-    public void sendPasswordResetEmail(String to, String token) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject("Password Reset Request");
-        message.setText("To reset your password, use the following token:\n" + token);
-        
-        mailSender.send(message);
+        mailSender.send(mail);
     }
 }
