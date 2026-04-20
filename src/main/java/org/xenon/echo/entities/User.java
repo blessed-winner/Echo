@@ -24,6 +24,12 @@ public class User {
 
     private String password;
 
+    @Column(name = "is_verified")
+    private boolean isVerified = false;
+
+    @Column(name = "is_enabled")
+    private boolean enabled = true;
+
     @Column(name = "creation_date")
     private LocalDateTime createdAt;
 
