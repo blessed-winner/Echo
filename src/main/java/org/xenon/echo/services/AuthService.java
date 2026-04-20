@@ -41,6 +41,9 @@ public class AuthService {
                     )
             );
             var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+            if(!user.isVerified()){
+                throw new IllegalArgumentException("User is not verified");
+            }
             String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
