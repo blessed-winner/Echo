@@ -23,6 +23,8 @@ public class JwtService {
         return buildToken(user, jwtConfig.getRefreshTokenExpiration());
     }
 
+    public String generateVerificationToken(User user){return buildToken(user, jwtConfig.getAccessTokenExpiration());}
+
     private String buildToken(User user, long tokenExpiration){
         Date expiry = new Date(new Date().getTime() + tokenExpiration * 1000);
         return Jwts.builder()
