@@ -1,5 +1,8 @@
 package org.xenon.echo.services;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +14,7 @@ import org.xenon.echo.dtos.LoginRequest;
 import org.xenon.echo.dtos.RegisterUserRequest;
 import org.xenon.echo.dtos.UserDto;
 import org.xenon.echo.enums.Role;
+import org.xenon.echo.exceptions.UserNotFoundException;
 import org.xenon.echo.mappers.UserMapper;
 import org.xenon.echo.repositories.UserRepository;
 
@@ -91,5 +95,26 @@ public class AuthService {
        var newRefreshToken = jwtService.generateRefreshToken(user);
 
        return new AuthResult(accessToken, newRefreshToken, user.getId());
+    }
+
+    public String handleVerification(String token){
+        Claims claims;
+        try{
+            claims = jwtService.extractClaims(token);
+        }catch(ExpiredJwtException e){
+           throw new RuntimeException("Token has expired");
+        }catch(JwtException e){
+            throw new RuntimeException("Invalid token");
+        }
+
+        UUID userId = UUID.fromString(claims.getSubject());
+        var user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User not found"));
+        if(user.isVerified()){
+            return "Email already verified";
+        }
+        user.setVerified(true);
+        userRepository.save(user);
+
+        return "Email verification successful";
     }
 }
