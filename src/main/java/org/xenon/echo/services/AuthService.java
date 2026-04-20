@@ -52,7 +52,7 @@ public class AuthService {
             return new AuthResult(accessToken, refreshToken, user.getId());
     }
 
-    public AuthResult register(RegisterUserRequest request){
+    public void register(RegisterUserRequest request){
         if(userRepository.existsByEmail(request.getEmail())){
             throw new IllegalArgumentException("Email already exists");
         }
@@ -68,9 +68,6 @@ public class AuthService {
         String refreshToken = jwtService.generateRefreshToken(user);
 
         emailService.sendVerificationEmail(user.getEmail(),verificationToken);
-        user.setVerified(true);
-
-        return new AuthResult(accessToken, refreshToken, user.getId());
     }
 
     public UserDto getMe(){

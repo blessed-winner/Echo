@@ -5,6 +5,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,15 +35,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(
-            @Valid @RequestBody RegisterUserRequest request,
-            HttpServletResponse response,
-            UriComponentsBuilder uriBuilder
-            ){
-     var result = authService.register(request);
-     addRefreshTokenCookie(response, result.refreshToken());
-     var uri = uriBuilder.path("/auth").buildAndExpand(result.userId()).toUri();
-     return ResponseEntity.created(uri).body(new JwtResponse(result.accessToken(), result.refreshToken()));
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterUserRequest request){
+        authService.register(request);
+        return ResponseEntity.status(201).body("Registration successfull. Please verify your email to verify your account");
     }
 
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken){
