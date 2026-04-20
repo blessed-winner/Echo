@@ -1,4 +1,5 @@
 package org.xenon.echo.controllers;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.echo.dtos.*;
 import org.xenon.echo.services.TopicService;
 
+@Tag(name = "Topic")
 @RestController
 @RequestMapping("/topics")
 @AllArgsConstructor

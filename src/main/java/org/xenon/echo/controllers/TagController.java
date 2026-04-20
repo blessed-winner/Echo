@@ -12,7 +12,7 @@ import org.xenon.echo.services.TagService;
 
 import java.util.Set;
 
-@Tag(name = "Tag")
+@Tag(name = "Tags")
 @RestController
 @RequestMapping("/tags")
 @AllArgsConstructor
