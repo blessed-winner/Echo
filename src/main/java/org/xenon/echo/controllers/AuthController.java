@@ -30,7 +30,7 @@ public class AuthController {
     ){
         var result = authService.login(request);
         addRefreshTokenCookie(response, result.refreshToken());
-        return ResponseEntity.ok(new JwtResponse(result.accessToken()));
+        return ResponseEntity.ok(new JwtResponse(result.accessToken(), result.refreshToken()));
     }
 
     @PostMapping("/register")
@@ -42,7 +42,7 @@ public class AuthController {
      var result = authService.register(request);
      addRefreshTokenCookie(response, result.refreshToken());
      var uri = uriBuilder.path("/auth").buildAndExpand(result.userId()).toUri();
-     return ResponseEntity.created(uri).body(new JwtResponse(result.accessToken()));
+     return ResponseEntity.created(uri).body(new JwtResponse(result.accessToken(), result.refreshToken()));
     }
 
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken){
@@ -70,6 +70,6 @@ public class AuthController {
     ){
         var result = authService.refresh(refreshToken);
         addRefreshTokenCookie(response, result.refreshToken());
-        return ResponseEntity.ok(new JwtResponse(result.accessToken()));
+        return ResponseEntity.ok(new JwtResponse(result.accessToken(), result.refreshToken()));
     }
 }
