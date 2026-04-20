@@ -23,7 +23,7 @@ Explore and test the Echo API through our hosted Swagger UI:
 - **Tagging System**: Flexible tagging for cross-referencing and filtering content.
 - **Secure Authentication**: Robust JWT-based security with Access and Refresh token support.
 - **Progress Tracking**: Real-time statistics including daily review counts, overdue items, and learning streaks.
-- **API Documentation**: Fully documented with Swagger UI (Dark Mode enabled).
+- **API Documentation**: Fully documented with Swagger UI.
 
 ---
 
