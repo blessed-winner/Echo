@@ -8,11 +8,11 @@
         <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.codewithmosh</groupId>
-    <artifactId>store</artifactId>
+    <groupId>org.xenon</groupId>
+    <artifactId>echo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>echo</name>
-    <description>echo</description>
+    <name>Echo</name>
+    <description>Echo - Spaced Repetition Memory Assistant</description>
     <url/>
     <licenses>
         <license/>
