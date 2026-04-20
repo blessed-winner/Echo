@@ -64,9 +64,6 @@ public class AuthService {
         userRepository.save(user);
 
         String verificationToken = jwtService.generateVerificationToken(user);
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
         emailService.sendVerificationEmail(user.getEmail(),verificationToken);
     }
 
