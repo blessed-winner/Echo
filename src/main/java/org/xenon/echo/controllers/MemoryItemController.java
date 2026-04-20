@@ -65,7 +65,7 @@ public class MemoryItemController {
     @PostMapping("/{id}/review")
     public ResponseEntity<MemoryItemDto> reviewMemoryItem(
             @PathVariable Long id,
-            @RequestParam ReviewRequest request
+            @RequestBody ReviewRequest request
     ){
         return ResponseEntity.ok(memoryItemService.review(id, request.getRating()));
     }
