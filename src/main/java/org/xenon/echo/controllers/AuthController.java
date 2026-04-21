@@ -68,6 +68,6 @@ public class AuthController {
 
     @GetMapping("/verify")
     public ResponseEntity<String> verifyEmail(@RequestParam String token){
-        return ResponseEntity.ok(authService.handleVerification(token));
+        return ResponseEntity.ok(authService.handleEmailVerification(token));
     }
 }

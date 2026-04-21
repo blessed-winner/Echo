@@ -14,10 +14,13 @@ import org.xenon.echo.config.JwtConfig;
 import org.xenon.echo.dtos.LoginRequest;
 import org.xenon.echo.dtos.RegisterUserRequest;
 import org.xenon.echo.dtos.UserDto;
+import org.xenon.echo.entities.VerificationToken;
 import org.xenon.echo.enums.Role;
+import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.exceptions.UserNotFoundException;
 import org.xenon.echo.mappers.UserMapper;
 import org.xenon.echo.repositories.UserRepository;
+import org.xenon.echo.repositories.VerificationTokenRepository;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,6 +35,8 @@ public class AuthService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final VerificationTokenRepository tokenRepository;
+    private final VerificationTokenService verificationTokenService;
 
     public record AuthResult(
             String accessToken,
@@ -98,29 +103,16 @@ public class AuthService {
        return new AuthResult(accessToken, newRefreshToken, user.getId());
     }
 
-    public void requestPasswordReset(String email){
-        var user = userRepository.findByEmail(email).orElseThrow(()->new UserNotFoundException("User not found"));
-        emailService.sendPasswordResetEmail();
-    }
-
-    public String handleVerification(String token){
-        Claims claims;
-        try{
-            claims = jwtService.extractClaims(token);
-        }catch(ExpiredJwtException e){
-           throw new RuntimeException("Token has expired");
-        }catch(JwtException e){
-            throw new RuntimeException("Invalid token");
-        }
-
-        UUID userId = UUID.fromString(claims.getSubject());
-        var user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User not found"));
+    public String handleEmailVerification(String rawToken){
+        VerificationToken token = verificationTokenService.validateToken(rawToken, TokenType.EMAIL_VERIFY);
+        var user = userRepository.findById(token.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
         if(user.isVerified()){
-            return "Email already verified";
+            return "User already verified";
         }
         user.setVerified(true);
         userRepository.save(user);
+        verificationTokenService.markAsUsed(token);
 
-        return "Email verification successful";
+        return "Email verification link sent";
     }
 }
