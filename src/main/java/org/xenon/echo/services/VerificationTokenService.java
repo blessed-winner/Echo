@@ -48,4 +48,9 @@ public class VerificationTokenService {
 
         return token;
     }
+
+    public void markAsUsed(VerificationToken token){
+        token.setUsedAt(LocalDateTime.now());
+        verificationTokenRepository.save(token);
+    }
 }
