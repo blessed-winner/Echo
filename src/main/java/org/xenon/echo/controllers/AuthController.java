@@ -70,4 +70,6 @@ public class AuthController {
     public ResponseEntity<String> verifyEmail(@RequestParam String token){
         return ResponseEntity.ok(authService.handleEmailVerification(token));
     }
+
+    @PostMapping()
 }
