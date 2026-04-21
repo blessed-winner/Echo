@@ -127,4 +127,13 @@ public class AuthService {
         emailService.sendPasswordResetEmail(email,token);
         return "Password reset email sent";
     }
+
+    public String resetPassword(String rawToken){
+        VerificationToken token = verificationTokenService.validateToken(rawToken,TokenType.PASSWORD_RESET);
+        User user = userRepository.findById(token.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        verificationTokenService.markAsUsed(token);
+        return "Password reset successful";
+    }
 }
