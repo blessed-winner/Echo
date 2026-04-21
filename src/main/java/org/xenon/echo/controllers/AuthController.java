@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.xenon.echo.config.JwtConfig;
-import org.xenon.echo.dtos.JwtResponse;
-import org.xenon.echo.dtos.LoginRequest;
-import org.xenon.echo.dtos.RegisterUserRequest;
-import org.xenon.echo.dtos.UserDto;
+import org.xenon.echo.dtos.*;
 import org.xenon.echo.services.AuthService;
 
 @Tag(name = "Auth")
@@ -71,5 +68,8 @@ public class AuthController {
         return ResponseEntity.ok(authService.handleEmailVerification(token));
     }
 
-    @PostMapping()
+    @GetMapping("/forgot-password")
+    public ResponseEntity<String> requestPasswordReset(@RequestBody ForgotPasswordRequest request){
+        return ResponseEntity.ok(authService.requestPasswordReset(request.getEmail()));
+    }
 }
