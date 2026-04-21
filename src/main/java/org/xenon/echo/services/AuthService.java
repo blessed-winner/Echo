@@ -1,19 +1,16 @@
 package org.xenon.echo.services;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.xenon.echo.config.JwtConfig;
 import org.xenon.echo.dtos.LoginRequest;
 import org.xenon.echo.dtos.RegisterUserRequest;
 import org.xenon.echo.dtos.UserDto;
+import org.xenon.echo.entities.User;
 import org.xenon.echo.entities.VerificationToken;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.enums.TokenType;
@@ -22,6 +19,7 @@ import org.xenon.echo.mappers.UserMapper;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.repositories.VerificationTokenRepository;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -113,6 +111,20 @@ public class AuthService {
         userRepository.save(user);
         verificationTokenService.markAsUsed(token);
 
-        return "Email verification link sent";
+        return "Email verification successful";
+    }
+
+    public String requestPasswordReset(String email){
+        User user = userRepository.findByEmail(email).orElse(null);
+        if(user == null){
+            return "If user exists, a reset email has been sent";
+        }
+        if(!user.isVerified()){
+            throw new RuntimeException("User not verified.Verify first");
+        }
+
+        String token = verificationTokenService.createToken(user.getId(),TokenType.PASSWORD_RESET, Duration.ofMinutes(15));
+        emailService.sendPasswordResetEmail(email,token);
+        return "Password reset email sent";
     }
 }
