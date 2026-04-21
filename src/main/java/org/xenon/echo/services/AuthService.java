@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.xenon.echo.config.JwtConfig;
@@ -95,6 +96,11 @@ public class AuthService {
        var newRefreshToken = jwtService.generateRefreshToken(user);
 
        return new AuthResult(accessToken, newRefreshToken, user.getId());
+    }
+
+    public void requestPasswordReset(String email){
+        var user = userRepository.findByEmail(email).orElseThrow(()->new UserNotFoundException("User not found"));
+        emailService.sendPasswordResetEmail();
     }
 
     public String handleVerification(String token){
