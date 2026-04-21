@@ -30,6 +30,22 @@ public class VerificationTokenService {
 
         verificationTokenRepository.save(token);
         return rawToken;
+    }
 
+    public VerificationToken validateToken(String rawToken, TokenType expectedType){
+        String hash = tokenUtil.hashToken(rawToken);
+        var token = verificationTokenRepository.findByTokenHash(hash).orElseThrow(()->new RuntimeException("Token not found"));
+        if(token.getUsedAt() != null){
+            throw new RuntimeException("Token already used");
+        }
+        if(token.getExpiresAt().isBefore(LocalDateTime.now())){
+            throw new RuntimeException("Token expired");
+        }
+
+        if(token.getTokenType() != expectedType){
+            throw new RuntimeException("Invalid token type");
+        }
+
+        return token;
     }
 }
