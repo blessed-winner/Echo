@@ -17,7 +17,7 @@ public class VerificationTokenService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final TokenUtil tokenUtil;
     public String createToken(UUID userId, TokenType tokenType, Duration ttl){
-        verificationTokenRepository.deleteByUserIdAndType(userId, tokenType);
+        verificationTokenRepository.deleteByUserIdAndTokenType(userId, tokenType);
 
        String rawToken = tokenUtil.generateRawToken();
        String hash = tokenUtil.hashToken(rawToken);
