@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface VerificationTokenRepository extends JpaRepository<UUID, VerificationToken> {
+public interface VerificationTokenRepository extends JpaRepository<VerificationToken,UUID> {
     Optional<VerificationToken> findByTokenHash(String tokenHash);
     void deleteByUserIdAndType(UUID userId, TokenType type);
     void deleteByExpiresAtBefore(LocalDateTime now);

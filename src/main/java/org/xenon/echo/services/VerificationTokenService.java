@@ -29,6 +29,7 @@ public class VerificationTokenService {
         token.setTokenType(tokenType);
 
         verificationTokenRepository.save(token);
+        return rawToken;
 
     }
 }
