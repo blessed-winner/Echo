@@ -1,6 +1,7 @@
 package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,18 @@ public class EmailService {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(to);
         mail.setSubject("Email Verification");
+        mail.setText(message);
+
+        mailSender.send(mail);
+    }
+
+    public void sendPasswordResetEmail(String to, String token){
+        String resetUrl = "https//echo.com/reset-password?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+        String message = "Click the link below to reset your password:\n" + resetUrl;
+
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(to);
+        mail.setSubject("Reset Password");
         mail.setText(message);
 
         mailSender.send(mail);
