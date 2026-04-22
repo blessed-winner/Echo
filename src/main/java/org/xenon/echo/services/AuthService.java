@@ -12,6 +12,7 @@ import org.xenon.echo.dtos.RegisterUserRequest;
 import org.xenon.echo.dtos.UserDto;
 import org.xenon.echo.entities.User;
 import org.xenon.echo.entities.VerificationToken;
+import org.xenon.echo.enums.AuditAction;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.exceptions.UserNotFoundException;
@@ -36,6 +37,7 @@ public class AuthService {
     private final VerificationTokenRepository tokenRepository;
     private final VerificationTokenService verificationTokenService;
     private final RateLimiterService rateLimiterService;
+    private final AuditLogService auditLogService;
 
     public record AuthResult(
             String accessToken,
@@ -57,8 +59,24 @@ public class AuthService {
             );
             var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
             if(!user.isVerified()){
-                throw new IllegalArgumentException("User is not verified");
+                auditLogService.log(
+                        user.getId(),
+                        AuditAction.LOGIN,
+                        ip,
+                        false,
+                        "User not verified",
+                        null
+                );
+                throw new IllegalArgumentException("Invalid credentials");
             }
+            auditLogService.log(
+                    user.getId(),
+                    AuditAction.LOGIN,
+                    ip,
+                    true,
+                    null,
+                    null
+            );
             String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
