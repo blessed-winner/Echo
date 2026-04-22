@@ -150,8 +150,25 @@ public class AuthService {
             return "If user exists, a reset email has been sent";
         }
         if(!user.isVerified()){
+            auditLogService.log(
+                    user.getId(),
+                    AuditAction.PASSWORD_RESET_REQUEST,
+                    ip,
+                    false,
+                    "User not verified",
+                    null
+            );
             throw new RuntimeException("User not verified.Verify first");
         }
+
+        auditLogService.log(
+                user.getId(),
+                AuditAction.PASSWORD_RESET_REQUEST,
+                ip,
+                true,
+                null,
+                null
+        );
 
         String token = verificationTokenService.createToken(user.getId(),TokenType.PASSWORD_RESET, Duration.ofMinutes(15));
         emailService.sendPasswordResetEmail(email,token);
