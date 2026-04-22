@@ -110,6 +110,7 @@ public class AuthService {
         user.setVerified(true);
         userRepository.save(user);
         verificationTokenService.markAsUsed(token);
+        tokenRepository.deleteByUserIdAndTokenType(user.getId(),TokenType.EMAIL_VERIFY);
 
         return "Email verification successful";
     }
@@ -134,6 +135,7 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         verificationTokenService.markAsUsed(token);
+        tokenRepository.deleteByUserIdAndTokenType(user.getId(),TokenType.PASSWORD_RESET);
         return "Password reset successful";
     }
 }
