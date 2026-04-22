@@ -39,6 +39,6 @@ public class VerificationToken {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "type", nullable = false)
     private TokenType tokenType;
 }
