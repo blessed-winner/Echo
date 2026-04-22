@@ -35,6 +35,7 @@ public class AuthService {
     private final EmailService emailService;
     private final VerificationTokenRepository tokenRepository;
     private final VerificationTokenService verificationTokenService;
+    private final RateLimiterService rateLimiterService;
 
     public record AuthResult(
             String accessToken,
@@ -42,7 +43,12 @@ public class AuthService {
             UUID userId
     ){}
 
-    public AuthResult login(LoginRequest request){
+    public AuthResult login(LoginRequest request, String ip){
+            String key = ip + "_" + request.getEmail();
+
+            if(!rateLimiterService.tryConsumeLogin(key)){
+                throw new RuntimeException("Too many login attempts.Try again later");
+            }
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
@@ -115,7 +121,12 @@ public class AuthService {
         return "Email verification successful";
     }
 
-    public String requestPasswordReset(String email){
+    public String requestPasswordReset(String email,String ip){
+        String key = ip + "_" + email;
+
+        if(!rateLimiterService.tryConsumeReset(key)){
+            throw new RuntimeException("Too many reset attempts.Try again later");
+        }
         User user = userRepository.findByEmail(email).orElse(null);
         if(user == null){
             return "If user exists, a reset email has been sent";

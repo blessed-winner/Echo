@@ -2,6 +2,7 @@ package org.xenon.echo.controllers;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -22,9 +23,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(
             @Valid @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest,
             HttpServletResponse response
     ){
-        var result = authService.login(request);
+        String ip = httpRequest.getRemoteAddr();
+        var result = authService.login(request,ip);
         addRefreshTokenCookie(response, result.refreshToken());
         return ResponseEntity.ok(new JwtResponse(result.accessToken(), result.refreshToken()));
     }
@@ -69,8 +72,9 @@ public class AuthController {
     }
 
     @GetMapping("/forgot-password")
-    public ResponseEntity<String> requestPasswordReset(@RequestBody ForgotPasswordRequest request){
-        return ResponseEntity.ok(authService.requestPasswordReset(request.getEmail()));
+    public ResponseEntity<String> requestPasswordReset(@RequestBody ForgotPasswordRequest request, HttpServletRequest httpRequest){
+        String ip = httpRequest.getRemoteAddr();
+        return ResponseEntity.ok(authService.requestPasswordReset(request.getEmail(),ip));
     }
 
     @PostMapping("/reset")
