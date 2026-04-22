@@ -178,6 +178,14 @@ public class AuthService {
     public String resetPassword(String rawToken, String newPassword){
         VerificationToken token = verificationTokenService.validateToken(rawToken,TokenType.PASSWORD_RESET);
         User user = userRepository.findById(token.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
+        auditLogService.log(
+                user.getId(),
+                AuditAction.PASSWORD_RESET,
+                null,
+                true,
+                null,
+                null
+        );
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         verificationTokenService.markAsUsed(token);
