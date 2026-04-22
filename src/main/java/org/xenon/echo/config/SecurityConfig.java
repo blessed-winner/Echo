@@ -60,6 +60,9 @@ public class SecurityConfig {
                          c-> c.requestMatchers("/","/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()
                                                            .requestMatchers(HttpMethod.POST,"/auth/register").permitAll()
                                                            .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                                                           .requestMatchers(HttpMethod.GET,"/auth/verify").permitAll()
+                                                           .requestMatchers(HttpMethod.GET,"/auth/forgot-password").permitAll()
+                                                           .requestMatchers(HttpMethod.POST,"/auth/reset").permitAll()
                                                            .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c->{

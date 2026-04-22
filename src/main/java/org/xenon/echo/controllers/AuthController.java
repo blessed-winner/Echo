@@ -32,7 +32,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterUserRequest request){
         authService.register(request);
-        return ResponseEntity.status(201).body("Registration successful. Please verify your email to verify your account");
+        return ResponseEntity.status(201).body("Registration successful. Please check your email to verify your account");
     }
 
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken){

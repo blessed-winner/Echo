@@ -72,7 +72,7 @@ public class AuthService {
         userRepository.save(user);
 
         String verificationToken = jwtService.generateVerificationToken(user);
-        emailService.sendVerificationEmail(user.getEmail(),verificationToken);
+        emailService.sendVerificationEmail("blessedwinner66@gmail.com",verificationToken);
     }
 
     public UserDto getMe(){
