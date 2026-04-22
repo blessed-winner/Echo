@@ -71,8 +71,8 @@ public class AuthService {
         user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
 
-        String verificationToken = jwtService.generateVerificationToken(user);
-        emailService.sendVerificationEmail("blessedwinner66@gmail.com",verificationToken);
+        String token = verificationTokenService.createToken(user.getId(),TokenType.EMAIL_VERIFY,Duration.ofMinutes(15));
+        emailService.sendVerificationEmail("blessedwinner66@gmail.com",token);
     }
 
     public UserDto getMe(){
