@@ -1,10 +1,11 @@
 package org.xenon.echo.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.xenon.echo.enums.AuditAction;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -12,7 +13,23 @@ import java.util.UUID;
 @Getter
 @Setter
 public class AuditLog {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     private UUID userId;
-    private
+
+    @Enumerated(EnumType.STRING)
+    private AuditAction action;
+
+    private boolean success;
+
+    private String ipAddress;
+
+    private String failureReason;
+
+    @Column(length = 500)
+    private String metadata;
+
+    private LocalDateTime timestamp;
 }
