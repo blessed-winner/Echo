@@ -1,12 +1,14 @@
 package org.xenon.echo.controllers;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.xenon.echo.dtos.UserDto;
+import org.xenon.echo.dtos.UserUpdateRequest;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.services.UserService;
 
@@ -41,9 +43,9 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(
-            @PathVariable UUID id,
-            @RequestBody UserDto userDto
-    ){
-        return ResponseEntity.ok(userService.updateUser(id, userDto));
+            @Valid @PathVariable UUID id,
+            @RequestBody UserUpdateRequest request
+            ){
+        return ResponseEntity.ok(userService.updateUser(id, request));
     }
 }

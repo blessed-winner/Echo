@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.UserDto;
+import org.xenon.echo.dtos.UserUpdateRequest;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.entities.User;
 import org.xenon.echo.exceptions.UserNotFoundException;
@@ -55,15 +56,15 @@ public class UserService {
       userRepository.delete(user);
   }
 
-  public UserDto updateUser(UUID id, UserDto userDto){
+  public UserDto updateUser(UUID id, UserUpdateRequest request){
       var user = userRepository.findById(id).orElse(null);
       if(user == null){
           throw new UserNotFoundException("User Not Found");
       }
 
-      if(userDto.getName() != null) user.setName(userDto.getName());
-      if(userDto.getRole() != null) user.setRole(user.getRole());
-      if(userDto.getEmail() != null) user.setEmail(userDto.getEmail());
+      if(request.getName() != null) user.setName(request.getName());
+      if(request.getRole() != null) user.setRole(request.getRole());
+      if(request.getEmail() != null) user.setEmail(request.getEmail());
 
       var updatedUser = userRepository.save(user);
       return userMapper.toDto(updatedUser);
