@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.xenon.echo.entities.Note;
-import org.xenon.echo.entities.Tag;
-import org.xenon.echo.entities.Topic;
-import org.xenon.echo.entities.User;
+import org.xenon.echo.entities.*;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.repositories.*;
 
@@ -24,6 +21,7 @@ public class DataSeeder {
    private final NoteRepository noteRepository;
    private final TagRepository tagRepository;
    private final TopicRepository topicRepository;
+   private final MemoryItemRepository memoryItemRepository;
    private final PasswordEncoder passwordEncoder;
 
    @Bean
@@ -162,5 +160,63 @@ public class DataSeeder {
        note5.setTags(Set.of(rockTag));
 
        noteRepository.saveAll(List.of(note1, note2, note3, note4, note5));
+
+       // MEMORY ITEMS for User 3
+       MemoryItem item1 = new MemoryItem();
+       item1.setText("What is the role of OncePerRequestFilter in Spring Security?");
+       item1.setSource("Spring Boot Security Note");
+       item1.setUser(user3);
+       item1.setNote(note1);
+       item1.setTags(Set.of(springTag));
+       item1.setInterval(1);
+       item1.setEaseFactor(2.5f);
+       item1.setReviewCount(0);
+       item1.setNextReviewDate(LocalDateTime.now());
+
+       MemoryItem item2 = new MemoryItem();
+       item2.setText("Explain Dependency Injection in NestJS.");
+       item2.setSource("NestJS Architecture Note");
+       item2.setUser(user3);
+       item2.setNote(note2);
+       item2.setTags(Set.of(nestTag));
+       item2.setInterval(1);
+       item2.setEaseFactor(2.5f);
+       item2.setReviewCount(0);
+       item2.setNextReviewDate(LocalDateTime.now());
+
+       MemoryItem item3 = new MemoryItem();
+       item3.setText("What are the three types of Haki in One Piece?");
+       item3.setSource("One Piece Note");
+       item3.setUser(user3);
+       item3.setNote(note3);
+       item3.setInterval(1);
+       item3.setEaseFactor(2.5f);
+       item3.setReviewCount(0);
+       item3.setNextReviewDate(LocalDateTime.now());
+
+       // MEMORY ITEMS for User 4
+       MemoryItem item4 = new MemoryItem();
+       item4.setText("Which sub-genres are dominating EDM in 2024?");
+       item4.setSource("EDM Note");
+       item4.setUser(user4);
+       item4.setNote(note4);
+       item4.setTags(Set.of(edmTag));
+       item4.setInterval(1);
+       item4.setEaseFactor(2.5f);
+       item4.setReviewCount(0);
+       item4.setNextReviewDate(LocalDateTime.now());
+
+       MemoryItem item5 = new MemoryItem();
+       item5.setText("Who performed Bohemian Rhapsody?");
+       item5.setSource("Rock Classics Note");
+       item5.setUser(user4);
+       item5.setNote(note5);
+       item5.setTags(Set.of(rockTag));
+       item5.setInterval(1);
+       item5.setEaseFactor(2.5f);
+       item5.setReviewCount(0);
+       item5.setNextReviewDate(LocalDateTime.now().minusDays(1)); // Overdue for testing
+
+       memoryItemRepository.saveAll(List.of(item1, item2, item3, item4, item5));
    }
 }
