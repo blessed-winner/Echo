@@ -27,20 +27,21 @@ import java.util.UUID;
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
+
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var authHeader = request.getHeader("Authorization");
         String path = request.getServletPath();
-        if(authHeader == null || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request,response);
+        if (path.equals("/auth/refresh")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
-        if(path.equals("/auth/refresh")){
-            filterChain.doFilter(request,response);
-        }
-
         String token = authHeader.replace("Bearer ", "");
-        try{
+        try {
             UUID userId = jwtService.extractUserId(token);
             String role = jwtService.extractUserRole(token);
             var authentication = new UsernamePasswordAuthenticationToken(
@@ -55,26 +56,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        }catch(ExpiredJwtException e){
-            handleException(response, "Token expired", HttpStatus.UNAUTHORIZED);
-        }catch(JwtException | IllegalArgumentException e) {
-          handleException(response, "Invalid token", HttpStatus.UNAUTHORIZED);
+        } catch (JwtException | IllegalArgumentException e) {
+            SecurityContextHolder.clearContext();
+            return;
         }
 
-        filterChain.doFilter(request,response);
-    }
-
-    private void handleException(HttpServletResponse response, String message, HttpStatus status) throws IOException{
-        SecurityContextHolder.clearContext();
-        response.setStatus(status.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("status", status.value());
-        body.put("error", status.getReasonPhrase());
-        body.put("message", message);
-        body.put("path", "");
-
-        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        filterChain.doFilter(request, response);
     }
 }
