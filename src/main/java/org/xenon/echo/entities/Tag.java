@@ -23,7 +23,7 @@ public class Tag {
     private String name;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "user_tags")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToMany(fetch = FetchType.LAZY,mappedBy = "tags")

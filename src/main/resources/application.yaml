@@ -13,7 +13,7 @@ spring:
     show-sql: false
   jwt:
     secret: ${JWT_SECRET}
-    accessTokenExpiration: 300
+    accessTokenExpiration: 600
     refreshTokenExpiration: 604800
 
   mail:
