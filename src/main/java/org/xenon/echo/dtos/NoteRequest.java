@@ -1,6 +1,7 @@
 package org.xenon.echo.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ public class NoteRequest {
     @Size(min = 2, max = 5000)
     private String content;
 
-    @NotBlank(message = "Each note must belong to a topic")
+    @NotNull(message = "Each note must belong to a topic")
     private Long topicId;
 
     private Set<Long> tagIds;

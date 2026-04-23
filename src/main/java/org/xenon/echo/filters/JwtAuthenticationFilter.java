@@ -38,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(path.equals("/auth/refresh")){
             filterChain.doFilter(request,response);
         }
+
         String token = authHeader.replace("Bearer ", "");
         try{
             UUID userId = jwtService.extractUserId(token);

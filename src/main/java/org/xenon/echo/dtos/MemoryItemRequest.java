@@ -1,6 +1,7 @@
 package org.xenon.echo.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,7 @@ public class MemoryItemRequest {
 
     private String source;
 
-    @NotBlank(message = "Each memory item must have a note")
+    @NotNull(message = "Each memory item must have a note")
     private Long NoteId;
 
     private Set<Long> tagIds;

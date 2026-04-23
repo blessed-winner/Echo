@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class ResetPasswordRequest {
     @NotBlank(message = "Token is required")
-    String token;
+    private String token;
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters long")
@@ -18,5 +18,5 @@ public class ResetPasswordRequest {
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$",
             message = "Must contain uppercase, lowercase and number"
     )
-    String newPassword;
+    private String newPassword;
 }
