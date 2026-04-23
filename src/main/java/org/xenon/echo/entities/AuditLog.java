@@ -25,8 +25,10 @@ public class AuditLog {
 
     private boolean success;
 
+    @Column(name = "ip_address")
     private String ipAddress;
 
+    @Column(name = "failure_reason")
     private String failureReason;
 
     @Column(length = 500)
