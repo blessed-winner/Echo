@@ -1,4 +1,4 @@
-package org.xenon.echo.seeder;
+package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

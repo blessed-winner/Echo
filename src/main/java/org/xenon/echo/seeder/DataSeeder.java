@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.xenon.echo.entities.*;
 import org.xenon.echo.repositories.*;
+import org.xenon.echo.services.SeedService;
 
 @Configuration
 @RequiredArgsConstructor
@@ -16,7 +16,7 @@ public class DataSeeder {
    @Bean
    CommandLineRunner seed(){
        return args -> {
-           if (userRepository.count() == 0) {
+           if(userRepository.count() == 0){
                seedService.seedData();
            }
        };

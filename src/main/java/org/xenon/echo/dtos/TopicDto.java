@@ -19,6 +19,4 @@ public class TopicDto {
 
     private UserDto user;
 
-    private Set<NoteDto> notes;
-
 }
