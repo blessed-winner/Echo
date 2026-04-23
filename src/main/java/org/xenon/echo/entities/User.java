@@ -30,7 +30,7 @@ public class User {
     private boolean enabled = true;
 
     @Column(name = "creation_date")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Topic> topics = new HashSet<>();

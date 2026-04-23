@@ -22,7 +22,7 @@ public class Topic {
     private String description;
 
     @Column(name = "creation_date")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
