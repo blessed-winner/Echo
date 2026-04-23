@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.*;
 import org.xenon.echo.exceptions.ForbiddenException;
 import org.xenon.echo.mappers.NoteMapper;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class TagService {
     private final TagRepository tagRepository;
     private final TagMapper tagMapper;
@@ -50,6 +52,7 @@ public class TagService {
         return tagMapper.toDto(tagRepository.save(tag));
     }
 
+    @Transactional(readOnly = true)
     public Set<TagResponseDto> getAllTags(){
         UUID userId = getCurrentUser();
         var tags = tagRepository.findByUserId(userId);
@@ -73,6 +76,7 @@ public class TagService {
         return tagMapper.toDto(tagRepository.save(tag));
     }
 
+    @Transactional(readOnly = true)
     public TagSummaryDto getTagSummary(Long tagId){
         UUID userId = getCurrentUser();
         var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
@@ -97,6 +101,7 @@ public class TagService {
         tagRepository.delete(tag);
     }
 
+    @Transactional(readOnly = true)
     public Page<NoteDto> getNotesByTag(Long tagId, int page, int size){
         UUID userId = getCurrentUser();
         var tag = tagRepository.findById(tagId).orElseThrow(() -> new RuntimeException("Tag Not Found"));

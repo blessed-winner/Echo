@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.LoginRequest;
 import org.xenon.echo.dtos.RegisterUserRequest;
 import org.xenon.echo.dtos.UserDto;
@@ -25,6 +26,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
@@ -97,6 +99,7 @@ public class AuthService {
         emailService.sendVerificationEmail("blessedwinner66@gmail.com",token);
     }
 
+    @Transactional(readOnly = true)
     public UserDto getMe(){
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var userId = (UUID) authentication.getPrincipal();
@@ -109,6 +112,7 @@ public class AuthService {
         return userMapper.toDto(user);
     }
 
+    @Transactional(readOnly = true)
     public AuthResult refresh(String refreshToken){
        if(!jwtService.isTokenValid(refreshToken)){
            throw new IllegalArgumentException("Refresh token is invalid");
@@ -123,6 +127,7 @@ public class AuthService {
        return new AuthResult(accessToken, newRefreshToken, user.getId());
     }
 
+    @Transactional
     public String handleEmailVerification(String rawToken){
         VerificationToken token = verificationTokenService.validateToken(rawToken, TokenType.EMAIL_VERIFY);
         var user = userRepository.findById(token.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
@@ -153,6 +158,7 @@ public class AuthService {
         return "Email verification successful";
     }
 
+    @Transactional(readOnly = true)
     public String requestPasswordReset(String email,String ip){
         String key = ip + "_" + email;
         User user = userRepository.findByEmail(email).orElse(null);

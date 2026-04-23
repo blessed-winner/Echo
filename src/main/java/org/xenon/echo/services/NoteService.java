@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.*;
 import org.xenon.echo.entities.Note;
 import org.xenon.echo.entities.Tag;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class NoteService {
     private final UserRepository userRepository;
     private final NoteMapper noteMapper;
@@ -67,6 +69,7 @@ public class NoteService {
 
     }
 
+    @Transactional(readOnly = true)
     public Page<NoteDto> getAllNotes(int page, int size){
         UUID userId = getCurrentUser();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -74,6 +77,7 @@ public class NoteService {
         return notesPage.map(noteMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     public NoteDto getNote(Long id){
         UUID userId = getCurrentUser();
         var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
@@ -118,6 +122,7 @@ public class NoteService {
         noteRepository.delete(note);
     }
 
+    @Transactional(readOnly = true)
     public NoteSummaryDto getNoteSummary(Long id){
         UUID userId = getCurrentUser();
         var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
@@ -133,6 +138,7 @@ public class NoteService {
         return dto;
     }
 
+    @Transactional(readOnly = true)
     public Page<MemoryItemDto> getDueMemoryItemsPerNote(Long id, int page, int size){
         UUID userId = getCurrentUser();
         var note = noteRepository.findById(id).orElseThrow(()->new RuntimeException("Note Not Found"));
@@ -144,6 +150,7 @@ public class NoteService {
         return memoryItemsPage.map(memoryItemMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     public Page<NoteDto> searchNotes(String query, int page, int size){
         UUID userId = getCurrentUser();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());

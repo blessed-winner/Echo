@@ -2,6 +2,7 @@ package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.entities.VerificationToken;
 import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.repositories.VerificationTokenRepository;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class VerificationTokenService {
     private final VerificationTokenRepository verificationTokenRepository;
     private final TokenUtil tokenUtil;
@@ -32,6 +34,7 @@ public class VerificationTokenService {
         return rawToken;
     }
 
+    @Transactional(readOnly = true)
     public VerificationToken validateToken(String rawToken, TokenType expectedType){
         String hash = tokenUtil.hashToken(rawToken);
         var token = verificationTokenRepository.findByTokenHash(hash).orElseThrow(()->new RuntimeException("Token not found"));

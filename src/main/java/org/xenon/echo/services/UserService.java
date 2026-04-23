@@ -2,6 +2,7 @@ package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.UserDto;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.entities.User;
@@ -15,10 +16,14 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
+
   private List<User> users;
+
+  @Transactional(readOnly = true)
   public List<UserDto> getAllUsers(Role role, UUID excludeUserId){
       if(role != null){
           users = userRepository.findByRoleAndIdNot(role,excludeUserId);
@@ -31,6 +36,7 @@ public class UserService {
               .collect(Collectors.toList());
   }
 
+  @Transactional(readOnly = true)
   public UserDto getUserById(UUID id){
       var user = userRepository.findById(id).orElse(null);
       if(user == null){

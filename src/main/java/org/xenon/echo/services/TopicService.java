@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.*;
 import org.xenon.echo.entities.Topic;
 import org.xenon.echo.entities.User;
@@ -43,6 +44,7 @@ public class TopicService {
         return (UUID) authentication.getPrincipal();
     }
 
+    @Transactional
   public TopicDto createTopic(TopicRequest topicRequest){
       UUID userId = getCurrentUser();
       User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -73,6 +75,7 @@ public class TopicService {
       return topicMapper.toDto(topic);
   }
 
+  @Transactional
   public TopicDto updateTopic(Long id, TopicUpdateRequest request){
       UUID userId = getCurrentUser();
       var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));
@@ -85,6 +88,7 @@ public class TopicService {
       return topicMapper.toDto(topicRepository.save(topic));
   }
 
+  @Transactional
   public void deleteTopic(Long id){
       UUID userId = getCurrentUser();
         var topic = topicRepository.findById(id).orElseThrow(()->new RuntimeException("Topic not found"));

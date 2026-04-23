@@ -1,5 +1,6 @@
 package org.xenon.echo.services;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.xenon.echo.entities.AuditLog;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class AuditLogService {
     private final AuditLogRepository auditLogRepository;
     public void log(UUID userId, AuditAction action, String ip,boolean success, String failureReason, String metadata){

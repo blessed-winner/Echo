@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.*;
 import org.xenon.echo.entities.*;
 import org.xenon.echo.enums.RescheduleType;
@@ -30,6 +31,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class MemoryItemService {
     private final MemoryItemRepository memoryItemRepository;
     private final UserRepository userRepository;
@@ -77,12 +79,14 @@ public class MemoryItemService {
          return memoryItemMapper.toDto(memoryItem);
     }
 
+    @Transactional(readOnly = true)
     public Page<MemoryItemDto> getAllMemoryItems(UUID userId,int page, int size){
         Pageable pageable = PageRequest.of(page,size, Sort.by("nextReviewDate").ascending());
         Page<MemoryItem> memoryItemsPage = memoryItemRepository.findAllByUserId(userId,pageable);
         return memoryItemsPage.map(memoryItemMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
     public MemoryItemDto getMemoryItem(Long memoryId){
         var memoryItem = memoryItemRepository.findById(memoryId).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
         UUID userId = getCurrentUser();
@@ -141,6 +145,7 @@ public class MemoryItemService {
          return memoryItemMapper.toDto(memoryItem);
     }
 
+    @Transactional(readOnly = true)
     public Page<MemoryItemDto> getDueMemoryItems(int limit, Long tagId){
         int safeLimit = Math.min(limit,50);
         UUID userId = getCurrentUser();
@@ -190,6 +195,7 @@ public class MemoryItemService {
         item.setLastReviewed(LocalDateTime.now());
     }
 
+    @Transactional(readOnly = true)
     public MemoryStatsDto getStats(){
         UUID userId = getCurrentUser();
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
