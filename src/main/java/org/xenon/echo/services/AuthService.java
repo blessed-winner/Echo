@@ -61,7 +61,7 @@ public class AuthService {
             if(!user.isVerified()){
                 auditLogService.log(
                         user.getId(),
-                        AuditAction.LOGIN,
+                        AuditAction.LOGIN_BLOCKED_UNVERIFIED,
                         ip,
                         false,
                         "User not verified",
@@ -71,7 +71,7 @@ public class AuthService {
             }
             auditLogService.log(
                     user.getId(),
-                    AuditAction.LOGIN,
+                    AuditAction.LOGIN_SUCCESS,
                     ip,
                     true,
                     null,
@@ -131,7 +131,7 @@ public class AuthService {
         if(user.isVerified()){
             auditLogService.log(
                     user.getId(),
-                    AuditAction.EMAIL_VERIFICATION,
+                    AuditAction.EMAIL_VERIFICATION_ALREADY_DONE,
                     null,
                     false,
                     "User already verified",
@@ -175,7 +175,7 @@ public class AuthService {
         if(!user.isVerified()){
             auditLogService.log(
                     user.getId(),
-                    AuditAction.PASSWORD_RESET_REQUEST,
+                    AuditAction.PASSWORD_RESET_REQUEST_FAILED,
                     ip,
                     false,
                     "User not verified",
@@ -186,7 +186,7 @@ public class AuthService {
 
         auditLogService.log(
                 user.getId(),
-                AuditAction.PASSWORD_RESET_REQUEST,
+                AuditAction.PASSWORD_RESET_REQUEST_SUCCESS,
                 ip,
                 true,
                 null,
@@ -203,7 +203,7 @@ public class AuthService {
         User user = userRepository.findById(token.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
         auditLogService.log(
                 user.getId(),
-                AuditAction.PASSWORD_RESET,
+                AuditAction.PASSWORD_RESET_SUCCESS,
                 null,
                 true,
                 null,
