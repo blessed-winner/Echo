@@ -129,6 +129,14 @@ public class AuthService {
         VerificationToken token = verificationTokenService.validateToken(rawToken, TokenType.EMAIL_VERIFY);
         var user = userRepository.findById(token.getUserId()).orElseThrow(()->new UserNotFoundException("User not found"));
         if(user.isVerified()){
+            auditLogService.log(
+                    user.getId(),
+                    AuditAction.EMAIL_VERIFICATION,
+                    null,
+                    false,
+                    "User already verified",
+                    null
+            );
             return "User already verified";
         }
         user.setVerified(true);
@@ -136,18 +144,33 @@ public class AuthService {
         verificationTokenService.markAsUsed(token);
         tokenRepository.deleteByUserIdAndTokenType(user.getId(),TokenType.EMAIL_VERIFY);
 
+        auditLogService.log(
+                user.getId(),
+                AuditAction.EMAIL_VERIFICATION_SUCCESS,
+                null,
+                true,
+                null,
+                null
+        );
         return "Email verification successful";
     }
 
     public String requestPasswordReset(String email,String ip){
         String key = ip + "_" + email;
-
-        if(!rateLimiterService.tryConsumeReset(key)){
-            throw new RuntimeException("Too many reset attempts.Try again later");
-        }
         User user = userRepository.findByEmail(email).orElse(null);
         if(user == null){
             return "If user exists, a reset email has been sent";
+        }
+        if(!rateLimiterService.tryConsumeReset(key)){
+            auditLogService.log(
+                    user.getId(),
+                    AuditAction.RATE_LIMIT_HIT,
+                    ip,
+                    false,
+                    "Too many reset attempts",
+                    null
+            );
+            throw new RuntimeException("Too many reset attempts.Try again later");
         }
         if(!user.isVerified()){
             auditLogService.log(
