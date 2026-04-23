@@ -1,7 +1,7 @@
 -- V7__create_audit_log_relation.sql
 
 CREATE TABLE audit_log (
-                           id UUID PRIMARY KEY
+                           id UUID PRIMARY KEY,
 
                            user_id UUID NULL,
 

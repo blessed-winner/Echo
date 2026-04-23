@@ -17,6 +17,7 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "user_id")
     private UUID userId;
 
     @Enumerated(EnumType.STRING)
