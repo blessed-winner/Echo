@@ -29,9 +29,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var authHeader = request.getHeader("Authorization");
+        String path = request.getServletPath();
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             filterChain.doFilter(request,response);
             return;
+        }
+
+        if(path.equals("/auth/refresh")){
+            filterChain.doFilter(request,response);
         }
         String token = authHeader.replace("Bearer ", "");
         try{
