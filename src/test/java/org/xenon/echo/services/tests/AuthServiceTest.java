@@ -8,11 +8,14 @@ import org.xenon.echo.dtos.LoginRequest;
 import org.xenon.echo.dtos.RegisterUserRequest;
 import org.xenon.echo.entities.User;
 import org.xenon.echo.enums.AuditAction;
+import org.xenon.echo.enums.Role;
+import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.mappers.UserMapper;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.repositories.VerificationTokenRepository;
 import org.xenon.echo.services.*;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -93,9 +96,11 @@ public class AuthServiceTest {
         );
     }
 
+    @Test
     void shouldRegisterSuccessfully(){
         var request = new RegisterUserRequest("Test Dude","test@mail.com","pass");
         User user = new User();
+
         user.setId(UUID.randomUUID());
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -104,11 +109,15 @@ public class AuthServiceTest {
         when(userRepo.existsByEmail(user.getEmail())).thenReturn(false);
         when(userMapper.toEntity(request)).thenReturn(user);
         when(encoder.encode(request.getPassword())).thenReturn("encoded");
+        when(tokenService.createToken(user.getId(), TokenType.EMAIL_VERIFY, Duration.ofMinutes(15))).thenReturn("token123");
 
         service.register(request);
 
         assertEquals("encoded",user.getPassword());
 
         verify(userRepo).save(user);
+        verify(emailService).sendVerificationEmail("blessedwinner66@gmail.com","token123");
+
+        assertEquals(Role.USER,user.getRole());
     }
 }
