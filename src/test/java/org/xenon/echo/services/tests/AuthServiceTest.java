@@ -121,10 +121,32 @@ public class AuthServiceTest {
         assertEquals(Role.USER,user.getRole());
     }
 
+    @Test
     void shouldThrowWhenRateLimitExceeded(){
         LoginRequest request = new LoginRequest("test@mail.com","pass");
         String ip = "127.0.0.1";
         when(rateLimiterService.tryConsumeLogin(any())).thenReturn(false);
         assertThrows(RuntimeException.class,()->service.login(request,ip));
+    }
+
+    void shouldFailWhenUserNotVerified(){
+        LoginRequest request = new LoginRequest("test@mail.com","pass");
+        String ip = "127.0.0.1";
+        User user = new User();
+        user.setEmail("test@mail.com");
+        user.setVerified(false);
+
+        when(rateLimiterService.tryConsumeLogin(any())).thenReturn(true);
+        when(userRepo.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+
+        assertThrows(IllegalArgumentException.class,()->service.login(request,ip));
+        verify(auditLogService).log(
+                user.getId(),
+                AuditAction.LOGIN_BLOCKED_UNVERIFIED,
+                ip,
+                false,
+                "User not verified",
+                null
+        );
     }
 }
