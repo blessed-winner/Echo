@@ -100,5 +100,15 @@ public class AuthServiceTest {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
+
+        when(userRepo.existsByEmail(user.getEmail())).thenReturn(false);
+        when(userMapper.toEntity(request)).thenReturn(user);
+        when(encoder.encode(request.getPassword())).thenReturn("encoded");
+
+        service.register(request);
+
+        assertEquals("encoded",user.getPassword());
+
+        verify(userRepo).save(user);
     }
 }
