@@ -120,4 +120,11 @@ public class AuthServiceTest {
 
         assertEquals(Role.USER,user.getRole());
     }
+
+    void shouldThrowWhenRateLimitExceeded(){
+        LoginRequest request = new LoginRequest("test@mail.com","pass");
+        String ip = "127.0.0.1";
+        when(rateLimiterService.tryConsumeLogin(any())).thenReturn(false);
+        assertThrows(RuntimeException.class,()->service.login(request,ip));
+    }
 }
