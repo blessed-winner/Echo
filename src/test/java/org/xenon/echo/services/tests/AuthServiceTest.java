@@ -129,6 +129,7 @@ public class AuthServiceTest {
         assertThrows(RuntimeException.class,()->service.login(request,ip));
     }
 
+    @Test
     void shouldFailWhenUserNotVerified(){
         LoginRequest request = new LoginRequest("test@mail.com","pass");
         String ip = "127.0.0.1";

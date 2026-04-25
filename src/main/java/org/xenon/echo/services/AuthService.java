@@ -21,7 +21,6 @@ import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.repositories.VerificationTokenRepository;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
