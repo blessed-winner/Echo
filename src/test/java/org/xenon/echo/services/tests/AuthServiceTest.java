@@ -98,9 +98,11 @@ public class AuthServiceTest {
 
     @Test
     void shouldRegisterSuccessfully(){
-        var request = new RegisterUserRequest("Test Dude","test@mail.com","pass");
+        var request = new RegisterUserRequest();
+        request.setName("Test Dude");
+        request.setEmail("test@mail.com");
+        request.setPassword("pass");
         User user = new User();
-
         user.setId(UUID.randomUUID());
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -150,4 +152,7 @@ public class AuthServiceTest {
                 null
         );
     }
+
+    void shouldThrowWhenEmailAlreadyExists(){}
+    RegisterUserRequest request = new RegisterUserRequest();
 }

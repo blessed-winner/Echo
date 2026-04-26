@@ -6,11 +6,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RegisterUserRequest {
     @NotBlank(message = "Name is required")
     private String name;
