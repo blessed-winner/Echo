@@ -153,6 +153,17 @@ public class AuthServiceTest {
         );
     }
 
-    void shouldThrowWhenEmailAlreadyExists(){}
-    RegisterUserRequest request = new RegisterUserRequest();
+    @Test
+    void shouldThrowWhenEmailAlreadyExists() {
+        RegisterUserRequest request = new RegisterUserRequest();
+        request.setEmail("test@mail.com");
+
+        when(userRepo.existsByEmail(request.getEmail())).thenReturn(true);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,()->service.register(request));
+        assertEquals("Email already exists",ex.getMessage());
+
+        verify(userRepo, never()).save(any());
+        verify(emailService, never()).sendVerificationEmail(any(),any());
+        verify(tokenService, never()).createToken(any(),any(),any());
+    }
 }
