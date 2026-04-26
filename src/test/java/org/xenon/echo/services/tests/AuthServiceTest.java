@@ -16,6 +16,7 @@ import org.xenon.echo.mappers.UserMapper;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.repositories.VerificationTokenRepository;
 import org.xenon.echo.services.*;
+import org.xenon.echo.utils.TokenUtil;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -35,7 +36,6 @@ public class AuthServiceTest {
     private EmailService emailService;
     private UserMapper userMapper;
     private PasswordEncoder encoder;
-
     private AuthService service;
 
     @BeforeEach
