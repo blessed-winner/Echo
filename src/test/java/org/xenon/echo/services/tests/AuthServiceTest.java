@@ -192,4 +192,33 @@ public class AuthServiceTest {
         verify(emailService, never()).sendVerificationEmail(any(),any());
         verify(tokenService, never()).createToken(any(),any(),any());
     }
+
+    @Test
+    void shouldRequestResetSuccessfully(){
+        String email = "test@mail.com";
+        String ip = "127.0.0.1";
+
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setEmail(email);
+        user.setVerified(true);
+
+        when(userRepo.findByEmail(email)).thenReturn(Optional.of(user));
+        when(rateLimiterService.tryConsumeReset(any())).thenReturn(true);
+        when(tokenService.createToken(any(),any(),any())).thenReturn("token123");
+
+        String result = service.requestPasswordReset(email,ip);
+        assertEquals("Password reset email sent",result);
+
+        verify(auditLogService).log(
+                user.getId(),
+                AuditAction.PASSWORD_RESET_REQUEST_SUCCESS,
+                ip,
+                true,
+                null,
+                null
+        );
+
+        verify(emailService).sendPasswordResetEmail(email,"token123");
+    }
 }
