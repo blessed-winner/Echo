@@ -153,6 +153,10 @@ public class AuthServiceTest {
         );
     }
 
+    void shouldThrowWhenCredentialsInvalid(){
+        LoginRequest request = new LoginRequest();
+    }
+
     @Test
     void shouldThrowWhenEmailAlreadyExists() {
         RegisterUserRequest request = new RegisterUserRequest();
