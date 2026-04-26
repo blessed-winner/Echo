@@ -160,6 +160,7 @@ public class AuthServiceTest {
         );
     }
 
+    @Test
     void shouldThrowWhenCredentialsInvalid(){
         LoginRequest request = new LoginRequest();
         request.setEmail("test@mail.com");
@@ -173,10 +174,9 @@ public class AuthServiceTest {
                 .authenticate(any());
 
         assertThrows(BadCredentialsException.class,()->service.login(request,ip));
-        verify(userRepo,never()).findByEmail(request.getEmail());
-        verify(auditLogService,never()).log(any(),eq(AuditAction.LOGIN_SUCCESS),any(),any(),any(),any());
-        verify(jwtService,never()).generateAccessToken(any());
-        verify(jwtService,never()).generateRefreshToken(any());
+        verifyNoInteractions(auditLogService);
+        verifyNoInteractions(userRepo);
+        verifyNoInteractions(tokenService);
     }
 
     @Test
