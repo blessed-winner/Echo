@@ -2,12 +2,14 @@ package org.xenon.echo.services.tests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.xenon.echo.dtos.LoginRequest;
 import org.xenon.echo.dtos.RegisterUserRequest;
 import org.xenon.echo.entities.User;
+import org.xenon.echo.entities.VerificationToken;
 import org.xenon.echo.enums.AuditAction;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.enums.TokenType;
@@ -220,5 +222,40 @@ public class AuthServiceTest {
         );
 
         verify(emailService).sendPasswordResetEmail(email,"token123");
+    }
+
+    @Test
+    void shouldResetPasswordSuccessfully(){
+       String rawToken = "token123";
+       String newPassword = "newPass";
+
+        VerificationToken token = new VerificationToken();
+        UUID userId = UUID.randomUUID();
+        token.setUserId(userId);
+
+        User user = new User();
+        user.setId(userId);
+        user.setPassword("oldEncodedPassword");
+
+
+        when(tokenService.validateToken(rawToken,any())).thenReturn(token);
+        when(userRepo.findById(token.getUserId())).thenReturn(Optional.of(user));
+        when(encoder.encode(newPassword)).thenReturn("newEncodedPassword");
+
+        var result = service.resetPassword(rawToken,newPassword);
+        assertEquals("Password reset successful",result);
+        assertEquals("newEncodedPassword",user.getPassword());
+
+        verify(userRepo).save(user);
+        verify(tokenService).markAsUsed(token);
+        verify(tokenRepo).deleteByUserIdAndTokenType(userId,token.getTokenType());
+        verify(auditLogService).log(
+                userId,
+                AuditAction.PASSWORD_RESET_SUCCESS,
+                null,
+                true,
+                null,
+                null
+        );
     }
 }
