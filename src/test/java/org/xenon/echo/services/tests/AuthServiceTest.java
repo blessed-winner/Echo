@@ -3,6 +3,7 @@ package org.xenon.echo.services.tests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.xenon.echo.dtos.LoginRequest;
 import org.xenon.echo.dtos.RegisterUserRequest;
@@ -66,7 +67,9 @@ public class AuthServiceTest {
 
     @Test
     void shouldLoginSuccessfully(){
-        var request = new LoginRequest("test@mail.com","pass");
+        var request = new LoginRequest();
+        request.setEmail("test@mail.com");
+        request.setPassword("pass");
         String ip = "127.0.0.1";
         UUID userId = UUID.randomUUID();
 
@@ -125,7 +128,9 @@ public class AuthServiceTest {
 
     @Test
     void shouldThrowWhenRateLimitExceeded(){
-        LoginRequest request = new LoginRequest("test@mail.com","pass");
+        LoginRequest request = new LoginRequest();
+        request.setEmail("test@mail.com");
+        request.setPassword("pass");
         String ip = "127.0.0.1";
         when(rateLimiterService.tryConsumeLogin(any())).thenReturn(false);
         assertThrows(RuntimeException.class,()->service.login(request,ip));
@@ -133,7 +138,9 @@ public class AuthServiceTest {
 
     @Test
     void shouldFailWhenUserNotVerified(){
-        LoginRequest request = new LoginRequest("test@mail.com","pass");
+        LoginRequest request = new LoginRequest();
+        request.setEmail("test@mail.com");
+        request.setPassword("pass");
         String ip = "127.0.0.1";
         User user = new User();
         user.setEmail("test@mail.com");
@@ -155,6 +162,21 @@ public class AuthServiceTest {
 
     void shouldThrowWhenCredentialsInvalid(){
         LoginRequest request = new LoginRequest();
+        request.setEmail("test@mail.com");
+        request.setPassword("wrongpass");
+        String ip = "127.0.0.1";
+
+        when(rateLimiterService.tryConsumeLogin(any())).thenReturn(true);
+
+        doThrow(new BadCredentialsException("Bad credentials"))
+                .when(manager)
+                .authenticate(any());
+
+        assertThrows(BadCredentialsException.class,()->service.login(request,ip));
+        verify(userRepo,never()).findByEmail(request.getEmail());
+        verify(auditLogService,never()).log(any(),eq(AuditAction.LOGIN_SUCCESS),any(),any(),any(),any());
+        verify(jwtService,never()).generateAccessToken(any());
+        verify(jwtService,never()).generateRefreshToken(any());
     }
 
     @Test
