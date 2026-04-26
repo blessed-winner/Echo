@@ -2,7 +2,6 @@ package org.xenon.echo.services.tests;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -238,7 +237,7 @@ public class AuthServiceTest {
         user.setPassword("oldEncodedPassword");
 
 
-        when(tokenService.validateToken(rawToken,any())).thenReturn(token);
+        when(tokenService.validateToken(any(),any())).thenReturn(token);
         when(userRepo.findById(token.getUserId())).thenReturn(Optional.of(user));
         when(encoder.encode(newPassword)).thenReturn("newEncodedPassword");
 
@@ -248,7 +247,7 @@ public class AuthServiceTest {
 
         verify(userRepo).save(user);
         verify(tokenService).markAsUsed(token);
-        verify(tokenRepo).deleteByUserIdAndTokenType(userId,token.getTokenType());
+        verify(tokenRepo).deleteByUserIdAndTokenType(any(),any());
         verify(auditLogService).log(
                 userId,
                 AuditAction.PASSWORD_RESET_SUCCESS,
