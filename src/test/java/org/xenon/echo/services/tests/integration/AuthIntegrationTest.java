@@ -1,6 +1,4 @@
 package org.xenon.echo.services.tests.integration;
-
-import io.jsonwebtoken.security.Password;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,8 +9,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.xenon.echo.entities.User;
 import org.xenon.echo.enums.Role;
+import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.services.EmailService;
+import org.xenon.echo.services.VerificationTokenService;
+import org.xenon.echo.utils.TokenUtil;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -36,7 +37,12 @@ public class AuthIntegrationTest {
         @MockitoBean
         private EmailService emailService;
 
-        @BeforeEach
+        @Autowired
+        private TokenUtil tokenUtil;
+    @Autowired
+    private VerificationTokenService verificationTokenService;
+
+    @BeforeEach
         void setup(){
             userRepository.deleteAll();
         }
@@ -112,5 +118,24 @@ public class AuthIntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.accessToken").exists())
                     .andExpect(jsonPath("$.refreshToken").exists());
+        }
+
+        @Test
+        void shouldVerifyEmailSuccessfully() throws Exception{
+            User user = new User();
+            user.setEmail("test@mail.com");
+            user.setPassword(passwordEncoder.encode("Password123"));
+            user.setRole(Role.USER);
+            user.setVerified(false);
+
+            userRepository.save(user);
+
+            String rawToken = tokenUtil.generateRawToken();
+
+            mockMvc.perform(
+                    get("/auth/verify?token="+verificationTokenService.validateToken(rawToken, TokenType.EMAIL_VERIFY))
+                            .contentType("application/json")
+                            .content(rawToken)
+            ).andExpect(status().isOk());
         }
 }
