@@ -1,5 +1,6 @@
 package org.xenon.echo.config;
 
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,5 +16,5 @@ public class JwtConfig {
     private int accessTokenExpiration;
     private int refreshTokenExpiration;
 
-    public SecretKey getSecretKey(){return Keys.hmacShaKeyFor(secret.getBytes());}
+    public SecretKey getSecretKey(){return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret))}
 }
