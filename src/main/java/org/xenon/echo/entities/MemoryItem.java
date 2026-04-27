@@ -30,6 +30,7 @@ public class MemoryItem {
 
     private LocalDateTime nextReviewDate;
 
+    @Column(name = "review_interval")
     private int interval;
 
     private double easeFactor;

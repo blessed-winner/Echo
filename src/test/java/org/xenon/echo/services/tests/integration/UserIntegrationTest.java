@@ -25,7 +25,7 @@ public class UserIntegrationTest {
 
     @BeforeEach
     void setup(){
-        User user = new User();
+        user = new User();
         user.setEmail("test@mail.com");
         user.setPassword(passwordEncoder.encode("password"));
         user.setVerified(false);

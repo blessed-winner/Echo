@@ -5,12 +5,11 @@
 -- =========================
 -- MEMORY ITEMS (update)
 -- =========================
-ALTER TABLE memory_items
-    ADD COLUMN next_review_date TIMESTAMP,
-    ADD COLUMN interval INT DEFAULT 1,
-    ADD COLUMN ease_factor FLOAT DEFAULT 2.5,
-    ADD COLUMN review_count INT DEFAULT 0,
-    ADD COLUMN note_id BIGINT;
+ALTER TABLE memory_items ADD COLUMN next_review_date TIMESTAMP;
+ALTER TABLE memory_items ADD COLUMN review_interval INT DEFAULT 1;
+ALTER TABLE memory_items ADD COLUMN ease_factor FLOAT DEFAULT 2.5;
+ALTER TABLE memory_items ADD COLUMN review_count INT DEFAULT 0;
+ALTER TABLE memory_items ADD COLUMN note_id BIGINT;
 
 ALTER TABLE memory_items
     ADD CONSTRAINT fk_memory_items_note
