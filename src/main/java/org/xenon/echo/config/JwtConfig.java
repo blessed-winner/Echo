@@ -16,5 +16,6 @@ public class JwtConfig {
     private int accessTokenExpiration;
     private int refreshTokenExpiration;
 
-    public SecretKey getSecretKey(){return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));}
+    String normalized = secret.replace("-","+").replace("_","/");
+    public SecretKey getSecretKey(){return Keys.hmacShaKeyFor(Decoders.BASE64.decode(normalized));}
 }
