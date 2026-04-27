@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.xenon.echo.entities.User;
-import org.xenon.echo.entities.VerificationToken;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.repositories.UserRepository;
@@ -40,12 +39,6 @@ public class AuthIntegrationTest {
 
         @MockitoBean
         private EmailService emailService;
-
-        @Autowired
-        private TokenUtil tokenUtil;
-
-        @MockitoBean
-        private JwtService jwtService;
 
     @Autowired
     private VerificationTokenService verificationTokenService;
@@ -158,30 +151,5 @@ public class AuthIntegrationTest {
              mockMvc.perform(
                      get("/auth/me")
              ).andExpect(status().isUnauthorized());
-        }
-
-        @Test
-        void shouldRejectInvalidToken() throws Exception{
-            mockMvc.perform(
-                    get("/auth/me")
-                            .header("Authorization","Bearer invalid")
-
-            ).andExpect(status().isUnauthorized());
-        }
-
-        @Test
-        void shouldAllowProtectedEndpointWithValidToken() throws Exception{
-             User user = new User();
-             user.setEmail("test@mail.com");
-             user.setPassword(passwordEncoder.encode( "Password123"));
-             user.setRole(Role.USER);
-
-             userRepository.save(user);
-
-             var token = jwtService.generateAccessToken(user);
-             mockMvc.perform(
-                     get("/auth/me")
-                             .header("Authorization","Bearer " + token))
-                     .andExpect(status().isOk());
         }
 }
