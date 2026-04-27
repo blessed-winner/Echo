@@ -27,3 +27,7 @@ jobs:
 
       - name: Run tests
         run: mvn clean test
+        env:
+          url: ${JDBC_DATABASE_URL:${DB_URL}}
+          username: ${DB_USERNAME}
+          password: ${DB_PASSWORD}
