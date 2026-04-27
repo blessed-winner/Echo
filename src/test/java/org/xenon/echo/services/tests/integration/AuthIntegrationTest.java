@@ -8,12 +8,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.xenon.echo.entities.User;
+import org.xenon.echo.entities.VerificationToken;
 import org.xenon.echo.enums.Role;
 import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.services.EmailService;
 import org.xenon.echo.services.VerificationTokenService;
 import org.xenon.echo.utils.TokenUtil;
+
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -130,12 +133,18 @@ public class AuthIntegrationTest {
 
             userRepository.save(user);
 
-            String rawToken = tokenUtil.generateRawToken();
+            String token = verificationTokenService.createToken(
+                    user.getId(),
+                    TokenType.EMAIL_VERIFY,
+                    Duration.ofDays(1)
+            );
 
             mockMvc.perform(
-                    get("/auth/verify?token="+verificationTokenService.validateToken(rawToken, TokenType.EMAIL_VERIFY))
-                            .contentType("application/json")
-                            .content(rawToken)
+                    get("/auth/verify")
+                            .param("token",token)
             ).andExpect(status().isOk());
+            User fromDb = userRepository.findByEmail("test@mail.com").orElse(null);
+            assertNotNull(fromDb);
+            assertTrue(fromDb.isVerified());
         }
 }
