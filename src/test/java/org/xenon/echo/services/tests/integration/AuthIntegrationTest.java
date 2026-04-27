@@ -86,4 +86,31 @@ public class AuthIntegrationTest {
                             .content(request)
             ).andExpect(status().isBadRequest());
         }
+
+        @Test
+        void shouldLoginSuccessfully() throws Exception {
+            User user = new User();
+            user.setEmail("test@mail.com");
+            user.setPassword(passwordEncoder.encode("Password123"));
+            user.setVerified(true);
+            user.setRole(Role.USER);
+
+            userRepository.save(user);
+
+            String request = """
+            {
+              "email":"test@mail.com",
+              "password":"Password123"
+            }
+            """;
+
+            mockMvc.perform(
+                    post("/auth/login")
+                            .contentType("application/json")
+                            .content(request)
+                    )
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.accessToken").exists())
+                    .andExpect(jsonPath("$.refreshToken").exists());
+        }
 }
