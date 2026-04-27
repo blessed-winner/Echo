@@ -13,6 +13,7 @@ import org.xenon.echo.enums.Role;
 import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.services.EmailService;
+import org.xenon.echo.services.JwtService;
 import org.xenon.echo.services.VerificationTokenService;
 import org.xenon.echo.utils.TokenUtil;
 
@@ -42,6 +43,10 @@ public class AuthIntegrationTest {
 
         @Autowired
         private TokenUtil tokenUtil;
+
+        @MockitoBean
+        private JwtService jwtService;
+
     @Autowired
     private VerificationTokenService verificationTokenService;
 
@@ -162,5 +167,21 @@ public class AuthIntegrationTest {
                             .header("Authorization","Bearer invalid")
 
             ).andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        void shouldAllowProtectedEndpointWithValidToken() throws Exception{
+             User user = new User();
+             user.setEmail("test@mail.com");
+             user.setPassword(passwordEncoder.encode( "Password123"));
+             user.setRole(Role.USER);
+
+             userRepository.save(user);
+
+             var token = jwtService.generateAccessToken(user);
+             mockMvc.perform(
+                     get("/auth/me")
+                             .header("Authorization","Bearer " + token))
+                     .andExpect(status().isOk());
         }
 }
