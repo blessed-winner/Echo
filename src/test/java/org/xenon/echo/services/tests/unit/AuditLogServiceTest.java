@@ -1,4 +1,4 @@
-package org.xenon.echo.services.tests;
+package org.xenon.echo.services.tests.unit;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
