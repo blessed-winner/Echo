@@ -147,4 +147,11 @@ public class AuthIntegrationTest {
             assertNotNull(fromDb);
             assertTrue(fromDb.isVerified());
         }
+
+        @Test
+        void shouldRejectProtectedEndpointWithoutToken() throws Exception {
+             mockMvc.perform(
+                     get("/auth/me")
+             ).andExpect(status().isUnauthorized());
+        }
 }
