@@ -154,4 +154,13 @@ public class AuthIntegrationTest {
                      get("/auth/me")
              ).andExpect(status().isUnauthorized());
         }
+
+        @Test
+        void shouldRejectInvalidToken() throws Exception{
+            mockMvc.perform(
+                    get("/auth/me")
+                            .header("Authorization","Bearer invalid")
+
+            ).andExpect(status().isUnauthorized());
+        }
 }
