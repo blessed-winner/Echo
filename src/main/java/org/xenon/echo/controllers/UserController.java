@@ -15,13 +15,14 @@ import org.xenon.echo.services.UserService;
 import java.util.List;
 import java.util.UUID;
 
-@Tag(name = "User")
+@Tag(name = "Admin")
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/admin")
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
-    @GetMapping
+
+    @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers(
             @RequestParam(required = false) Role role
     ) {
@@ -34,7 +35,6 @@ public class UserController {
     public ResponseEntity<UserDto> getUserById(@PathVariable UUID id){
         return ResponseEntity.ok(userService.getUserById(id));
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id){
         userService.deleteUser(id);
@@ -47,5 +47,10 @@ public class UserController {
             @RequestBody UserUpdateRequest request
             ){
         return ResponseEntity.ok(userService.updateUser(id, request));
+    }
+
+    @PutMapping("/{id}/enable")
+    public ResponseEntity<String> enableUser(@PathVariable String id){
+        return ResponseEntity.ok("User enabled");
     }
 }

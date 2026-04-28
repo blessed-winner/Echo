@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.xenon.echo.enums.Role;
 import org.xenon.echo.filters.JwtAuthenticationFilter;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.services.JwtService;
@@ -64,6 +65,7 @@ public class SecurityConfig {
                                                            .requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll()
                                                            .requestMatchers(HttpMethod.GET,"/auth/forgot-password").permitAll()
                                                            .requestMatchers(HttpMethod.POST,"/auth/reset").permitAll()
+                                                           .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                                            .anyRequest().authenticated()
                 ).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c->{

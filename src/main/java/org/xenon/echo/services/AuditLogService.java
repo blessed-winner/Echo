@@ -1,8 +1,8 @@
 package org.xenon.echo.services;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.entities.AuditLog;
 import org.xenon.echo.enums.AuditAction;
 import org.xenon.echo.repositories.AuditLogRepository;

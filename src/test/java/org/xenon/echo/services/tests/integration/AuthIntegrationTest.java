@@ -12,9 +12,7 @@ import org.xenon.echo.enums.Role;
 import org.xenon.echo.enums.TokenType;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.services.EmailService;
-import org.xenon.echo.services.JwtService;
 import org.xenon.echo.services.VerificationTokenService;
-import org.xenon.echo.utils.TokenUtil;
 
 import java.time.Duration;
 

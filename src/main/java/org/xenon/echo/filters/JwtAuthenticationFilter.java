@@ -1,15 +1,11 @@
 package org.xenon.echo.filters;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,10 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.xenon.echo.services.JwtService;
 
 import java.io.IOException;
-import java.security.Security;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -56,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        } catch (JwtException | IllegalArgumentException e) {
+        }catch (JwtException | IllegalArgumentException e){
             SecurityContextHolder.clearContext();
             return;
         }
