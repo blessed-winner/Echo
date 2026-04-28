@@ -1,6 +1,7 @@
 package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
+import org.mapstruct.control.MappingControl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.UserDto;
@@ -59,12 +60,16 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
-    public String enableUser(UUID userId) {
+    public void enableUser(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
 
         user.setEnabled(true);
+    }
 
-        return "User enabled";
+    public void disableUser(UUID userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User Not Found"));
+        user.setEnabled(false);
     }
 }

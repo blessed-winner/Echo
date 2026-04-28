@@ -50,7 +50,14 @@ public class UserController {
     }
 
     @PutMapping("/{id}/enable")
-    public ResponseEntity<String> enableUser(@PathVariable String id){
-        return ResponseEntity.ok("User enabled");
+    public ResponseEntity<Void> enableUser(@PathVariable UUID id){
+        userService.enableUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/disable")
+    public ResponseEntity<Void> disableUser(@PathVariable UUID id){
+        userService.disableUser(id);
+        return ResponseEntity.noContent().build();
     }
 }
