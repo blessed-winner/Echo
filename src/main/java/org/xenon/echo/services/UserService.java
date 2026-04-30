@@ -1,7 +1,6 @@
 package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
-import org.mapstruct.control.MappingControl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.UserDto;

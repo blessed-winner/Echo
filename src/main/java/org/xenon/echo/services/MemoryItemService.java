@@ -72,9 +72,7 @@ public class MemoryItemService {
              }
              tags.add(tag);
          }
-
-         memoryItemRepository.save(memoryItem);
-
+         memoryItem.setTags(tags);
          return memoryItemMapper.toDto(memoryItem);
     }
 
@@ -116,7 +114,6 @@ public class MemoryItemService {
             }
             memoryItem.setTags(tags);
         }
-        memoryItemRepository.save(memoryItem);
 
         return memoryItemMapper.toDto(memoryItem);
     }
@@ -138,8 +135,6 @@ public class MemoryItemService {
          }
 
          applyReviewLogic(memoryItem,rating);
-
-         memoryItemRepository.save(memoryItem);
 
          return memoryItemMapper.toDto(memoryItem);
     }
@@ -247,6 +242,5 @@ public class MemoryItemService {
        };
 
        memoryItem.setNextReviewDate(newDate);
-       memoryItemRepository.save(memoryItem);
     }
 }

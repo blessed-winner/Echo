@@ -56,7 +56,7 @@ public class TopicService {
       topic.setUser(user);
       topic.setCreatedAt(LocalDateTime.now());
 
-      return topicMapper.toDto(topicRepository.save(topic));
+      return topicMapper.toDto(topic);
   }
 
   public Page<TopicDto> getTopics(int page, int size){
@@ -85,7 +85,7 @@ public class TopicService {
       if(request.getName() != null){topic.setName(request.getName());}
       if(request.getDescription() != null){topic.setDescription(request.getDescription());}
 
-      return topicMapper.toDto(topicRepository.save(topic));
+      return topicMapper.toDto(topic);
   }
 
   @Transactional

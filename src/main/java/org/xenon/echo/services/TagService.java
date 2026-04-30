@@ -49,7 +49,7 @@ public class TagService {
         var tag = tagMapper.toEntity(tagRequest);
         tag.setUser(user);
 
-        return tagMapper.toDto(tagRepository.save(tag));
+        return tagMapper.toDto(tag);
     }
 
     @Transactional(readOnly = true)
@@ -73,7 +73,7 @@ public class TagService {
             throw new ForbiddenException("Cannot update this tag");
         }
         tag.setName(tagRequest.getName());
-        return tagMapper.toDto(tagRepository.save(tag));
+        return tagMapper.toDto(tag);
     }
 
     @Transactional(readOnly = true)

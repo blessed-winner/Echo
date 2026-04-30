@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Transactional
 public class NoteService {
-    private final UserRepository userRepository;
     private final NoteMapper noteMapper;
     private final TopicRepository topicRepository;
     private final NoteRepository noteRepository;
@@ -63,7 +62,6 @@ public class NoteService {
         }
 
         note.setTags(tags);
-        noteRepository.save(note);
 
         return noteMapper.toDto(note);
 
@@ -110,7 +108,7 @@ public class NoteService {
             note.setTags(tags);
         }
 
-        return noteMapper.toDto(noteRepository.save(note));
+        return noteMapper.toDto(note);
     }
 
     public void deleteNote(Long id){
@@ -178,8 +176,6 @@ public class NoteService {
 
             note.getTags().add(tag);
         }
-
-        noteRepository.save(note);
     }
 
     public void removeTagsFromNote(Long id, Set<Long> tagIds) {
@@ -202,6 +198,5 @@ public class NoteService {
                 .collect(Collectors.toSet());
 
         note.getTags().removeAll(tagsToRemove);
-        noteRepository.save(note);
     }
 }
