@@ -71,4 +71,11 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User Not Found"));
         user.setEnabled(false);
     }
+
+    public void changeUserRole(UUID userId){
+        User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User Not Found"));
+        if(user.getRole() == Role.USER){
+            user.setRole(Role.ADMIN);
+        }
+    }
 }

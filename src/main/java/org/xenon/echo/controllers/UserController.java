@@ -60,4 +60,10 @@ public class UserController {
         userService.disableUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/role")
+    public ResponseEntity<Void> toggleAdmin(@PathVariable UUID id){
+        userService.changeUserRole(id);
+        return ResponseEntity.noContent().build();
+    }
 }
