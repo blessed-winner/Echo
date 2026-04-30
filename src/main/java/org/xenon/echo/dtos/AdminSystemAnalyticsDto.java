@@ -6,8 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-public class AnalyticsResponse {
+public class AdminSystemAnalyticsDto {
     private long totalUsers;
     private long activeUsers;
     private long totalNotes;

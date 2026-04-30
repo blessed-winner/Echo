@@ -1,6 +1,7 @@
 package org.xenon.echo.entities;
 
 import jakarta.persistence.*;
+import org.xenon.echo.enums.ReviewRating;
 
 import java.time.LocalDateTime;
 
@@ -16,5 +17,13 @@ public class Review {
     private MemoryItem memoryItem;
 
     private LocalDateTime reviewDate;
-    private int rating; // 1-5
+
+    @Enumerated(EnumType.STRING)
+    private ReviewRating rating;
+
+    private long timeSpentSeconds;
+
+    private int intervalBeforeReview;
+
+    private double easeFactorBefore;
 }
