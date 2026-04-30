@@ -129,7 +129,7 @@ public class MemoryItemService {
         memoryItemRepository.delete(memoryItem);
     }
 
-    public MemoryItemDto review(Long id, ReviewRating rating){
+    public MemoryItemDto review(Long id, ReviewRating rating, long timeSpentSeconds){
          UUID userId = getCurrentUser();
          var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
          if(!memoryItem.getUser().getId().equals(userId)){
