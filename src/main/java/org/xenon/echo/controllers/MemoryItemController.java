@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.xenon.echo.dtos.*;
 import org.xenon.echo.services.MemoryItemService;
+import org.xenon.echo.services.ReviewService;
 
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class MemoryItemController {
     private final MemoryItemService memoryItemService;
+    private final ReviewService reviewService;
     @PostMapping
     public ResponseEntity<MemoryItemDto> createMemoryItem(
             @Valid @RequestBody MemoryItemRequest request,
@@ -90,5 +92,14 @@ public class MemoryItemController {
     ){
         memoryItemService.reschedule(id,request.getType());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/reviews")
+    public ResponseEntity<Page<ReviewDto>> getReviewsPerItem(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(reviewService.getReviewsPerItem(id));
     }
 }
