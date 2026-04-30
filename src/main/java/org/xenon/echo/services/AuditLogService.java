@@ -24,5 +24,7 @@ public class AuditLogService {
         auditLog.setFailureReason(failureReason);
         auditLog.setMetadata(metadata);
         auditLog.setTimestamp(LocalDateTime.now());
+
+        auditLogRepository.save(auditLog);
     }
 }
