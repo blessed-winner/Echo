@@ -80,7 +80,7 @@ public class MemoryItemController {
             @PathVariable Long id,
             @RequestBody ReviewRequest request
     ){
-        return ResponseEntity.ok(memoryItemService.review(id, request.getRating()));
+        return ResponseEntity.ok(memoryItemService.review(id, request.getRating(), request.getTimeSpentSeconds()));
     }
 
     @PostMapping("/{id}/reschedule")

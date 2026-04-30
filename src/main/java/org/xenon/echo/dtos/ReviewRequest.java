@@ -10,4 +10,6 @@ import org.xenon.echo.enums.ReviewRating;
 public class ReviewRequest {
     @NotNull
     private ReviewRating rating;
+    @NotNull
+    private long timeSpentSeconds;
 }
