@@ -90,4 +90,8 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User Not Found"));
         user.setVerified(true);
     }
+
+    public void getSystemAnalytics(){
+
+    }
 }

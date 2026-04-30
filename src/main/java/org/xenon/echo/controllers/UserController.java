@@ -31,17 +31,17 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers(role, myId));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("users/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable UUID id){
         return ResponseEntity.ok(userService.getUserById(id));
     }
-    @DeleteMapping("/{id}")
+    @DeleteMapping("users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id){
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("users/{id}")
     public ResponseEntity<UserDto> updateUser(
             @Valid @PathVariable UUID id,
             @RequestBody UserUpdateRequest request
@@ -49,25 +49,25 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
-    @PutMapping("/{id}/enable")
+    @PutMapping("users/{id}/enable")
     public ResponseEntity<Void> enableUser(@PathVariable UUID id){
         userService.enableUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/disable")
+    @PutMapping("users/{id}/disable")
     public ResponseEntity<Void> disableUser(@PathVariable UUID id){
         userService.disableUser(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/role")
+    @PutMapping("users/{id}/role")
     public ResponseEntity<Void> toggleAdmin(@PathVariable UUID id){
         userService.changeUserRole(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/reset-password")
+    @PutMapping("users/{id}/reset-password")
     public ResponseEntity<Void> resetUserPassword(
             @PathVariable UUID id,
             @RequestBody String newPassword
@@ -76,7 +76,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/force-verify")
+    @PutMapping("users/{id}/force-verify")
     public ResponseEntity<Void> forceVerifyUser(
             @PathVariable UUID id
     ){
