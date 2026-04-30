@@ -50,17 +50,3 @@ CREATE TABLE memory_item_links (
                                            REFERENCES memory_items(id)
                                            ON DELETE CASCADE
 );
-
--- =========================
--- REVIEWS
--- =========================
-CREATE TABLE reviews (
-                         id BIGSERIAL PRIMARY KEY,
-                         memory_item_id BIGINT NOT NULL,
-                         review_date TIMESTAMP NOT NULL,
-                         rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
-                         CONSTRAINT fk_reviews_memory_item
-                             FOREIGN KEY (memory_item_id)
-                                 REFERENCES memory_items(id)
-                                 ON DELETE CASCADE
-);
