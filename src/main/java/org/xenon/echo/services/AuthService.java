@@ -91,6 +91,7 @@ public class AuthService {
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
+        userRepository.save(user);
 
         String token = verificationTokenService.createToken(user.getId(),TokenType.EMAIL_VERIFY,Duration.ofMinutes(15));
         emailService.sendVerificationEmail("blessedwinner66@gmail.com",token);

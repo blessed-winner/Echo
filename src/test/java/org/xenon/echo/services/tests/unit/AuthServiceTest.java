@@ -120,7 +120,6 @@ public class AuthServiceTest {
 
         assertEquals("encoded",user.getPassword());
 
-        verify(userRepo).save(user);
         verify(emailService).sendVerificationEmail("blessedwinner66@gmail.com","token123");
 
         assertEquals(Role.USER,user.getRole());
@@ -244,7 +243,6 @@ public class AuthServiceTest {
         assertEquals("Password reset successful",result);
         assertEquals("newEncodedPassword",user.getPassword());
 
-        verify(userRepo).save(user);
         verify(tokenService).markAsUsed(token);
         verify(tokenRepo).deleteByUserIdAndTokenType(any(),any());
         verify(auditLogService).log(

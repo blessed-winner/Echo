@@ -62,6 +62,7 @@ public class MemoryItemService {
          memoryItem.setEaseFactor(2.5F);
          memoryItem.setReviewCount(0);
          memoryItem.setNextReviewDate(LocalDateTime.now());
+         memoryItemRepository.save(memoryItem);
 
          Set<Tag> tags = new HashSet<>();
 
@@ -73,6 +74,7 @@ public class MemoryItemService {
              tags.add(tag);
          }
          memoryItem.setTags(tags);
+         memoryItemRepository.save(memoryItem); // Ensure tags are saved with the memory item
          return memoryItemMapper.toDto(memoryItem);
     }
 

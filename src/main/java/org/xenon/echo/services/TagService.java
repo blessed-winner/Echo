@@ -48,6 +48,7 @@ public class TagService {
         }
         var tag = tagMapper.toEntity(tagRequest);
         tag.setUser(user);
+        tagRepository.save(tag);
 
         return tagMapper.toDto(tag);
     }

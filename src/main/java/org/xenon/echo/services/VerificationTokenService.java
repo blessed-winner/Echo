@@ -29,6 +29,7 @@ public class VerificationTokenService {
         token.setExpiresAt(LocalDateTime.now().plus(ttl));
         token.setTokenHash(hash);
         token.setTokenType(tokenType);
+        verificationTokenRepository.save(token);
         return rawToken;
     }
 

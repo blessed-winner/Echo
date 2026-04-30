@@ -62,6 +62,7 @@ public class NoteService {
         }
 
         note.setTags(tags);
+        noteRepository.save(note);
 
         return noteMapper.toDto(note);
 
