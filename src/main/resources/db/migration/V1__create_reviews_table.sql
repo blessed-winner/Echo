@@ -5,7 +5,7 @@ CREATE TABLE reviews (
 
                          reviewed_at TIMESTAMP NOT NULL,
 
-                         result VARCHAR(20) NOT NULL,
+                         rating VARCHAR(20) NOT NULL,
 
                          time_spent_seconds BIGINT NOT NULL,
 

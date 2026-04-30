@@ -16,14 +16,19 @@ public class Review {
     @JoinColumn(name = "memory_item_id")
     private MemoryItem memoryItem;
 
+    @Column(name = "reviewed_at")
     private LocalDateTime reviewDate;
+
 
     @Enumerated(EnumType.STRING)
     private ReviewRating rating;
 
+    @Column(name = "time_spent_seconds")
     private long timeSpentSeconds;
 
+    @Column(name = "interval_before_review")
     private int intervalBeforeReview;
 
+    @Column(name = "ease_factor_before")
     private double easeFactorBefore;
 }
