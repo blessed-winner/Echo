@@ -1,6 +1,7 @@
 package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.UserDto;
@@ -21,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public List<UserDto> getAllUsers(Role role, UUID excludeUserId) {
@@ -77,5 +79,15 @@ public class UserService {
         if(user.getRole() == Role.USER){
             user.setRole(Role.ADMIN);
         }
+    }
+
+    public void resetUserPassword(UUID userId, String newPassword){
+        User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User Not Found"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+    }
+
+    public void forceVerify(UUID userId){
+        User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User Not Found"));
+        user.setVerified(true);
     }
 }

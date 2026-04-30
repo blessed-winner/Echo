@@ -66,4 +66,21 @@ public class UserController {
         userService.changeUserRole(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/reset-password")
+    public ResponseEntity<Void> resetUserPassword(
+            @PathVariable UUID id,
+            @RequestBody String newPassword
+    ){
+        userService.resetUserPassword(id, newPassword);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/force-verify")
+    public ResponseEntity<Void> forceVerifyUser(
+            @PathVariable UUID id
+    ){
+        userService.forceVerify(id);
+        return ResponseEntity.noContent().build();
+    }
 }
