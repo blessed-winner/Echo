@@ -16,10 +16,7 @@ import org.xenon.echo.exceptions.ForbiddenException;
 import org.xenon.echo.exceptions.MemoryItemNotFoundException;
 import org.xenon.echo.exceptions.UserNotFoundException;
 import org.xenon.echo.mappers.MemoryItemMapper;
-import org.xenon.echo.repositories.MemoryItemRepository;
-import org.xenon.echo.repositories.NoteRepository;
-import org.xenon.echo.repositories.TagRepository;
-import org.xenon.echo.repositories.UserRepository;
+import org.xenon.echo.repositories.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +34,7 @@ public class MemoryItemService {
     private final NoteRepository noteRepository;
     private final MemoryItemMapper memoryItemMapper;
     private final TagRepository tagRepository;
+    private final ReviewRepository reviewRepository;
 
     private UUID getCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -135,6 +133,16 @@ public class MemoryItemService {
          if(!memoryItem.getUser().getId().equals(userId)){
                 throw new ForbiddenException("Cannot review this memory item");
          }
+
+         Review review = new Review();
+         review.setMemoryItem(memoryItem);
+         review.setReviewDate(LocalDateTime.now());
+         review.setRating(rating);
+         review.setIntervalBeforeReview(memoryItem.getInterval());
+         review.setEaseFactorBefore(memoryItem.getEaseFactor());
+         review.setTimeSpentSeconds(timeSpentSeconds);
+
+         reviewRepository.save(review);
 
          applyReviewLogic(memoryItem,rating);
 

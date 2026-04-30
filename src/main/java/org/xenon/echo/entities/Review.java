@@ -1,12 +1,16 @@
 package org.xenon.echo.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.xenon.echo.enums.ReviewRating;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reviews")
+@Getter
+@Setter
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
