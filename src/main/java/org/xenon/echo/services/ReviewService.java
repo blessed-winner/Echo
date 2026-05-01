@@ -44,10 +44,12 @@ public class ReviewService {
         reviewSummary.setTotalReviews(reviewRepository.countByUserId(userId));
         reviewSummary.setTotalReviewedToday(reviewRepository.countToday(userId, LocalDateTime.now().toLocalDate().atStartOfDay()));
         reviewSummary.setTotalReviewedThisWeek(reviewRepository.countReviewsThisWeek(userId,LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay()));
+        reviewSummary.setSuccessfulReviews(calculateSuccessfulReviews(userId));
+
+        return reviewSummary;
     }
 
-    private double calculateSuccessfulReviews(){
-        UUID userId = getCurrentUser();
+    private double calculateSuccessfulReviews(UUID userId){
         long total = reviewRepository.countByUserId(userId);
         if(total == 0){
             return 0.0;

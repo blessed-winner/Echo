@@ -9,5 +9,5 @@ public class ReviewSummaryDto {
     private long totalReviews;
     private long totalReviewedToday;
     private long totalReviewedThisWeek;
-    private long successfulReviews;
+    private double successfulReviews;
 }
