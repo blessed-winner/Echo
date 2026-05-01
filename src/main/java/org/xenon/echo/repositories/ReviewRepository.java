@@ -25,4 +25,9 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
      SELECT COUNT(r) FROM Review r WHERE r.memoryItem.user.id =:userId AND r.reviewDate >=:startOfWeek
     """)
     long countReviewsThisWeek(UUID userId, LocalDateTime startOfWeek);
+
+    @Query("""
+      SELECT COUNT(r) FROM Review  r WHERE r.memoryItem.user.id =:userId AND r.rating <> org.xenon.echo.enums.ReviewRating.AGAIN AND r.rating <> org.xenon.echo.enums.ReviewRating.HARD
+    """)
+    long countSuccessfulReviews(UUID userId);
 }
