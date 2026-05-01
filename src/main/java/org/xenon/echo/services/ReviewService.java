@@ -8,12 +8,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.echo.dtos.ReviewDto;
+import org.xenon.echo.dtos.ReviewSummaryDto;
 import org.xenon.echo.entities.Review;
 import org.xenon.echo.exceptions.MemoryItemNotFoundException;
 import org.xenon.echo.mappers.ReviewMapper;
 import org.xenon.echo.repositories.MemoryItemRepository;
 import org.xenon.echo.repositories.ReviewRepository;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -35,4 +38,22 @@ public class ReviewService {
        return reviews.map(reviewMapper::toDto);
     }
 
+    public ReviewSummaryDto getReviewStats(){
+        UUID userId = getCurrentUser();
+        ReviewSummaryDto reviewSummary = new ReviewSummaryDto();
+        reviewSummary.setTotalReviews(reviewRepository.countByUserId(userId));
+        reviewSummary.setTotalReviewedToday(reviewRepository.countToday(userId, LocalDateTime.now().toLocalDate().atStartOfDay()));
+        reviewSummary.setTotalReviewedThisWeek(reviewRepository.countReviewsThisWeek(userId,LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay()));
+    }
+
+    private double calculateSuccessfulReviews(){
+        UUID userId = getCurrentUser();
+        long total = reviewRepository.countByUserId(userId);
+        if(total == 0){
+            return 0.0;
+        }
+        double successful = reviewRepository.countSuccessfulReviews(userId);
+
+        return (successful /total) * 100;
+    }
 }
