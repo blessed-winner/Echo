@@ -38,7 +38,7 @@ public class ReviewService {
        return reviews.map(reviewMapper::toDto);
     }
 
-    public ReviewSummaryDto getReviewStats(){
+    public ReviewSummaryDto getReviewSummary(){
         UUID userId = getCurrentUser();
         ReviewSummaryDto reviewSummary = new ReviewSummaryDto();
         reviewSummary.setTotalReviews(reviewRepository.countByUserId(userId));
