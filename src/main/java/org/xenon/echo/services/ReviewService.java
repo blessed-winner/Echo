@@ -34,4 +34,5 @@ public class ReviewService {
        Page<Review> reviews = reviewRepository.findByMemoryItemIdAndMemoryItemUserId(memoryItem.getId(),userId,pageable);
        return reviews.map(reviewMapper::toDto);
     }
+
 }
