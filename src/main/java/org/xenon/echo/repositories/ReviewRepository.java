@@ -12,27 +12,27 @@ import java.util.UUID;
 public interface ReviewRepository extends JpaRepository<Review,Long> {
     Page<Review> findByMemoryItemIdAndMemoryItemUserId(Long memoryItemId, UUID userId, Pageable pageable);
     @Query("""
-      SELECT COUNT(r) FROM Review r WHERE r.memoryItem.user.id =: userId
+      SELECT COUNT(r) FROM Review r WHERE r.memoryItem.user.id = :userId
      """)
     long countByUserId(UUID userId);
 
     @Query("""
-      SELECT COUNT(r) FROM Review r WHERE r.memoryItem.user.id =:userId AND r.reviewDate >=: startOfDay
+      SELECT COUNT(r) FROM Review r WHERE r.memoryItem.user.id = :userId AND r.reviewDate >= :startOfDay
     """)
     long countToday(UUID userId, LocalDateTime startOfDay);
 
     @Query("""
-     SELECT COUNT(r) FROM Review r WHERE r.memoryItem.user.id =:userId AND r.reviewDate >=:startOfWeek
+     SELECT COUNT(r) FROM Review r WHERE r.memoryItem.user.id = :userId AND r.reviewDate >= :startOfWeek
     """)
     long countReviewsThisWeek(UUID userId, LocalDateTime startOfWeek);
 
     @Query("""
-      SELECT COUNT(r) FROM Review  r WHERE r.memoryItem.user.id =:userId AND r.rating <> org.xenon.echo.enums.ReviewRating.AGAIN AND r.rating <> org.xenon.echo.enums.ReviewRating.HARD
+      SELECT COUNT(r) FROM Review  r WHERE r.memoryItem.user.id = :userId AND r.rating <> org.xenon.echo.enums.ReviewRating.AGAIN AND r.rating <> org.xenon.echo.enums.ReviewRating.HARD
     """)
     double countSuccessfulReviews(UUID userId);
 
     @Query("""
-     SELECT r FROM Review r WHERE r.memoryItem.user.id =:userId ORDER BY r.reviewDate DESC
+     SELECT r FROM Review r WHERE r.memoryItem.user.id = :userId ORDER BY r.reviewDate DESC
      """)
     Page<Review> findRecentReviews(UUID userId, Pageable pageable);
 }

@@ -7,11 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.xenon.echo.dtos.AdminSystemAnalyticsDto;
 import org.xenon.echo.dtos.UserDto;
 import org.xenon.echo.dtos.UserUpdateRequest;
 import org.xenon.echo.enums.Role;
-import org.xenon.echo.services.AnalyticsService;
 import org.xenon.echo.services.UserService;
 
 import java.util.List;
