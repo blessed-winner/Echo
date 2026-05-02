@@ -1,10 +1,19 @@
 package org.xenon.echo.controllers;
 
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.xenon.echo.dtos.AdminSystemAnalyticsDto;
+import org.xenon.echo.services.AnalyticsService;
 
 @RestController
-@RequestMapping("/analytics")
+@AllArgsConstructor
 public class AnalyticsController {
+    private final AnalyticsService analyticsService;
+    @GetMapping("/admin/system/analytics")
+    public ResponseEntity<AdminSystemAnalyticsDto> getAdminSystemAnalytics(){
+        return ResponseEntity.ok(analyticsService.getSystemAnalytics());
+    }
 }

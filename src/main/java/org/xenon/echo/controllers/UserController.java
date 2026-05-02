@@ -23,7 +23,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final AnalyticsService analyticsService;
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers(
@@ -32,11 +31,6 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UUID myId = (UUID) authentication.getPrincipal();
         return ResponseEntity.ok(userService.getAllUsers(role, myId));
-    }
-
-    @GetMapping("/system/analytics")
-    public ResponseEntity<AdminSystemAnalyticsDto> getAdminSystemAnalytics(){
-        return ResponseEntity.ok(analyticsService.getSystemAnalytics());
     }
 
     @GetMapping("users/{id}")
