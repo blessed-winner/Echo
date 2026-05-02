@@ -57,7 +57,11 @@ public class ReviewService {
         UUID userId = getCurrentUser();
         Pageable pageable = PageRequest.of(0,limit, Sort.by("reviewDate").descending());
         Page<Review> reviews = reviewRepository.findByMemoryItemUserIdOrderByReviewDateDesc(userId,pageable);
-        return reviews.map(reviewMapper::toDto);
+        return reviews.map(review -> {
+            ReviewDto dto = reviewMapper.toDto(review);
+            dto.setMemoryItemId(review.getMemoryItem().getId());
+            return dto;
+        });
     }
 
     private double calculateSuccessfulReviews(UUID userId){
