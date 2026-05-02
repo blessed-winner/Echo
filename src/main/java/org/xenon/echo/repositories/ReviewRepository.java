@@ -11,6 +11,7 @@ import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review,Long> {
     Page<Review> findByMemoryItemIdAndMemoryItemUserId(Long memoryItemId, UUID userId, Pageable pageable);
+
     @Query("""
       SELECT COUNT(r) FROM Review r WHERE r.memoryItem.user.id = :userId
      """)
@@ -31,8 +32,5 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     """)
     double countSuccessfulReviews(UUID userId);
 
-    @Query("""
-     SELECT r FROM Review r WHERE r.memoryItem.user.id = :userId ORDER BY r.reviewDate DESC
-     """)
-    Page<Review> findRecentReviews(UUID userId, Pageable pageable);
+    Page<Review> findByMemoryItemUserIdOrderByReviewDateDesc(UUID userId, Pageable pageable);
 }

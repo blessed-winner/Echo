@@ -35,15 +35,17 @@ public class ReviewService {
        var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item not found"));
         Pageable pageable = PageRequest.of(page,size, Sort.by("reviewDate").descending());
        Page<Review> reviews = reviewRepository.findByMemoryItemIdAndMemoryItemUserId(memoryItem.getId(),userId,pageable);
-       return reviews.map(reviewMapper::toDto);
+       return reviews.map(review -> {
+           ReviewDto dto = reviewMapper.toDto(review);
+           dto.setMemoryItemId(memoryItem.getId());
+           return dto;
+       });
     }
 
     public ReviewSummaryDto getReviewSummary(){
         UUID userId = getCurrentUser();
         ReviewSummaryDto reviewSummary = new ReviewSummaryDto();
-        var totalReviews = reviewRepository.countByUserId(userId);
-        System.out.println(totalReviews);
-        reviewSummary.setTotalReviews(totalReviews);
+        reviewSummary.setTotalReviews(reviewRepository.countByUserId(userId));
         reviewSummary.setTotalReviewedToday(reviewRepository.countToday(userId, LocalDateTime.now().toLocalDate().atStartOfDay()));
         reviewSummary.setTotalReviewedThisWeek(reviewRepository.countReviewsThisWeek(userId,LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay()));
         reviewSummary.setSuccessfulReviews(calculateSuccessfulReviews(userId));
@@ -54,7 +56,7 @@ public class ReviewService {
     public Page<ReviewDto> getRecentReviews(int limit){
         UUID userId = getCurrentUser();
         Pageable pageable = PageRequest.of(0,limit, Sort.by("reviewDate").descending());
-        Page<Review> reviews = reviewRepository.findRecentReviews(userId,pageable);
+        Page<Review> reviews = reviewRepository.findByMemoryItemUserIdOrderByReviewDateDesc(userId,pageable);
         return reviews.map(reviewMapper::toDto);
     }
 
