@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.xenon.echo.dtos.AdminSystemAnalyticsDto;
 import org.xenon.echo.dtos.UserDto;
 import org.xenon.echo.dtos.UserUpdateRequest;
 import org.xenon.echo.enums.Role;
+import org.xenon.echo.services.AnalyticsService;
 import org.xenon.echo.services.UserService;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final AnalyticsService analyticsService;
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getAllUsers(
@@ -29,6 +32,11 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UUID myId = (UUID) authentication.getPrincipal();
         return ResponseEntity.ok(userService.getAllUsers(role, myId));
+    }
+
+    @GetMapping("/system/analytics")
+    public ResponseEntity<AdminSystemAnalyticsDto> getAdminSystemAnalytics(){
+        return ResponseEntity.ok(analyticsService.getSystemAnalytics());
     }
 
     @GetMapping("users/{id}")
