@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.echo.dtos.ReviewDto;
 import org.xenon.echo.dtos.ReviewSummaryDto;
+import org.xenon.echo.dtos.UserAnalyticsDto;
 import org.xenon.echo.entities.Review;
 import org.xenon.echo.exceptions.MemoryItemNotFoundException;
 import org.xenon.echo.repositories.MemoryItemRepository;

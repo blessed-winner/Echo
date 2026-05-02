@@ -25,5 +25,5 @@ public interface NoteRepository extends JpaRepository<Note,Long> {
 
     Page<Note> findByTagsIdAndTopicUserId(Long tagId, UUID userId, Pageable pageable);
 
-    long countByTopicUserId(UUID userId);
+    Long countByTopicUserId(UUID userId);
 }

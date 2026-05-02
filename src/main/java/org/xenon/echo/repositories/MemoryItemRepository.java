@@ -72,4 +72,10 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     """)
     Long countMemoryItemsByTag(Long tagId, UUID userId);
 
+    Long countByUserId(UUID userId);
+
+    @Query("""
+      SELECT COUNT(m) FROM MemoryItem m WHERE m.user.id = :userId AND m.nextReviewDate <= :now
+    """)
+    Long countDueItems(UUID userId, LocalDateTime now);
 }
