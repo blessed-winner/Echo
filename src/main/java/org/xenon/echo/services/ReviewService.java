@@ -11,7 +11,6 @@ import org.xenon.echo.dtos.ReviewDto;
 import org.xenon.echo.dtos.ReviewSummaryDto;
 import org.xenon.echo.entities.Review;
 import org.xenon.echo.exceptions.MemoryItemNotFoundException;
-import org.xenon.echo.mappers.ReviewMapper;
 import org.xenon.echo.repositories.MemoryItemRepository;
 import org.xenon.echo.repositories.ReviewRepository;
 
@@ -24,7 +23,6 @@ import java.util.UUID;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemoryItemRepository memoryItemRepository;
-    private final ReviewMapper reviewMapper;
 
     private UUID getCurrentUser(){
         return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -36,8 +34,13 @@ public class ReviewService {
         Pageable pageable = PageRequest.of(page,size, Sort.by("reviewDate").descending());
        Page<Review> reviews = reviewRepository.findByMemoryItemIdAndMemoryItemUserId(memoryItem.getId(),userId,pageable);
        return reviews.map(review -> {
-           ReviewDto dto = reviewMapper.toDto(review);
+           ReviewDto dto = new ReviewDto();
            dto.setMemoryItemId(memoryItem.getId());
+           dto.setReviewDate(review.getReviewDate());
+           dto.setIntervalBeforeReview(review.getIntervalBeforeReview());
+           dto.setRating(review.getRating());
+           dto.setTimeSpentSeconds(review.getTimeSpentSeconds());
+           dto.setEaseFactorBefore(review.getEaseFactorBefore());
            return dto;
        });
     }
@@ -58,8 +61,13 @@ public class ReviewService {
         Pageable pageable = PageRequest.of(0,limit, Sort.by("reviewDate").descending());
         Page<Review> reviews = reviewRepository.findByMemoryItemUserIdOrderByReviewDateDesc(userId,pageable);
         return reviews.map(review -> {
-            ReviewDto dto = reviewMapper.toDto(review);
+            ReviewDto dto = new ReviewDto();
             dto.setMemoryItemId(review.getMemoryItem().getId());
+            dto.setReviewDate(review.getReviewDate());
+            dto.setIntervalBeforeReview(review.getIntervalBeforeReview());
+            dto.setRating(review.getRating());
+            dto.setTimeSpentSeconds(review.getTimeSpentSeconds());
+            dto.setEaseFactorBefore(review.getEaseFactorBefore());
             return dto;
         });
     }
