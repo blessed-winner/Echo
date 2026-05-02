@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xenon.echo.dtos.AdminSystemAnalyticsDto;
+import org.xenon.echo.dtos.UserAnalyticsDto;
 import org.xenon.echo.services.AnalyticsService;
 
 @Tag(name = "Analytics")
@@ -16,5 +17,10 @@ public class AnalyticsController {
     @GetMapping("/admin/system/analytics")
     public ResponseEntity<AdminSystemAnalyticsDto> getAdminSystemAnalytics(){
         return ResponseEntity.ok(analyticsService.getSystemAnalytics());
+    }
+
+    @GetMapping("/analytics/me")
+    public ResponseEntity<UserAnalyticsDto> getMyAnalytics(){
+        return ResponseEntity.ok(analyticsService.getMyAnalytics());
     }
 }
