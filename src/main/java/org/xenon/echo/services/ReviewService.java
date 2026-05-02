@@ -40,19 +40,15 @@ public class ReviewService {
 
     public ReviewSummaryDto getReviewSummary(){
         UUID userId = getCurrentUser();
-        try {
-            ReviewSummaryDto reviewSummary = new ReviewSummaryDto();
-            var totalReviews = reviewRepository.countByUserId(userId);
-            System.out.println(totalReviews);
-            reviewSummary.setTotalReviews(totalReviews);
-            reviewSummary.setTotalReviewedToday(reviewRepository.countToday(userId, LocalDateTime.now().toLocalDate().atStartOfDay()));
-            reviewSummary.setTotalReviewedThisWeek(reviewRepository.countReviewsThisWeek(userId, LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay()));
-            reviewSummary.setSuccessfulReviews(calculateSuccessfulReviews(userId));
-            return reviewSummary;
-        }catch(Exception e){
-            System.out.println("Cause: " + e.getCause());
-            throw new RuntimeException("problem" + e.getMessage());
-        }
+        ReviewSummaryDto reviewSummary = new ReviewSummaryDto();
+        var totalReviews = reviewRepository.countByUserId(userId);
+        System.out.println(totalReviews);
+        reviewSummary.setTotalReviews(totalReviews);
+        reviewSummary.setTotalReviewedToday(reviewRepository.countToday(userId, LocalDateTime.now().toLocalDate().atStartOfDay()));
+        reviewSummary.setTotalReviewedThisWeek(reviewRepository.countReviewsThisWeek(userId,LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay()));
+        reviewSummary.setSuccessfulReviews(calculateSuccessfulReviews(userId));
+
+        return reviewSummary;
     }
 
     public Page<ReviewDto> getRecentReviews(int limit){
