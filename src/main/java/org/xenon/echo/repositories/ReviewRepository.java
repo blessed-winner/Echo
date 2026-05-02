@@ -30,4 +30,9 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
       SELECT COUNT(r) FROM Review  r WHERE r.memoryItem.user.id =:userId AND r.rating <> org.xenon.echo.enums.ReviewRating.AGAIN AND r.rating <> org.xenon.echo.enums.ReviewRating.HARD
     """)
     double countSuccessfulReviews(UUID userId);
+
+    @Query("""
+     SELECT r FROM Review r WHERE r.memoryItem.user.id =:userId ORDER BY r.reviewDate DESC
+     """)
+    Page<Review> findRecentReviews(UUID userId, Pageable pageable);
 }

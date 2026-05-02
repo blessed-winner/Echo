@@ -49,6 +49,13 @@ public class ReviewService {
         return reviewSummary;
     }
 
+    public Page<ReviewDto> getRecentReviews(int limit){
+        UUID userId = getCurrentUser();
+        Pageable pageable = PageRequest.of(0,limit, Sort.by("reviewDate").descending());
+        Page<Review> reviews = reviewRepository.findRecentReviews(userId,pageable);
+        return reviews.map(reviewMapper::toDto);
+    }
+
     private double calculateSuccessfulReviews(UUID userId){
         long total = reviewRepository.countByUserId(userId);
         if(total == 0){
