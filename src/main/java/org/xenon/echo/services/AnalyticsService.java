@@ -4,13 +4,16 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.stylesheets.LinkStyle;
 import org.xenon.echo.dtos.AdminSystemAnalyticsDto;
 import org.xenon.echo.dtos.UserAnalyticsDto;
 import org.xenon.echo.entities.User;
 import org.xenon.echo.repositories.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -58,7 +61,29 @@ public class AnalyticsService {
     }
 
     private int calculateStreak(UUID userId){
+       List<LocalDate> reviewDates = reviewRepository.findDistinctReviewDatesByUserId(userId);
+       if(reviewDates.isEmpty()){
+           return 0;
+       }
 
+        LocalDate today = LocalDate.now();
+        LocalDate expectedDate = today;
+
+        if(!reviewDates.contains(today)){
+            expectedDate = today.minusDays(1);
+        }
+
+        int streak = 0;
+        for(LocalDate date : reviewDates){
+            if(date.equals(expectedDate)){
+                streak++;
+                expectedDate = expectedDate.minusDays(1);
+            } else if(date.isBefore(expectedDate)){
+                break;
+            }
+        }
+
+        return streak;
     }
 
     private UUID getCurrentUser(){
