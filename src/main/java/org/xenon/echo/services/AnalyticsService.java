@@ -46,7 +46,7 @@ public class AnalyticsService {
         long reviewsToday = reviewRepository.countToday(userId,LocalDateTime.now().toLocalDate().atStartOfDay());
         long reviewThisWeek = reviewRepository.countReviewsThisWeek(userId, LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay());
         double retentionRate = (reviewRepository.countSuccessfulReviews(userId)*100/totalReviews);
-        int currentStreak = 0;
+        int currentStreak = calculateStreak(userId);
 
         return new UserAnalyticsDto(
                 totalNotes,
