@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.xenon.echo.entities.Review;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public interface ReviewRepository extends JpaRepository<Review,Long> {
@@ -33,4 +34,9 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     Double countSuccessfulReviews(UUID userId);
 
     Page<Review> findByMemoryItemUserIdOrderByReviewDateDesc(UUID userId, Pageable pageable);
+
+    @Query("""
+     SELECT DISTINCT r.reviewDate FROM Review r WHERE r.memoryItem.user.id = :userId ORDER BY r.reviewDate DESC
+    """)
+    List<LocalDateTime> findDistinctReviewDatesByUserId(UUID userId);
 }

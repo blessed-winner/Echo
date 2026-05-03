@@ -57,6 +57,10 @@ public class AnalyticsService {
         );
     }
 
+    private int calculateStreak(UUID userId){
+
+    }
+
     private UUID getCurrentUser(){
         return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
