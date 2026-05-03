@@ -61,7 +61,11 @@ public class AnalyticsService {
     }
 
     private int calculateStreak(UUID userId){
-       List<LocalDate> reviewDates = reviewRepository.findDistinctReviewDatesByUserId(userId);
+       List<LocalDate> reviewDates = reviewRepository.findDistinctReviewDatesByUserId(userId)
+               .stream()
+               .map(LocalDateTime::toLocalDate)
+               .distinct()
+               .toList();
        if(reviewDates.isEmpty()){
            return 0;
        }

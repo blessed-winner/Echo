@@ -39,5 +39,5 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     @Query("""
      SELECT DISTINCT r.reviewDate FROM Review r WHERE r.memoryItem.user.id = :userId ORDER BY r.reviewDate DESC
     """)
-    List<LocalDate> findDistinctReviewDatesByUserId(UUID userId);
+    List<LocalDateTime> findDistinctReviewDatesByUserId(UUID userId);
 }
