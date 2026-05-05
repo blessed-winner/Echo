@@ -63,6 +63,7 @@ public class SecurityConfig {
                                                            .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
                                                            .requestMatchers(HttpMethod.GET,"/auth/verify").permitAll()
                                                            .requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll()
+                                                           .requestMatchers(HttpMethod.GET,"/auth/success").permitAll()
                                                            .requestMatchers(HttpMethod.GET,"/auth/forgot-password").permitAll()
                                                            .requestMatchers(HttpMethod.POST,"/auth/reset").permitAll()
                                                            .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
@@ -74,7 +75,12 @@ public class SecurityConfig {
                         }
                 )
                 .oauth2Login(oauth2->{
-                    oauth2.defaultSuccessUrl("/auth/success");
+                    oauth2
+                            .defaultSuccessUrl("/auth/success",true)
+                            .failureHandler((request,response,exception)->{
+                                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                                response.getWriter().write("Oauth2 login failed: " + exception.getMessage());
+                            });
                 });
 
 
