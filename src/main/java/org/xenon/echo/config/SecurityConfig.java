@@ -3,6 +3,7 @@ package org.xenon.echo.config;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,14 +31,8 @@ import org.xenon.echo.services.Oauth2SuccessHandler;
 @AllArgsConstructor
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
-    private final JwtService jwtService;
-    private final Oauth2SuccessHandler oauth2SuccessHandler;
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(){return new JwtAuthenticationFilter(jwtService);}
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder();}
+    private final @Lazy Oauth2SuccessHandler oauth2SuccessHandler;
+    private final AppConfig appConfig;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
@@ -47,7 +42,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider(){
         var provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
+        provider.setPasswordEncoder(appConfig.passwordEncoder());
         provider.setUserDetailsService(userDetailsService);
 
         return provider;
@@ -69,7 +64,7 @@ public class SecurityConfig {
                                                            .requestMatchers(HttpMethod.POST,"/auth/reset").permitAll()
                                                            .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                                            .anyRequest().authenticated()
-                ).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                ).addFilterBefore(appConfig.jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(c->{
                     c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
                     c.accessDeniedHandler((request, response, accessDeniedException) -> {response.setStatus(HttpStatus.FORBIDDEN.value());});
