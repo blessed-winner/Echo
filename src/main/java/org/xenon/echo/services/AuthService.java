@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.LoginRequest;
@@ -214,5 +215,19 @@ public class AuthService {
         verificationTokenService.markAsUsed(token);
         tokenRepository.deleteByUserIdAndTokenType(user.getId(),TokenType.PASSWORD_RESET);
         return "Password reset successful";
+    }
+
+    public User createUserFromOauth(OAuth2User oAuth2User){
+        String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(UUID.randomUUID().toString());
+        user.setVerified(true);
+
+        userRepository.save(user);
+
+        return user;
     }
 }

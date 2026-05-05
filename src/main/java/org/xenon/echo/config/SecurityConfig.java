@@ -23,6 +23,7 @@ import org.xenon.echo.enums.Role;
 import org.xenon.echo.filters.JwtAuthenticationFilter;
 import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.services.JwtService;
+import org.xenon.echo.services.Oauth2SuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +31,7 @@ import org.xenon.echo.services.JwtService;
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(){return new JwtAuthenticationFilter(jwtService);}
@@ -76,7 +77,7 @@ public class SecurityConfig {
                 )
                 .oauth2Login(oauth2->{
                     oauth2
-                            .defaultSuccessUrl("/auth/success",true)
+                            .successHandler(oauth2SuccessHandler)
                             .failureHandler((request,response,exception)->{
                                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
                                 response.getWriter().write("Oauth2 login failed: " + exception.getMessage());

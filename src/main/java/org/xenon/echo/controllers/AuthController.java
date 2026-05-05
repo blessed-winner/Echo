@@ -96,16 +96,4 @@ public class AuthController {
     public ResponseEntity<?> oauthSuccess(@RequestParam String token){
         return ResponseEntity.ok(Map.of("token",token));
     }
-
-    private User createUserFromOauth(OAuth2User oAuth2User){
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(UUID.randomUUID().toString());
-        user.setVerified(true);
-
-        return user;
-    }
 }
