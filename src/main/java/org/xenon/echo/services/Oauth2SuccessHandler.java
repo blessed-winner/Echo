@@ -16,12 +16,12 @@ import java.io.IOException;
 public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final AuthService authService;
+    private final UserService userService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        var user = userRepository.findByEmail(oAuth2User.getAttribute("email")).orElseGet(()->authService.createUserFromOauth(oAuth2User));
+        var user = userRepository.findByEmail(oAuth2User.getAttribute("email")).orElseGet(()->userService.createUserFromOauth(oAuth2User));
         String token = jwtService.generateAccessToken(user);
         getRedirectStrategy().sendRedirect(request,response,"/auth/success?token=" + token);
     }

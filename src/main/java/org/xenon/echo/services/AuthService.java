@@ -216,18 +216,4 @@ public class AuthService {
         tokenRepository.deleteByUserIdAndTokenType(user.getId(),TokenType.PASSWORD_RESET);
         return "Password reset successful";
     }
-
-    public User createUserFromOauth(OAuth2User oAuth2User){
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(UUID.randomUUID().toString());
-        user.setVerified(true);
-
-        userRepository.save(user);
-
-        return user;
-    }
 }
