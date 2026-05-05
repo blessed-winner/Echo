@@ -27,3 +27,11 @@ spring:
           auth: true
           starttls:
             enable: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23liWx0H2whnRBwPml
+            client-secret: 55a73d6035818bc8869c631b47d102ad653aeea2
