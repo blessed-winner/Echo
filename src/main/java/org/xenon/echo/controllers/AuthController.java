@@ -93,16 +93,8 @@ public class AuthController {
     }
 
     @GetMapping("/success")
-    public String getSuccessMessage(){
-        return "Oauth2 login successful";
-    }
-
-    @GetMapping("/user")
-    public ResponseEntity<?> user(@AuthenticationPrincipal OAuth2User oAuth2User){
-          String email = oAuth2User.getAttribute("email");
-          var user = userRepository.findByEmail(email).orElseGet(()->createUserFromOauth(oAuth2User));
-          String token = jwtService.generateAccessToken(user);
-          return ResponseEntity.ok(Map.of("token",token));
+    public ResponseEntity<?> oauthSuccess(@RequestParam String token){
+        return ResponseEntity.ok(Map.of("token",token));
     }
 
     private User createUserFromOauth(OAuth2User oAuth2User){
