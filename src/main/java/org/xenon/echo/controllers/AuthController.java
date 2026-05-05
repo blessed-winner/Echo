@@ -12,9 +12,13 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.xenon.echo.config.JwtConfig;
 import org.xenon.echo.dtos.*;
+import org.xenon.echo.entities.User;
+import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.services.AuthService;
+import org.xenon.echo.services.JwtService;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Tag(name = "Auth")
 @RestController
@@ -23,6 +27,8 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
     private final JwtConfig jwtConfig;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(
@@ -92,7 +98,22 @@ public class AuthController {
     }
 
     @GetMapping("/user")
-    public Map<String,Object> user(@AuthenticationPrincipal OAuth2User principal){
-        return principal.getAttributes();
+    public ResponseEntity<?> user(@AuthenticationPrincipal OAuth2User oAuth2User){
+          String email = oAuth2User.getAttribute("email");
+          var user = userRepository.findByEmail(email).orElseGet(()->createUserFromOauth(oAuth2User));
+          String token = jwtService.generateAccessToken(user);
+          return ResponseEntity.ok(Map.of("token",token));
+    }
+
+    private User createUserFromOauth(OAuth2User oAuth2User){
+        String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(UUID.randomUUID().toString());
+        user.setVerified(true);
+
+        return user;
     }
 }
