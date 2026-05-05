@@ -72,7 +72,10 @@ public class SecurityConfig {
                     c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
                     c.accessDeniedHandler((request, response, accessDeniedException) -> {response.setStatus(HttpStatus.FORBIDDEN.value());});
                         }
-                );
+                )
+                .oauth2Login(oauth2->{
+                    oauth2.defaultSuccessUrl("/success");
+                });
 
 
         return http.build();
