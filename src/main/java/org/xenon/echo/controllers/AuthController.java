@@ -81,4 +81,9 @@ public class AuthController {
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request){
         return ResponseEntity.ok(authService.resetPassword(request.getToken(),request.getNewPassword()));
     }
+
+    @GetMapping("/success")
+    public String getSuccessMessage(){
+        return "Oauth2 login successful";
+    }
 }
