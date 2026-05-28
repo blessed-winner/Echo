@@ -32,6 +32,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final @Lazy Oauth2SuccessHandler oauth2SuccessHandler;
     private final AppConfig appConfig;
+    private final org.springframework.core.env.Environment environment;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
@@ -61,8 +62,8 @@ public class SecurityConfig {
                                                            .requestMatchers(HttpMethod.GET,"/auth/verify").permitAll()
                                                            .requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll()
                                                            .requestMatchers(HttpMethod.POST,"/auth/logout").permitAll()
+                                                           .requestMatchers(HttpMethod.POST,"/auth/forgot-password").permitAll()
                                                            .requestMatchers(HttpMethod.GET,"/auth/success").permitAll()
-                                                           .requestMatchers(HttpMethod.GET,"/auth/forgot-password").permitAll()
                                                            .requestMatchers(HttpMethod.POST,"/auth/reset").permitAll()
                                                            .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                                            .anyRequest().authenticated()
@@ -87,7 +88,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Vite default port
+        configuration.setAllowedOrigins(List.of(environment.getProperty("app.frontend-url", "http://localhost:5173")));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setAllowCredentials(true);

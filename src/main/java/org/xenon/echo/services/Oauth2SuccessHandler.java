@@ -2,7 +2,8 @@ package org.xenon.echo.services;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -12,16 +13,18 @@ import org.xenon.echo.repositories.UserRepository;
 
 import jakarta.servlet.http.Cookie;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.net.URLEncoder;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final UserService userService;
     private final JwtConfig jwtConfig;
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -31,8 +34,8 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = jwtService.generateRefreshToken(user);
         addRefreshTokenCookie(response, refreshToken, request.isSecure());
         String encodedToken = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
-       String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
-        getRedirectStrategy().sendRedirect(request,response, baseUrl + "/auth/success?token=" + encodedToken);
+        String redirectBase = frontendUrl.endsWith("/") ? frontendUrl.substring(0, frontendUrl.length() - 1) : frontendUrl;
+        getRedirectStrategy().sendRedirect(request, response, redirectBase + "/auth/success?token=" + encodedToken);
     }
 
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken, boolean secure){

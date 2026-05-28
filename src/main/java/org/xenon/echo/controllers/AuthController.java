@@ -91,7 +91,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.handleEmailVerification(token));
     }
 
-    @GetMapping("/forgot-password")
+    @PostMapping("/forgot-password")
     public ResponseEntity<String> requestPasswordReset(@RequestBody ForgotPasswordRequest request, HttpServletRequest httpRequest){
         String ip = httpRequest.getRemoteAddr();
         return ResponseEntity.ok(authService.requestPasswordReset(request.getEmail(),ip));
