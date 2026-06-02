@@ -102,7 +102,8 @@ public class MemoryItemService {
 
         Set<Tag> tags = new HashSet<>();
 
-        if(request.getText() != null && !request.getText().isBlank()){memoryItem.setText(request.getText());}
+        if(request.getFront() != null && !request.getFront().isBlank()){memoryItem.setFront(request.getFront());}
+        if(request.getBack() != null && !request.getBack().isBlank()){memoryItem.setBack(request.getBack());}
         if(request.getSource() != null && !request.getSource().isBlank()){memoryItem.setSource(request.getSource());}
         if(request.getTagIds() != null && !request.getTagIds().isEmpty()){
             for (Long tagId:request.getTagIds()){
