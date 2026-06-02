@@ -11,9 +11,13 @@ import java.util.Set;
 @Getter
 @Setter
 public class MemoryItemRequest {
-    @NotBlank(message = "Text is required")
+    @NotBlank(message = "Front content is required")
+    @Size(max = 200)
+    private String front;
+
+    @NotBlank(message = "Back content is required")
     @Size(max = 1000)
-    private String text;
+    private String back;
 
     private String source;
 
