@@ -17,8 +17,11 @@ public class MemoryItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 200)
+    private String front;
+
     @Column(length = 1000)
-    private String text;
+    private String back;
 
     private String source;
 
