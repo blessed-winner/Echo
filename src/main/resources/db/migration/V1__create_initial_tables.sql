@@ -76,7 +76,8 @@ CREATE TABLE note_tags (
 -- =========================
 CREATE TABLE memory_items (
   id BIGSERIAL PRIMARY KEY,
-  text VARCHAR(1000) NOT NULL,
+  front VARCHAR(200) NOT NULL,
+  back VARCHAR(1000) NOT NULL,
   source VARCHAR(150),
   last_reviewed TIMESTAMP,
 
