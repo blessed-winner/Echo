@@ -35,9 +35,9 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     Long countOverdue(UUID userId,  LocalDateTime now);
 
     @Query("""
-           SELECT CAST(m.lastReviewed AS date) FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed IS NOT NULL ORDER BY m.lastReviewed DESC
+           SELECT m.lastReviewed FROM MemoryItem m WHERE m.user.id = :userId AND m.lastReviewed IS NOT NULL ORDER BY m.lastReviewed DESC
           """)
-    List<LocalDate> findLastReviewedDates(UUID userId);
+    List<LocalDateTime> findLastReviewedDates(UUID userId);
 
     @Query("""
     SELECT COUNT(m) FROM MemoryItem m WHERE m.note.id = :noteId AND m.note.topic.user.id = :userId
