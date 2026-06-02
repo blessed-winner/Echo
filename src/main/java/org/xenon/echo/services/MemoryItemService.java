@@ -225,7 +225,7 @@ public class MemoryItemService {
     private int calculateStreak(User user){
         LocalDate today = LocalDate.now();
         int streak = 0;
-        List<LocalDate> reviewDates = memoryItemRepository.findLastReviewedDates(user.getId());
+        List<LocalDate> reviewDates = memoryItemRepository.findLastReviewedDates(user.getId()).stream().map(LocalDateTime::toLocalDate).toList();
         for(LocalDate date : reviewDates){
             if(!today.isBefore(date.minusDays(streak))){
                 streak++;
