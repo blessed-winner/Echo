@@ -151,7 +151,8 @@ public class SeedService {
 
         // MEMORY ITEMS for User 3
         MemoryItem item1 = new MemoryItem();
-        item1.setText("What is the role of OncePerRequestFilter in Spring Security?");
+        item1.setFront("What is the role of OncePerRequestFilter in Spring Security?");
+        item1.setBack("OncePerRequestFilter is used to specify which filters are called only once");
         item1.setSource("Spring Boot Security Note");
         item1.setUser(user3);
         item1.setNote(note1);
@@ -162,7 +163,8 @@ public class SeedService {
         item1.setNextReviewDate(LocalDateTime.now());
 
         MemoryItem item2 = new MemoryItem();
-        item2.setText("Explain Dependency Injection in NestJS.");
+        item2.setFront("Explain Dependency Injection in NestJS.");
+        item2.setBack("Dependency Injection is an implementation of IOC where dependencies are injected from the external.");
         item2.setSource("NestJS Architecture Note");
         item2.setUser(user3);
         item2.setNote(note2);
@@ -173,7 +175,8 @@ public class SeedService {
         item2.setNextReviewDate(LocalDateTime.now());
 
         MemoryItem item3 = new MemoryItem();
-        item3.setText("What are the three types of Haki in One Piece?");
+        item3.setFront("What are the three types of Haki in One Piece?");
+        item3.setBack("Observation Haki, Armament Haki, Conquerors Haki");
         item3.setSource("One Piece Note");
         item3.setUser(user3);
         item3.setNote(note3);
@@ -184,7 +187,8 @@ public class SeedService {
 
         // MEMORY ITEMS for User 4
         MemoryItem item4 = new MemoryItem();
-        item4.setText("Which sub-genres are dominating EDM in 2024?");
+        item4.setFront("Which sub-genres are dominating EDM in 2024?");
+        item4.setBack("Melodic Techno/House, Hard Techno, Afro House, Drum and Bass (DnB), and Tech House");
         item4.setSource("EDM Note");
         item4.setUser(user4);
         item4.setNote(note4);
@@ -195,7 +199,8 @@ public class SeedService {
         item4.setNextReviewDate(LocalDateTime.now());
 
         MemoryItem item5 = new MemoryItem();
-        item5.setText("Who performed Bohemian Rhapsody?");
+        item5.setFront("Who performed Bohemian Rhapsody?");
+        item5.setBack("\"Bohemian Rhapsody\" was originally performed by the British rock band Queen, written by their lead singer Freddie Mercury");
         item5.setSource("Rock Classics Note");
         item5.setUser(user4);
         item5.setNote(note5);
