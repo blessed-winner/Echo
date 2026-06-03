@@ -16,6 +16,10 @@ public class MemoryItemDto {
 
         private String text;
 
+        private String front;
+
+        private String back;
+
         private String source;
 
         private LocalDateTime createdAt;

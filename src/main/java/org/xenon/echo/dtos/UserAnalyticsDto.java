@@ -19,5 +19,8 @@ public class UserAnalyticsDto {
 
     private double retentionRate;
     private int currentStreak;
+    
+    private long newItemsThisWeek;
+    private long masteredItems;
 
 }
