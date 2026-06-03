@@ -208,7 +208,6 @@ public class MemoryItemService {
         int currentInterval = item.getInterval();
         double currentEaseFactor = item.getEaseFactor();
 
-        // Calculate intervals for each rating
         int againDays = 1;
         int hardDays = Math.max(1, (int)(currentInterval * 1.2));
         int goodDays = (int)(currentInterval * currentEaseFactor);
