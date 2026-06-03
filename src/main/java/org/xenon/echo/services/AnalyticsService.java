@@ -45,8 +45,14 @@ public class AnalyticsService {
         long totalReviews = reviewRepository.countByUserId(userId);
         long reviewsToday = reviewRepository.countToday(userId,LocalDateTime.now().toLocalDate().atStartOfDay());
         long reviewThisWeek = reviewRepository.countReviewsThisWeek(userId, LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay());
-        double retentionRate = (reviewRepository.countSuccessfulReviews(userId)*100/totalReviews);
+        double retentionRate = totalReviews > 0 ? (reviewRepository.countSuccessfulReviews(userId)*100.0/totalReviews) : 0;
         int currentStreak = calculateStreak(userId);
+        
+        // New metrics
+        LocalDateTime weekStart = LocalDateTime.now().with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
+        long newItemsThisWeek = memoryItemRepository.countByUserIdAndCreatedAtAfter(userId, weekStart);
+        // Mastered = reviewCount >= 5 (reviewed successfully multiple times)
+        long masteredItems = memoryItemRepository.countByUserIdAndReviewCountGreaterThanEqual(userId, 5);
 
         return new UserAnalyticsDto(
                 totalNotes,
@@ -56,7 +62,9 @@ public class AnalyticsService {
                 reviewsToday,
                 reviewThisWeek,
                 retentionRate,
-                currentStreak
+                currentStreak,
+                newItemsThisWeek,
+                masteredItems
         );
     }
 

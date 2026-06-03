@@ -24,6 +24,8 @@ public class MemoryItem {
     private String back;
 
     private String source;
+    
+    private LocalDateTime createdAt;
 
     private LocalDateTime lastReviewed;
 

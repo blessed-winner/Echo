@@ -102,4 +102,11 @@ public class MemoryItemController {
     ){
         return ResponseEntity.ok(reviewService.getReviewsPerItem(id,page,size));
     }
+
+    @GetMapping("/{id}/preview-intervals")
+    public ResponseEntity<ReviewIntervalsDto> getPreviewIntervals(
+            @PathVariable Long id
+    ){
+        return ResponseEntity.ok(memoryItemService.calculatePreviewIntervals(id));
+    }
 }

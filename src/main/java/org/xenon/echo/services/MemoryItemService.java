@@ -60,6 +60,7 @@ public class MemoryItemService {
          memoryItem.setEaseFactor(2.5F);
          memoryItem.setReviewCount(0);
          memoryItem.setNextReviewDate(LocalDateTime.now());
+         memoryItem.setCreatedAt(LocalDateTime.now());
          memoryItemRepository.save(memoryItem);
 
          Set<Tag> tags = new HashSet<>();
@@ -198,6 +199,22 @@ public class MemoryItemService {
         item.setEaseFactor(easeFactor);
         item.setNextReviewDate(LocalDateTime.now().plusDays(interval));
         item.setLastReviewed(LocalDateTime.now());
+    }
+
+    public ReviewIntervalsDto calculatePreviewIntervals(Long memoryItemId) {
+        MemoryItem item = memoryItemRepository.findById(memoryItemId)
+                .orElseThrow(() -> new MemoryItemNotFoundException("Memory Item Not Found"));
+
+        int currentInterval = item.getInterval();
+        double currentEaseFactor = item.getEaseFactor();
+
+        // Calculate intervals for each rating
+        int againDays = 1;
+        int hardDays = Math.max(1, (int)(currentInterval * 1.2));
+        int goodDays = (int)(currentInterval * currentEaseFactor);
+        int easyDays = (int)(currentInterval * currentEaseFactor * 1.3);
+
+        return new ReviewIntervalsDto(againDays, hardDays, goodDays, easyDays);
     }
 
     @Transactional(readOnly = true)
