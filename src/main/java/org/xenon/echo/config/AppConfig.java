@@ -14,10 +14,10 @@ import org.xenon.echo.services.JwtService;
 @AllArgsConstructor
 public class AppConfig {
     private final JwtService jwtService;
+    
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(){return new JwtAuthenticationFilter(jwtService);}
 
     @Bean
     public PasswordEncoder passwordEncoder(){return new BCryptPasswordEncoder();}
-
 }
