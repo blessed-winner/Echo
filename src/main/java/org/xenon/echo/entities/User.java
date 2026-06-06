@@ -43,4 +43,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Tag> tags = new HashSet<>();
+
+    @OneToMany(mappedBy = "recipient",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Notification> notifications = new HashSet<>();
 }
