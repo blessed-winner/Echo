@@ -1,0 +1,12 @@
+package org.xenon.echo.repositories;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.xenon.echo.entities.Notification;
+
+import java.util.UUID;
+
+public interface NotificationRepository extends JpaRepository<Notification, UUID> {
+    Page<Notification> findByRecipientIdOrderByCreatedAtDesc(UUID userId);
+    Long countByRecipientIdAndReadFalse(UUID userId);
+}
