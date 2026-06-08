@@ -1,4 +1,4 @@
-package org.xenon.echo.mappers;
+ package org.xenon.echo.mappers;
 
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
