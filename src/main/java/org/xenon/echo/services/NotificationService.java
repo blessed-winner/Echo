@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.xenon.echo.dtos.NotificationResponse;
 import org.xenon.echo.entities.Notification;
 import org.xenon.echo.entities.User;
+import org.xenon.echo.enums.NotificationStatus;
 import org.xenon.echo.enums.NotificationType;
 import org.xenon.echo.repositories.NotificationRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,6 +21,18 @@ public class NotificationService {
             String message,
             NotificationType type
     ){
+        Notification notification = Notification.builder()
+                .recipient(recipient)
+                .title(title)
+                .message(message)
+                .type(type)
+                .status(NotificationStatus.SENT)
+                .read(false)
+                .build();
+
+        var saved = notificationRepository.save(notification);
+        push(saved);
+        return saved;
 
     }
 
