@@ -1,6 +1,8 @@
 package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.echo.dtos.NotificationRequest;
 import org.xenon.echo.dtos.NotificationResponse;
@@ -11,11 +13,18 @@ import org.xenon.echo.enums.NotificationType;
 import org.xenon.echo.repositories.NotificationRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class NotificationService {
     private NotificationRepository notificationRepository;
     private SimpMessagingTemplate messagingTemplate;
+
+    public UUID getCurrentUser(){
+        return (UUID)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     public Notification createNotification(
             NotificationRequest request
     ){
@@ -34,7 +43,7 @@ public class NotificationService {
 
     }
 
-    public void push(
+    private void push(
             Notification notification
     ){
         NotificationResponse response = NotificationResponse.builder()
@@ -50,5 +59,19 @@ public class NotificationService {
                 "topic/users/" + notification.getRecipient().getId(),
                 response
         );
+    }
+
+    public long countUnread(){
+        UUID userId = getCurrentUser();
+        return notificationRepository.countByRecipientIdAndReadFalse(userId);
+    }
+
+    public void markAsRead(UUID id){
+        UUID userId = getCurrentUser();
+        var notification = notificationRepository.findById(id).orElseThrow(() -> new RuntimeException("Notification not found"));
+        if(notification.getRecipient().getId().equals(userId) && !notification.isRead()){
+            notification.setRead(true);
+            notificationRepository.save(notification);
+        }
     }
 }
