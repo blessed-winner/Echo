@@ -2,6 +2,10 @@ package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.xenon.echo.dtos.NotificationRequest;
@@ -73,5 +77,23 @@ public class NotificationService {
             notification.setRead(true);
             notificationRepository.save(notification);
         }
+    }
+
+    public Page<NotificationResponse>getMyNotifications(int page,int size){
+        UUID userId = getCurrentUser();
+        Pageable pageable = PageRequest.of(page,size, Sort.by("createdAt").descending());
+        Page<Notification>myNotifications = notificationRepository.findByRecipientIdOrderByCreatedAtDesc(userId,pageable);
+        return myNotifications.map(notification -> {
+            NotificationResponse response = NotificationResponse.builder()
+                    .id(notification.getId())
+                    .title(notification.getTitle())
+                    .message(notification.getMessage())
+                    .type(notification.getType())
+                    .createdAt(notification.getCreatedAt())
+                    .read(notification.isRead())
+                    .build();
+
+            return response;
+        });
     }
 }
