@@ -1,6 +1,5 @@
 package org.xenon.echo.dtos;
 
-
 import lombok.*;
 import org.xenon.echo.enums.NotificationType;
 

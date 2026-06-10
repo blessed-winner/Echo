@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +14,6 @@ import org.xenon.echo.dtos.NotificationResponse;
 import org.xenon.echo.entities.Notification;
 import org.xenon.echo.enums.NotificationStatus;
 import org.xenon.echo.repositories.NotificationRepository;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.nio.file.AccessDeniedException;
 import java.util.UUID;
@@ -25,13 +25,13 @@ public class NotificationService {
     private NotificationRepository notificationRepository;
     private SimpMessagingTemplate messagingTemplate;
 
-    public UUID getCurrentUser(){
-        return (UUID)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public UUID getCurrentUser() {
+        return (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public NotificationResponse createNotification(
             NotificationRequest request
-    ){
+    ) {
         Notification notification = Notification.builder()
                 .recipient(request.getRecipient())
                 .title(request.getTitle())
@@ -43,7 +43,7 @@ public class NotificationService {
 
         var saved = notificationRepository.save(notification);
         push(saved);
-        NotificationResponse response = NotificationResponse.builder()
+        return NotificationResponse.builder()
                 .id(saved.getId())
                 .title(saved.getTitle())
                 .message(saved.getMessage())
@@ -52,13 +52,11 @@ public class NotificationService {
                 .read(saved.isRead())
                 .referenceId(saved.getReferenceId())
                 .build();
-
-        return response;
     }
 
     public void push(
             Notification notification
-    ){
+    ) {
         NotificationResponse response = NotificationResponse.builder()
                 .id(notification.getId())
                 .title(notification.getTitle())
@@ -76,7 +74,7 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
-    public long countUnread(){
+    public long countUnread() {
         UUID userId = getCurrentUser();
         return notificationRepository.countByRecipientIdAndReadFalse(userId);
     }
@@ -91,22 +89,18 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
-    public Page<NotificationResponse>getMyNotifications(int page,int size){
+    public Page<NotificationResponse> getMyNotifications(int page, int size) {
         UUID userId = getCurrentUser();
-        Pageable pageable = PageRequest.of(page,size, Sort.by("createdAt").descending());
-        Page<Notification>myNotifications = notificationRepository.findByRecipientIdOrderByCreatedAtDesc(userId,pageable);
-        return myNotifications.map(notification -> {
-            NotificationResponse response = NotificationResponse.builder()
-                    .id(notification.getId())
-                    .title(notification.getTitle())
-                    .message(notification.getMessage())
-                    .type(notification.getType())
-                    .createdAt(notification.getCreatedAt())
-                    .read(notification.isRead())
-                    .referenceId(notification.getReferenceId())
-                    .build();
-
-            return response;
-        });
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Notification> myNotifications = notificationRepository.findByRecipientIdOrderByCreatedAtDesc(userId, pageable);
+        return myNotifications.map(notification -> NotificationResponse.builder()
+                .id(notification.getId())
+                .title(notification.getTitle())
+                .message(notification.getMessage())
+                .type(notification.getType())
+                .createdAt(notification.getCreatedAt())
+                .read(notification.isRead())
+                .referenceId(notification.getReferenceId())
+                .build());
     }
 }
