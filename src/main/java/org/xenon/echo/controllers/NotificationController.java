@@ -10,7 +10,6 @@ import org.xenon.echo.dtos.NotificationResponse;
 import org.xenon.echo.entities.Notification;
 import org.xenon.echo.services.NotificationService;
 
-import java.nio.file.AccessDeniedException;
 import java.util.UUID;
 
 @Tag(name = "Notifications")
@@ -21,7 +20,7 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @PostMapping
-    public ResponseEntity<NotificationResponse> createNotification(
+    public ResponseEntity<Notification> createNotification(
             @RequestBody NotificationRequest request
     ){
         return ResponseEntity.ok(notificationService.createNotification(request));
@@ -41,7 +40,7 @@ public class NotificationController {
     }
 
     @PostMapping("/{id}/read")
-    public ResponseEntity<Void>markAsRead(@PathVariable UUID id) throws AccessDeniedException {
+    public ResponseEntity<Void>markAsRead(@PathVariable UUID id){
         notificationService.markAsRead(id);
         return ResponseEntity.ok().build();
     }

@@ -3,6 +3,7 @@ package org.xenon.echo.services;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.xenon.echo.dtos.NotificationRequest;
 import org.xenon.echo.dtos.NotificationResponse;
 import org.xenon.echo.entities.Notification;
 import org.xenon.echo.entities.User;
@@ -17,16 +18,13 @@ public class NotificationService {
     private SimpMessagingTemplate messagingTemplate;
 
     public Notification createNotification(
-            User recipient,
-            String title,
-            String message,
-            NotificationType type
+            NotificationRequest request
     ){
         Notification notification = Notification.builder()
-                .recipient(recipient)
-                .title(title)
-                .message(message)
-                .type(type)
+                .recipient(request.getRecipient())
+                .title(request.getTitle())
+                .message(request.getMessage())
+                .type(request.getType())
                 .status(NotificationStatus.SENT)
                 .read(false)
                 .build();
