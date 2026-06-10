@@ -13,7 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 @AllArgsConstructor
 public class NotificationService {
     private NotificationRepository notificationRepository;
-    private SimpMessagingTemplate simpMessagingTemplate;
+    private SimpMessagingTemplate messagingTemplate;
     public Notification createNotification(
             User recipient,
             String title,
@@ -32,5 +32,12 @@ public class NotificationService {
                 .message(notification.getMessage())
                 .type(notification.getType())
                 .createdAt(notification.getCreatedAt())
+                .read(notification.isRead())
+                .build();
+
+        messagingTemplate.convertAndSend(
+                "topic/users/" + notification.getRecipient().getId(),
+                response
+        );
     }
 }

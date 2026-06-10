@@ -176,7 +176,6 @@ public class MemoryItemService {
                 item.setReviewCount(0);
                 easeFactor = Math.max(1.3,easeFactor - 0.2);
             }
-
             case HARD -> {
                 interval = Math.max(1,(int)(interval*1.2));
                 easeFactor = Math.max(1.3,easeFactor - 0.15);
