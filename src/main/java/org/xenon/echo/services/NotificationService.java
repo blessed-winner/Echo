@@ -62,7 +62,7 @@ public class NotificationService {
                 .build();
 
         messagingTemplate.convertAndSend(
-                "topic/users/" + notification.getRecipient().getId(),
+                "/topic/users/" + notification.getRecipient().getId(),
                 response
         );
     }

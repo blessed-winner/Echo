@@ -43,7 +43,9 @@ public class Notification {
     @Column(name = "created_at")
     private Instant createdAt = Instant.now();
 
+    @Column(name = "deliver_at")
     private Instant deliverAt;
 
+    @Column(name = "delivered_at")
     private Instant deliveredAt;
 }
