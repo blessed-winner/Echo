@@ -34,10 +34,10 @@ public class Notification {
 
     private boolean read;
 
-    private String referenceId;
+    private UUID referenceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipient_id")
+    @JoinColumn(name = "user_id")
     private User recipient;
 
     @Column(name = "created_at")
