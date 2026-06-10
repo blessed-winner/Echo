@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.NotificationRequest;
 import org.xenon.echo.dtos.NotificationResponse;
 import org.xenon.echo.entities.Notification;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class NotificationService {
     private NotificationRepository notificationRepository;
     private SimpMessagingTemplate messagingTemplate;
@@ -65,6 +67,7 @@ public class NotificationService {
         );
     }
 
+    @Transactional(readOnly = true)
     public long countUnread(){
         UUID userId = getCurrentUser();
         return notificationRepository.countByRecipientIdAndReadFalse(userId);
@@ -79,6 +82,7 @@ public class NotificationService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<NotificationResponse>getMyNotifications(int page,int size){
         UUID userId = getCurrentUser();
         Pageable pageable = PageRequest.of(page,size, Sort.by("createdAt").descending());

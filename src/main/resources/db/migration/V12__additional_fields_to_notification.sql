@@ -1,0 +1,5 @@
+ALTER TABLE notifications
+    ADD COLUMN deliver_at TIMESTAMP WITH TIME ZONE;
+
+ALTER TABLE notifications
+    ADD COLUMN delivered_at TIMESTAMP WITH TIME ZONE;
