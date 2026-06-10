@@ -24,7 +24,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
                 @Tag(name = "Tags", description = "Tag operations"),
                 @Tag(name = "Admin",description = "User operations"),
                 @Tag(name = "Topic", description = "Topic management"),
-                @Tag(name = "Analytics", description = "User analytics")
+                @Tag(name = "Analytics", description = "User analytics"),
+                @Tag(name = "Notifications", description = "Real time notifications")
         }
 )
 @SecurityScheme(
