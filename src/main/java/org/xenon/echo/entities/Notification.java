@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.xenon.echo.enums.NotificationStatus;
 import org.xenon.echo.enums.NotificationType;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -40,4 +41,7 @@ public class Notification {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User recipient;
+
+    @Column(name = "created_at")
+    private Instant createdAt = Instant.now();
 }
