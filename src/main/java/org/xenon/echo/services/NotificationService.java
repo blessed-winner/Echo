@@ -40,7 +40,7 @@ public class NotificationService {
                 .title(request.getTitle())
                 .message(request.getMessage())
                 .type(request.getType())
-                .status(NotificationStatus.SENT)
+                .status(NotificationStatus.DELIVERED)
                 .read(false)
                 .build();
 
