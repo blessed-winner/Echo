@@ -18,6 +18,7 @@ import org.xenon.echo.enums.NotificationType;
 import org.xenon.echo.repositories.NotificationRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.nio.file.AccessDeniedException;
 import java.util.UUID;
 
 @Service
@@ -73,12 +74,13 @@ public class NotificationService {
         return notificationRepository.countByRecipientIdAndReadFalse(userId);
     }
 
-    public void markAsRead(UUID id){
+    public void markAsRead(UUID id) throws AccessDeniedException {
         UUID userId = getCurrentUser();
         var notification = notificationRepository.findById(id).orElseThrow(() -> new RuntimeException("Notification not found"));
-        if(notification.getRecipient().getId().equals(userId) && !notification.isRead()){
-            notification.setRead(true);
+        if (!notification.getRecipient().getId().equals(userId)) {
+            throw new AccessDeniedException("Forbidden");
         }
+        notification.setRead(true);
     }
 
     @Transactional(readOnly = true)
