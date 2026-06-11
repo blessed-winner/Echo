@@ -32,7 +32,7 @@ public class NotificationService {
         return (UUID)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public Notification createNotification(
+    public NotificationResponse createNotification(
             NotificationRequest request
     ){
         Notification notification = Notification.builder()
@@ -46,8 +46,16 @@ public class NotificationService {
 
         var saved = notificationRepository.save(notification);
         push(saved);
-        return saved;
+        NotificationResponse response = NotificationResponse.builder()
+                .id(saved.getId())
+                .title(saved.getTitle())
+                .message(saved.getMessage())
+                .type(saved.getType())
+                .createdAt(saved.getCreatedAt())
+                .read(saved.isRead())
+                .build();
 
+        return response;
     }
 
     private void push(
