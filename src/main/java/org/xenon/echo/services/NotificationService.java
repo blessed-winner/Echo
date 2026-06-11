@@ -78,7 +78,6 @@ public class NotificationService {
         var notification = notificationRepository.findById(id).orElseThrow(() -> new RuntimeException("Notification not found"));
         if(notification.getRecipient().getId().equals(userId) && !notification.isRead()){
             notification.setRead(true);
-            notificationRepository.save(notification);
         }
     }
 
