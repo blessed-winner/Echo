@@ -22,6 +22,7 @@ import org.xenon.echo.entities.Notification;
 import org.xenon.echo.enums.NotificationStatus;
 import org.xenon.echo.enums.NotificationType;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -41,6 +42,7 @@ public class MemoryItemService {
     private final ReviewRepository reviewRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationService notificationService;
+    private final DynamicSchedulerService dynamicSchedulerService;
 
     private UUID getCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -80,6 +82,7 @@ public class MemoryItemService {
          }
          memoryItem.setTags(tags);
          memoryItemRepository.save(memoryItem); // Ensure tags are saved with the memory item
+         scheduleReminderForMemoryItem(memoryItem);
          return memoryItemMapper.toDto(memoryItem);
     }
 
@@ -112,6 +115,9 @@ public class MemoryItemService {
         if(request.getFront() != null && !request.getFront().isBlank()){memoryItem.setFront(request.getFront());}
         if(request.getBack() != null && !request.getBack().isBlank()){memoryItem.setBack(request.getBack());}
         if(request.getSource() != null && !request.getSource().isBlank()){memoryItem.setSource(request.getSource());}
+        if(request.getCustomReminderTime() != null){
+            memoryItem.setCustomReminderTime(request.getCustomReminderTime());
+        }
         if(request.getTagIds() != null && !request.getTagIds().isEmpty()){
             for (Long tagId:request.getTagIds()){
                 var tag = tagRepository.findById(tagId).orElseThrow(()->new RuntimeException("Tag Not Found"));
@@ -123,6 +129,7 @@ public class MemoryItemService {
             memoryItem.setTags(tags);
         }
 
+        scheduleReminderForMemoryItem(memoryItem);
         return memoryItemMapper.toDto(memoryItem);
     }
 
@@ -153,6 +160,7 @@ public class MemoryItemService {
          reviewRepository.save(review);
 
          applyReviewLogic(memoryItem,rating);
+         scheduleReminderForMemoryItem(memoryItem);
 
          return memoryItemMapper.toDto(memoryItem);
     }
@@ -274,6 +282,7 @@ public class MemoryItemService {
        };
 
        memoryItem.setNextReviewDate(newDate);
+       scheduleReminderForMemoryItem(memoryItem);
 
        String title = "Item Rescheduled!";
        String message = String.format(
@@ -293,5 +302,68 @@ public class MemoryItemService {
 
        notificationRepository.save(notification);
        notificationService.push(notification);
+    }
+
+    private void scheduleReminderForMemoryItem(MemoryItem memoryItem) {
+        String taskId = "memory-item-reminder-" + memoryItem.getId();
+        dynamicSchedulerService.cancelTask(taskId);
+
+        if (memoryItem.getNextReviewDate() == null) {
+            return;
+        }
+
+        LocalDateTime reminderDateTime = calculateReminderDateTime(memoryItem);
+        if (reminderDateTime != null && reminderDateTime.isAfter(LocalDateTime.now())) {
+            // Convert to Instant
+            Instant reminderInstant = reminderDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant();
+            dynamicSchedulerService.scheduleOnce(
+                taskId,
+                () -> sendReminderNotification(memoryItem.getId()),
+                reminderInstant
+            );
+        }
+    }
+
+    private LocalDateTime calculateReminderDateTime(MemoryItem memoryItem) {
+        LocalDateTime nextReviewDate = memoryItem.getNextReviewDate();
+        String customReminderTime = memoryItem.getCustomReminderTime();
+
+        if (customReminderTime != null && customReminderTime.matches("\\d{2}:\\d{2}")) {
+            // Parse custom time (HH:mm)
+            String[] parts = customReminderTime.split(":");
+            int hour = Integer.parseInt(parts[0]);
+            int minute = Integer.parseInt(parts[1]);
+            return nextReviewDate.withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+        }
+
+        // Default: use nextReviewDate as is
+        return nextReviewDate;
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void sendReminderNotification(Long memoryItemId) {
+        MemoryItem memoryItem = memoryItemRepository.findById(memoryItemId).orElse(null);
+        if (memoryItem == null || memoryItem.getUser() == null) {
+            return;
+        }
+
+        String title = "Time to Review!";
+        String message = String.format(
+            "Don't forget to review your memory item: \"%s\"",
+            memoryItem.getFront()
+        );
+
+        Notification notification = Notification.builder()
+            .recipient(memoryItem.getUser())
+            .title(title)
+            .message(message)
+            .type(NotificationType.MEMORY_REVIEW)
+            .status(NotificationStatus.DELIVERED)
+            .read(false)
+            .referenceId(String.valueOf(memoryItemId))
+            .build();
+
+        notificationRepository.save(notification);
+        notificationService.push(notification);
     }
 }

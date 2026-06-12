@@ -40,4 +40,6 @@ public class MemoryItemDto {
 
         private Set<TagDto> tags;
 
+        private String customReminderTime;
+
 }

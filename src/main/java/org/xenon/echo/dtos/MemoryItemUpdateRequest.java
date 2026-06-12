@@ -12,4 +12,7 @@ public class MemoryItemUpdateRequest {
     private String back;
     private String source;
     private Set<Long> tagIds;
+
+    // Custom reminder time (e.g., "09:00")
+    private String customReminderTime;
 }

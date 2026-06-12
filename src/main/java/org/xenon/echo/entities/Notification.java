@@ -34,7 +34,7 @@ public class Notification {
 
     private boolean read;
 
-    private UUID referenceId;
+    private String referenceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id")

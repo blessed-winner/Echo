@@ -64,4 +64,8 @@ public class MemoryItem {
 
     @OneToMany(mappedBy = "memoryItem", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
+
+    // Custom reminder time (e.g., "09:00" for 9 AM)
+    @Column(length = 5)
+    private String customReminderTime;
 }
