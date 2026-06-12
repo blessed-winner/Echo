@@ -25,4 +25,7 @@ public class MemoryItemRequest {
     private Long NoteId;
 
     private Set<Long> tagIds;
+
+    // Custom reminder time (e.g., "09:00")
+    private String customReminderTime;
 }
