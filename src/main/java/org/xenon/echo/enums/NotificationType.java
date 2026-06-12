@@ -4,5 +4,6 @@ public enum NotificationType {
     REMINDER,
     MEMORY_REVIEW,
     DEADLINE,
-    SYSTEM
+    SYSTEM,
+    RESCHEDULE
 }
