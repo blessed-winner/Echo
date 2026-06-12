@@ -41,6 +41,7 @@ public class Notification {
     private User recipient;
 
     @Column(name = "created_at")
+    @Builder.Default
     private Instant createdAt = Instant.now();
 
     @Column(name = "deliver_at")
