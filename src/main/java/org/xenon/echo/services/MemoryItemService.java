@@ -17,6 +17,10 @@ import org.xenon.echo.exceptions.MemoryItemNotFoundException;
 import org.xenon.echo.exceptions.UserNotFoundException;
 import org.xenon.echo.mappers.MemoryItemMapper;
 import org.xenon.echo.repositories.*;
+import org.xenon.echo.services.NotificationService;
+import org.xenon.echo.entities.Notification;
+import org.xenon.echo.enums.NotificationStatus;
+import org.xenon.echo.enums.NotificationType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,6 +39,8 @@ public class MemoryItemService {
     private final MemoryItemMapper memoryItemMapper;
     private final TagRepository tagRepository;
     private final ReviewRepository reviewRepository;
+    private final NotificationRepository notificationRepository;
+    private final NotificationService notificationService;
 
     private UUID getCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -268,5 +274,24 @@ public class MemoryItemService {
        };
 
        memoryItem.setNextReviewDate(newDate);
+
+       String title = "Item Rescheduled!";
+       String message = String.format(
+           "Your memory item \"%s\" has been rescheduled to %s.",
+           memoryItem.getFront(),
+           newDate.toLocalDate()
+       );
+
+       Notification notification = Notification.builder()
+           .recipient(memoryItem.getUser())
+           .title(title)
+           .message(message)
+           .type(NotificationType.RESCHEDULE)
+           .status(NotificationStatus.DELIVERED)
+           .read(false)
+           .build();
+
+       notificationRepository.save(notification);
+       notificationService.push(notification);
     }
 }
