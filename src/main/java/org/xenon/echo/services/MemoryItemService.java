@@ -1,6 +1,7 @@
 package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 @Transactional
@@ -55,6 +57,8 @@ public class MemoryItemService {
 
     public MemoryItemDto createMemoryItem(MemoryItemRequest memoryItemRequest) {
 
+         log.info("Creating memory item with customReminderTime: {}", memoryItemRequest.getCustomReminderTime());
+
          UUID userId = getCurrentUser();
          User currentUser = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException("User Not Found"));
          Note note = noteRepository.findById(memoryItemRequest.getNoteId()).orElseThrow();
@@ -62,6 +66,7 @@ public class MemoryItemService {
              throw new ForbiddenException("Cannot add memory to this note");
          }
          var memoryItem = memoryItemMapper.toEntity(memoryItemRequest);
+         log.info("Mapped memory item has customReminderTime: {}", memoryItem.getCustomReminderTime());
          memoryItem.setUser(currentUser);
          memoryItem.setNote(note);
          memoryItem.setInterval(1);
@@ -82,7 +87,7 @@ public class MemoryItemService {
          }
          memoryItem.setTags(tags);
          memoryItemRepository.save(memoryItem); // Ensure tags are saved with the memory item
-         scheduleReminderForMemoryItem(memoryItem);
+         dynamicSchedulerService.scheduleReminderForMemoryItem(memoryItem);
          return memoryItemMapper.toDto(memoryItem);
     }
 
@@ -104,6 +109,8 @@ public class MemoryItemService {
     }
 
     public MemoryItemDto updateMemoryItem(Long id, MemoryItemUpdateRequest request){
+        log.info("Updating memory item {} with customReminderTime: {}", id, request.getCustomReminderTime());
+
         var memoryItem = memoryItemRepository.findById(id).orElseThrow(()->new MemoryItemNotFoundException("Memory Item Not Found"));
         UUID userId = getCurrentUser();
         if(!memoryItem.getUser().getId().equals(userId)){
@@ -129,7 +136,7 @@ public class MemoryItemService {
             memoryItem.setTags(tags);
         }
 
-        scheduleReminderForMemoryItem(memoryItem);
+        dynamicSchedulerService.scheduleReminderForMemoryItem(memoryItem);
         return memoryItemMapper.toDto(memoryItem);
     }
 
@@ -160,7 +167,7 @@ public class MemoryItemService {
          reviewRepository.save(review);
 
          applyReviewLogic(memoryItem,rating);
-         scheduleReminderForMemoryItem(memoryItem);
+         dynamicSchedulerService.scheduleReminderForMemoryItem(memoryItem);
 
          return memoryItemMapper.toDto(memoryItem);
     }
@@ -304,46 +311,79 @@ public class MemoryItemService {
        notificationService.push(notification);
     }
 
-    private void scheduleReminderForMemoryItem(MemoryItem memoryItem) {
+    public void scheduleReminderForMemoryItem(MemoryItem memoryItem) {
+        log.info("Scheduling reminder for memory item {} - customReminderTime: {}, nextReviewDate: {}",
+                 memoryItem.getId(), memoryItem.getCustomReminderTime(), memoryItem.getNextReviewDate());
+
         String taskId = "memory-item-reminder-" + memoryItem.getId();
         dynamicSchedulerService.cancelTask(taskId);
 
         if (memoryItem.getNextReviewDate() == null) {
+            log.info("Not scheduling reminder - nextReviewDate is null");
             return;
         }
 
         LocalDateTime reminderDateTime = calculateReminderDateTime(memoryItem);
+        log.info("Calculated reminder date time: {}", reminderDateTime);
         if (reminderDateTime != null && reminderDateTime.isAfter(LocalDateTime.now())) {
             // Convert to Instant
             Instant reminderInstant = reminderDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant();
+            log.info("Scheduling reminder for instant: {}", reminderInstant);
             dynamicSchedulerService.scheduleOnce(
                 taskId,
                 () -> sendReminderNotification(memoryItem.getId()),
                 reminderInstant
             );
+        } else {
+            log.info("Not scheduling reminder - date is null or in the past");
         }
     }
 
     private LocalDateTime calculateReminderDateTime(MemoryItem memoryItem) {
         LocalDateTime nextReviewDate = memoryItem.getNextReviewDate();
         String customReminderTime = memoryItem.getCustomReminderTime();
+        log.info("Calculating reminder time - customReminderTime: {}, nextReviewDate: {}", customReminderTime, nextReviewDate);
+
+        if (nextReviewDate == null) {
+            log.info("nextReviewDate is null, cannot calculate reminder time");
+            return null;
+        }
 
         if (customReminderTime != null && customReminderTime.matches("\\d{2}:\\d{2}")) {
+            log.info("Custom reminder time matches pattern, parsing...");
             // Parse custom time (HH:mm)
             String[] parts = customReminderTime.split(":");
             int hour = Integer.parseInt(parts[0]);
             int minute = Integer.parseInt(parts[1]);
-            return nextReviewDate.withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+            
+            LocalDateTime result = nextReviewDate.withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+            log.info("Parsed custom reminder time result: {}", result);
+            
+            // If the result is in the past, schedule for tomorrow at the same time instead!
+            if (result.isBefore(LocalDateTime.now())) {
+                result = LocalDateTime.now().plusDays(1).withHour(hour).withMinute(minute).withSecond(0).withNano(0);
+                log.info("Result was in past, rescheduling to tomorrow: {}", result);
+            }
+            
+            return result;
         }
 
+        log.info("Using default nextReviewDate");
         // Default: use nextReviewDate as is
         return nextReviewDate;
     }
 
     @org.springframework.transaction.annotation.Transactional
     public void sendReminderNotification(Long memoryItemId) {
+        log.info("sendReminderNotification called for memory item ID: {}", memoryItemId);
+        
         MemoryItem memoryItem = memoryItemRepository.findById(memoryItemId).orElse(null);
-        if (memoryItem == null || memoryItem.getUser() == null) {
+        if (memoryItem == null) {
+            log.error("Memory item not found for ID: {}", memoryItemId);
+            return;
+        }
+        if (memoryItem.getUser() == null) {
+            log.error("Memory item has no user: {}", memoryItemId);
             return;
         }
 
@@ -363,7 +403,10 @@ public class MemoryItemService {
             .referenceId(String.valueOf(memoryItemId))
             .build();
 
+        log.info("Saving notification for user {}: {}", memoryItem.getUser().getId(), message);
         notificationRepository.save(notification);
+        log.info("Pushing notification via notificationService...");
         notificationService.push(notification);
+        log.info("Notification saved and pushed successfully!");
     }
 }

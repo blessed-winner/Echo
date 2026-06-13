@@ -19,4 +19,5 @@ public class NotificationResponse {
     private NotificationType type;
     private boolean read;
     private Instant createdAt;
+    private String referenceId;
 }

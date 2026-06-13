@@ -50,6 +50,7 @@ public class NotificationService {
                 .type(saved.getType())
                 .createdAt(saved.getCreatedAt())
                 .read(saved.isRead())
+                .referenceId(saved.getReferenceId())
                 .build();
 
         return response;
@@ -65,6 +66,7 @@ public class NotificationService {
                 .type(notification.getType())
                 .createdAt(notification.getCreatedAt())
                 .read(notification.isRead())
+                .referenceId(notification.getReferenceId())
                 .build();
 
         messagingTemplate.convertAndSend(
@@ -101,6 +103,7 @@ public class NotificationService {
                     .type(notification.getType())
                     .createdAt(notification.getCreatedAt())
                     .read(notification.isRead())
+                    .referenceId(notification.getReferenceId())
                     .build();
 
             return response;
