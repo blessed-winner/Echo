@@ -19,7 +19,7 @@ import java.util.Set;
 public class TagController {
     private final TagService tagService;
     @PostMapping
-    public ResponseEntity<TagDto> createTag(
+    public ResponseEntity<TagResponseDto> createTag(
             @Valid @RequestBody TagRequest request,
             UriComponentsBuilder uriBuilder
     ){

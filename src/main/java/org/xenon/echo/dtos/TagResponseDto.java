@@ -8,5 +8,5 @@ import lombok.Setter;
 public class TagResponseDto {
     private Long id;
     private String name;
-    private int count;
+    private int noteCount;
 }

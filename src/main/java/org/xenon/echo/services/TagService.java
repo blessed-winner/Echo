@@ -39,7 +39,7 @@ public class TagService {
         return (UUID) authentication.getPrincipal();
     }
 
-    public TagDto createTag(TagRequest tagRequest) {
+    public TagResponseDto createTag(TagRequest tagRequest) {
         UUID userId = getCurrentUser();
         var user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User Not Found"));
         var existingTag = tagRepository.findByNameIgnoreCaseAndUserId(tagRequest.getName(), userId);
@@ -50,7 +50,12 @@ public class TagService {
         tag.setUser(user);
         tagRepository.save(tag);
 
-        return tagMapper.toDto(tag);
+        var tagResponseDto = new TagResponseDto();
+        tagResponseDto.setId(tag.getId());
+        tagResponseDto.setName(tag.getName());
+        tagResponseDto.setNoteCount(0); // new tag has 0 items
+
+        return tagResponseDto;
     }
 
     @Transactional(readOnly = true)
@@ -62,7 +67,7 @@ public class TagService {
             var tagResponseDto = new TagResponseDto();
             tagResponseDto.setId(tag.getId());
             tagResponseDto.setName(tag.getName());
-            tagResponseDto.setCount(tagRepository.countTagsByUserId(userId, tag.getId()));
+            tagResponseDto.setNoteCount(tagRepository.countTagsByUserId(userId, tag.getId()));
             return tagResponseDto;
         }).collect(Collectors.toSet());
     }
