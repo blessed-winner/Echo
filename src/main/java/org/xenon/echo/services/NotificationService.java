@@ -1,7 +1,6 @@
 package org.xenon.echo.services;
 
 import lombok.AllArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,9 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.xenon.echo.dtos.NotificationRequest;
 import org.xenon.echo.dtos.NotificationResponse;
 import org.xenon.echo.entities.Notification;
-import org.xenon.echo.entities.User;
 import org.xenon.echo.enums.NotificationStatus;
-import org.xenon.echo.enums.NotificationType;
 import org.xenon.echo.repositories.NotificationRepository;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
@@ -58,7 +55,7 @@ public class NotificationService {
         return response;
     }
 
-    private void push(
+    public void push(
             Notification notification
     ){
         NotificationResponse response = NotificationResponse.builder()
