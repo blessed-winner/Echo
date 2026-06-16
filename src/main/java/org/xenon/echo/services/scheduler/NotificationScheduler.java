@@ -1,4 +1,4 @@
-package org.xenon.echo.services;
+package org.xenon.echo.services.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.xenon.echo.entities.Notification;
 import org.xenon.echo.enums.NotificationStatus;
 import org.xenon.echo.repositories.NotificationRepository;
+import org.xenon.echo.services.NotificationService;
 
 import java.time.Instant;
 
