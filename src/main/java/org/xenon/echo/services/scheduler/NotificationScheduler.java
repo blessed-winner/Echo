@@ -31,7 +31,7 @@ public class NotificationScheduler {
         notifications.forEach(notification -> {
             notificationService.push(notification);
             notification.setStatus(NotificationStatus.DELIVERED);
-            notification.setDeliverAt(Instant.now());
+            notification.setDeliveredAt(Instant.now());
         });
 
         notificationRepository.saveAll(notifications);
