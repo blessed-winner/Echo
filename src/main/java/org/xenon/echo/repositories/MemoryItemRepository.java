@@ -83,4 +83,17 @@ public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     Long countByUserIdAndCreatedAtAfter(UUID userId, LocalDateTime after);
     
     Long countByUserIdAndReviewCountGreaterThanEqual(UUID userId, int reviewCount);
+    
+    // For review reminder scheduler
+    @Query("""
+      SELECT m FROM MemoryItem m WHERE m.nextReviewDate <= :referenceTime ORDER BY m.nextReviewDate ASC
+    """)
+    Page<MemoryItem> findDueItems(LocalDateTime referenceTime, Pageable pageable);
+    
+    @Query("""
+      SELECT m.user.id, COUNT(m) FROM MemoryItem m WHERE m.nextReviewDate <= :referenceTime GROUP BY m.user.id
+    """)
+    List<Object[]> countDueItemsByUser(LocalDateTime referenceTime);
+    
+    Page<MemoryItem> findTopByUserIdOrderByNextReviewDateAsc(UUID userId, Pageable pageable);
 }
