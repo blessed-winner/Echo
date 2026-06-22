@@ -22,9 +22,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtService jwtService;
     private final UserService userService;
     private final JwtConfig jwtConfig;
-    @org.springframework.beans.factory.annotation.Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
-    @org.springframework.beans.factory.annotation.Value("${app.cookie-secure:false}")
     private boolean cookieSecure;
 
     @Override
