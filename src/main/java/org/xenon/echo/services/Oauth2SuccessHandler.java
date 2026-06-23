@@ -22,7 +22,6 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtService jwtService;
     private final UserService userService;
     private final JwtConfig jwtConfig;
-    private String frontendUrl;
     private boolean cookieSecure;
 
     @Override
@@ -33,7 +32,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = jwtService.generateRefreshToken(user);
         addRefreshTokenCookie(response, refreshToken, request.isSecure() || cookieSecure);
         String encodedToken = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
-        String baseUrl = frontendUrl.endsWith("/") ? frontendUrl.substring(0, frontendUrl.length() - 1) : frontendUrl;
+       String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
         getRedirectStrategy().sendRedirect(request,response, baseUrl + "/auth/success?token=" + encodedToken);
     }
 
