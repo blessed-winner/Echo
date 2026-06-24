@@ -22,7 +22,6 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtService jwtService;
     private final UserService userService;
     private final JwtConfig jwtConfig;
-    private boolean cookieSecure;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -30,7 +29,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         var user = userRepository.findByEmail(oAuth2User.getAttribute("email")).orElseGet(()->userService.createUserFromOauth(oAuth2User));
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
-        addRefreshTokenCookie(response, refreshToken, request.isSecure() || cookieSecure);
+        addRefreshTokenCookie(response, refreshToken, request.isSecure());
         String encodedToken = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
        String baseUrl = request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
         getRedirectStrategy().sendRedirect(request,response, baseUrl + "/auth/success?token=" + encodedToken);
