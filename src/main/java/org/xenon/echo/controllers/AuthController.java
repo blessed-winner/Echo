@@ -25,9 +25,6 @@ public class AuthController {
     private final JwtConfig jwtConfig;
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    @org.springframework.beans.factory.annotation.Value("${app.cookie-secure:false}")
-    private boolean cookieSecure;
-
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(
             @Valid @RequestBody LoginRequest request,
@@ -36,7 +33,7 @@ public class AuthController {
     ){
         String ip = httpRequest.getRemoteAddr();
         var result = authService.login(request,ip);
-        addRefreshTokenCookie(response, result.refreshToken(), httpRequest.isSecure() || cookieSecure);
+        addRefreshTokenCookie(response, result.refreshToken(), httpRequest.isSecure());
         return ResponseEntity.ok(new JwtResponse(result.accessToken(), result.refreshToken()));
     }
 
@@ -71,7 +68,7 @@ public class AuthController {
         HttpServletResponse response
     ){
         var result = authService.refresh(refreshToken);
-        addRefreshTokenCookie(response, result.refreshToken(), request.isSecure() || cookieSecure);
+        addRefreshTokenCookie(response, result.refreshToken(), request.isSecure());
         return ResponseEntity.ok(new JwtResponse(result.accessToken(), result.refreshToken()));
     }
 
@@ -82,7 +79,7 @@ public class AuthController {
     ){
         var cookie = new Cookie("refreshToken", "");
         cookie.setHttpOnly(true);
-        cookie.setSecure(request.isSecure() || cookieSecure);
+        cookie.setSecure(request.isSecure());
         cookie.setPath("/auth/refresh");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
