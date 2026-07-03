@@ -161,6 +161,7 @@ public class SeedService {
         item1.setEaseFactor(2.5f);
         item1.setReviewCount(0);
         item1.setNextReviewDate(LocalDateTime.now());
+        item1.setCreatedAt(LocalDateTime.now());
 
         MemoryItem item2 = new MemoryItem();
         item2.setFront("Explain Dependency Injection in NestJS.");
@@ -173,6 +174,7 @@ public class SeedService {
         item2.setEaseFactor(2.5f);
         item2.setReviewCount(0);
         item2.setNextReviewDate(LocalDateTime.now());
+        item2.setCreatedAt(LocalDateTime.now());
 
         MemoryItem item3 = new MemoryItem();
         item3.setFront("What are the three types of Haki in One Piece?");
@@ -184,6 +186,7 @@ public class SeedService {
         item3.setEaseFactor(2.5f);
         item3.setReviewCount(0);
         item3.setNextReviewDate(LocalDateTime.now());
+        item3.setCreatedAt(LocalDateTime.now());
 
         // MEMORY ITEMS for User 4
         MemoryItem item4 = new MemoryItem();
@@ -197,6 +200,7 @@ public class SeedService {
         item4.setEaseFactor(2.5f);
         item4.setReviewCount(0);
         item4.setNextReviewDate(LocalDateTime.now());
+        item4.setCreatedAt(LocalDateTime.now());
 
         MemoryItem item5 = new MemoryItem();
         item5.setFront("Who performed Bohemian Rhapsody?");
@@ -208,7 +212,8 @@ public class SeedService {
         item5.setInterval(1);
         item5.setEaseFactor(2.5f);
         item5.setReviewCount(0);
-        item5.setNextReviewDate(LocalDateTime.now().minusDays(1)); // Overdue for testing
+        item5.setNextReviewDate(LocalDateTime.now().minusDays(1));
+        item5.setCreatedAt(LocalDateTime.now());
 
         memoryItemRepository.saveAll(List.of(item1, item2, item3, item4, item5));
     }

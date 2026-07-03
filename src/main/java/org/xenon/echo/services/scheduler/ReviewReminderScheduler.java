@@ -32,7 +32,6 @@ public class ReviewReminderScheduler {
     @Scheduled(cron = "0 0 * * * *") // Every hour at minute 0
     @Transactional
     public void createReviewReminders() {
-        log.info("Starting review reminder check...");
         
         // Find all memory items that are due or overdue
         LocalDateTime now = LocalDateTime.now();
@@ -83,7 +82,6 @@ public class ReviewReminderScheduler {
     @Scheduled(cron = "0 0 8 * * *") // Every day at 8:00 AM
     @Transactional
     public void sendDailySummary() {
-        log.info("Starting daily review summary...");
         
         LocalDateTime now = LocalDateTime.now();
         Pageable pageable = PageRequest.of(0, 1000);

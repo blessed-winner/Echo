@@ -37,9 +37,6 @@ public class DynamicSchedulerService {
 
     @PostConstruct
     public void rescheduleExistingReminders() {
-        log.info("Rescheduling existing memory item reminders on startup...");
-        
-        // Find all memory items where nextReviewDate is after now
         var itemsToReschedule = memoryItemRepository.findAll()
                 .stream()
                 .filter(item -> item.getNextReviewDate() != null && item.getNextReviewDate().isAfter(LocalDateTime.now()))
@@ -47,14 +44,13 @@ public class DynamicSchedulerService {
                 
         for (MemoryItem item : itemsToReschedule) {
             try {
-                log.info("Rescheduling reminder for existing memory item: {}", item.getId());
                 scheduleReminderForMemoryItem(item);
             } catch (Exception e) {
                 log.error("Error rescheduling reminder for memory item {}", item.getId(), e);
             }
         }
         
-        log.info("Done rescheduling {} reminders", itemsToReschedule.size());
+        log.info("Startup: rescheduled {} pending reminders", itemsToReschedule.size());
     }
 
     // Helper method to schedule reminder
@@ -67,18 +63,13 @@ public class DynamicSchedulerService {
         }
 
         LocalDateTime reminderDateTime = calculateReminderDateTime(memoryItem);
-        log.info("Calculated reminder time: {}", reminderDateTime);
         if (reminderDateTime != null && reminderDateTime.isAfter(LocalDateTime.now())) {
-            // Convert to Instant
             Instant reminderInstant = reminderDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant();
-            log.info("Scheduling reminder for instant: {}", reminderInstant);
             this.scheduleOnce(
                 taskId,
                 () -> sendReminderNotification(memoryItem.getId()),
                 reminderInstant
             );
-        } else {
-            log.info("Not scheduling reminder - date is null or in the past");
         }
     }
 
@@ -86,48 +77,39 @@ public class DynamicSchedulerService {
     private LocalDateTime calculateReminderDateTime(MemoryItem memoryItem) {
         LocalDateTime nextReviewDate = memoryItem.getNextReviewDate();
         String customReminderTime = memoryItem.getCustomReminderTime();
-        log.info("Calculating reminder time - customReminderTime: {}, nextReviewDate: {}", customReminderTime, nextReviewDate);
 
         if (nextReviewDate == null) {
-            log.info("nextReviewDate is null, cannot calculate reminder time");
             return null;
         }
 
         if (customReminderTime != null && customReminderTime.matches("\\d{2}:\\d{2}")) {
-            log.info("Custom reminder time matches pattern, parsing...");
-            // Parse custom time (HH:mm)
             String[] parts = customReminderTime.split(":");
             int hour = Integer.parseInt(parts[0]);
             int minute = Integer.parseInt(parts[1]);
             
             LocalDateTime result = nextReviewDate.withHour(hour).withMinute(minute).withSecond(0).withNano(0);
-            log.info("Parsed custom reminder time result: {}", result);
             
             // If the result is in the past, schedule for tomorrow at the same time instead!
             if (result.isBefore(LocalDateTime.now())) {
                 result = LocalDateTime.now().plusDays(1).withHour(hour).withMinute(minute).withSecond(0).withNano(0);
-                log.info("Result was in past, rescheduling to tomorrow: {}", result);
             }
             
             return result;
         }
 
-        log.info("Using default nextReviewDate");
         // Default: use nextReviewDate as is
         return nextReviewDate;
     }
 
     @Transactional
     public void sendReminderNotification(Long memoryItemId) {
-        log.info("sendReminderNotification called for memory item ID: {}", memoryItemId);
-        
         MemoryItem memoryItem = memoryItemRepository.findById(memoryItemId).orElse(null);
         if (memoryItem == null) {
-            log.error("Memory item not found for ID: {}", memoryItemId);
+            log.error("Memory item not found for scheduled reminder: id={}", memoryItemId);
             return;
         }
         if (memoryItem.getUser() == null) {
-            log.error("Memory item has no user: {}", memoryItemId);
+            log.error("Memory item {} has no associated user — skipping notification", memoryItemId);
             return;
         }
 
@@ -147,11 +129,9 @@ public class DynamicSchedulerService {
             .referenceId(String.valueOf(memoryItemId))
             .build();
 
-        log.info("Saving notification for user {}: {}", memoryItem.getUser().getId(), message);
         notificationRepository.save(notification);
-        log.info("Pushing notification via notificationService...");
         notificationService.push(notification);
-        log.info("Notification saved and pushed successfully!");
+        log.info("Reminder notification dispatched for memory item {} (user {})", memoryItemId, memoryItem.getUser().getId());
     }
 
     public void scheduleOnce(String taskId, Runnable task, Instant runAt) {
