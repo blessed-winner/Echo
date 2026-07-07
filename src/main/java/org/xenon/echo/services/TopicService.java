@@ -55,9 +55,9 @@ public class TopicService {
       var topic = topicMapper.toEntity(topicRequest);
       topic.setUser(user);
       topic.setCreatedAt(LocalDateTime.now());
-      topicRepository.save(topic);
+      var savedTopic = topicRepository.save(topic);
 
-      return topicMapper.toDto(topic);
+      return topicMapper.toDto(savedTopic);
   }
 
   public Page<TopicDto> getTopics(int page, int size){
