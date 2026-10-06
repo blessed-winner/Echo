@@ -47,3 +47,13 @@ spring:
 app:
   frontend-url: ${FRONTEND_URL:http://localhost:5173}
   cookie-secure: ${COOKIE_SECURE:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+  endpoint:
+   health:
+     show-details: always
