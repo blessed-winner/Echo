@@ -10,9 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.xenon.echo.config.JwtConfig;
 import org.xenon.echo.dtos.*;
-import org.xenon.echo.repositories.UserRepository;
 import org.xenon.echo.services.AuthService;
-import org.xenon.echo.services.JwtService;
 
 import java.util.Map;
 
