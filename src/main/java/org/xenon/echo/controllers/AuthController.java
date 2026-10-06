@@ -23,8 +23,6 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
     private final JwtConfig jwtConfig;
-    private final UserRepository userRepository;
-    private final JwtService jwtService;
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(
             @Valid @RequestBody LoginRequest request,
