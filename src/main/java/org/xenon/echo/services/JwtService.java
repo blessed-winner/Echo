@@ -47,7 +47,7 @@ public class JwtService {
         try{
             extractClaims(token);
             return true;
-        } catch (Exception e) {
+        } catch (Exception e){
             return false;
         }
     }
