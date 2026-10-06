@@ -6,7 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 import org.xenon.echo.config.JwtConfig;
 import org.xenon.echo.dtos.*;
@@ -40,12 +43,14 @@ public class AuthController {
     }
 
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken, boolean secure){
-        var cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secure);
-        cookie.setPath("/auth/refresh");
-        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration()); // 7 days
-        response.addCookie(cookie);
+        var responseCookie = ResponseCookie.from("refreshToken", refreshToken != null ? refreshToken : "")
+                .httpOnly(true)
+                .secure(secure)
+                .path("/auth/refresh")
+                .maxAge(refreshToken != null ? jwtConfig.getRefreshTokenExpiration() : 0)
+                .sameSite(secure ? "None" : "Lax")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
     @GetMapping("/me")
@@ -59,11 +64,24 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<JwtResponse> refreshToken(
-            @CookieValue(name = "refreshToken") String refreshToken,
-        HttpServletRequest request,
-        HttpServletResponse response
+            @CookieValue(name = "refreshToken", required = false) String refreshTokenCookie,
+            @RequestBody(required = false) Map<String, String> body,
+            HttpServletRequest request,
+            HttpServletResponse response
     ){
-        var result = authService.refresh(refreshToken);
+        String token = refreshTokenCookie;
+        if (token == null || token.isBlank()) {
+            if (body != null) {
+                token = body.get("refreshToken");
+                if (token == null || token.isBlank()) {
+                    token = body.get("refresh_token");
+                }
+            }
+        }
+        if (token == null || token.isBlank()) {
+            throw new BadCredentialsException("Refresh token is missing");
+        }
+        var result = authService.refresh(token);
         addRefreshTokenCookie(response, result.refreshToken(), request.isSecure());
         return ResponseEntity.ok(new JwtResponse(result.accessToken(), result.refreshToken()));
     }
@@ -73,12 +91,7 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response
     ){
-        var cookie = new Cookie("refreshToken", "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(request.isSecure());
-        cookie.setPath("/auth/refresh");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        addRefreshTokenCookie(response, null, request.isSecure());
         return ResponseEntity.noContent().build();
     }
 
