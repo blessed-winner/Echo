@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.xenon.echo.dtos.NotificationRequest;
 import org.xenon.echo.dtos.NotificationResponse;
-import org.xenon.echo.entities.Notification;
 import org.xenon.echo.services.NotificationService;
-
 import java.nio.file.AccessDeniedException;
 import java.util.UUID;
 
