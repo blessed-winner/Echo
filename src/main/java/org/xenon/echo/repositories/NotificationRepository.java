@@ -15,4 +15,5 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     Long countByRecipientIdAndReadFalse(UUID userId);
     Page<Notification> findByStatusAndDeliverAtBefore(NotificationStatus status, Instant time, Pageable pageable);
     boolean existsByRecipientIdAndTypeAndCreatedAtAfter(UUID recipientId, NotificationType type, Instant createdAfter);
+    void deleteAllByRecipientId(UUID recipientId);
 }

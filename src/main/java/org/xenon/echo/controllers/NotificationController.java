@@ -43,4 +43,16 @@ public class NotificationController {
         notificationService.markAsRead(id);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable UUID id) throws AccessDeniedException {
+        notificationService.deleteNotification(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> clearAllNotifications() {
+        notificationService.clearAllNotifications();
+        return ResponseEntity.noContent().build();
+    }
 }

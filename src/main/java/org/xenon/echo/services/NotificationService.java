@@ -90,6 +90,20 @@ public class NotificationService {
         notification.setRead(true);
     }
 
+    public void deleteNotification(UUID id) throws AccessDeniedException {
+        UUID userId = getCurrentUser();
+        var notification = notificationRepository.findById(id).orElseThrow(() -> new RuntimeException("Notification not found"));
+        if (!notification.getRecipient().getId().equals(userId)) {
+            throw new AccessDeniedException("Forbidden");
+        }
+        notificationRepository.delete(notification);
+    }
+
+    public void clearAllNotifications() {
+        UUID userId = getCurrentUser();
+        notificationRepository.deleteAllByRecipientId(userId);
+    }
+
     @Transactional(readOnly = true)
     public Page<NotificationResponse>getMyNotifications(int page,int size){
         UUID userId = getCurrentUser();
