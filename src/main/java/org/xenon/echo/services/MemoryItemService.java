@@ -184,36 +184,51 @@ public class MemoryItemService {
 
     }
 
+    public int calculateNextInterval(int currentInterval, double easeFactor, ReviewRating rating) {
+        return switch (rating) {
+            case AGAIN -> 1;
+            case HARD -> Math.max(2, (int) Math.round(currentInterval * 1.2));
+            case GOOD -> {
+                int hardDays = Math.max(2, (int) Math.round(currentInterval * 1.2));
+                int calculatedGood = (int) Math.round(currentInterval * easeFactor);
+                yield Math.max(hardDays + 2, calculatedGood);
+            }
+            case EASY -> {
+                int hardDays = Math.max(2, (int) Math.round(currentInterval * 1.2));
+                int goodDays = Math.max(hardDays + 2, (int) Math.round(currentInterval * easeFactor));
+                int calculatedEasy = (int) Math.round(currentInterval * easeFactor * 1.35);
+                yield Math.max(goodDays + 3, calculatedEasy);
+            }
+        };
+    }
+
     private void applyReviewLogic(MemoryItem item, ReviewRating rating){
         int interval = item.getInterval();
         double easeFactor = item.getEaseFactor();
+
+        int nextInterval = calculateNextInterval(interval, easeFactor, rating);
+
         switch (rating){
             case AGAIN -> {
-                interval = 1;
                 item.setReviewCount(0);
-                easeFactor = Math.max(1.3,easeFactor - 0.2);
+                easeFactor = Math.max(1.3, easeFactor - 0.2);
             }
             case HARD -> {
-                interval = Math.max(1,(int)(interval*1.2));
-                easeFactor = Math.max(1.3,easeFactor - 0.15);
+                easeFactor = Math.max(1.3, easeFactor - 0.15);
                 item.setReviewCount(item.getReviewCount() + 1);
             }
-
             case GOOD -> {
-                interval = (int)(interval * easeFactor);
                 item.setReviewCount(item.getReviewCount() + 1);
             }
-
             case EASY -> {
-                interval = (int) (interval * easeFactor * 1.3);
                 easeFactor += 0.1;
                 item.setReviewCount(item.getReviewCount() + 1);
             }
         }
 
-        item.setInterval(interval);
+        item.setInterval(nextInterval);
         item.setEaseFactor(easeFactor);
-        item.setNextReviewDate(LocalDateTime.now().plusDays(interval));
+        item.setNextReviewDate(LocalDateTime.now().plusDays(nextInterval));
         item.setLastReviewed(LocalDateTime.now());
     }
 
@@ -224,10 +239,10 @@ public class MemoryItemService {
         int currentInterval = item.getInterval();
         double currentEaseFactor = item.getEaseFactor();
 
-        int againDays = 1;
-        int hardDays = Math.max(1, (int)(currentInterval * 1.2));
-        int goodDays = (int)(currentInterval * currentEaseFactor);
-        int easyDays = (int)(currentInterval * currentEaseFactor * 1.3);
+        int againDays = calculateNextInterval(currentInterval, currentEaseFactor, ReviewRating.AGAIN);
+        int hardDays = calculateNextInterval(currentInterval, currentEaseFactor, ReviewRating.HARD);
+        int goodDays = calculateNextInterval(currentInterval, currentEaseFactor, ReviewRating.GOOD);
+        int easyDays = calculateNextInterval(currentInterval, currentEaseFactor, ReviewRating.EASY);
 
         return new ReviewIntervalsDto(againDays, hardDays, goodDays, easyDays);
     }
