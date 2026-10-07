@@ -12,6 +12,8 @@ public interface NoteRepository extends JpaRepository<Note,Long> {
     Page<Note> findAllByTopicUserId(UUID userId, Pageable pageable);
     Page<Note> findByTitleContainingIgnoreCaseAndTopicUserId(String title, UUID userId, Pageable pageable);
     Page<Note> findAllByTopicId(Long id, Pageable pageable);
+    boolean existsByTitleIgnoreCaseAndTopicId(String title, Long topicId);
+    java.util.Optional<Note> findByTitleIgnoreCaseAndTopicId(String title, Long topicId);
 
     @Query("""
     SELECT COUNT(n) FROM Note n WHERE n.topic.id = :topicId AND n.topic.user.id = :userId

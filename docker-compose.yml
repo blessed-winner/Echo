@@ -9,6 +9,8 @@ services:
       POSTGRES_DB: echo
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+      TZ: UTC
+      PGTZ: UTC
 
     ports:
       - "5433:5432"

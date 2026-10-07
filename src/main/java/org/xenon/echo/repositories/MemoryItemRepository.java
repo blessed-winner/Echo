@@ -14,6 +14,7 @@ import java.util.UUID;
 
 public interface MemoryItemRepository extends JpaRepository<MemoryItem,Long> {
     Page<MemoryItem> findAllByUserId(UUID userId, Pageable pageable);
+    boolean existsByFrontIgnoreCaseAndNoteId(String front, Long noteId);
 
     Page<MemoryItem> findByUserIdAndNextReviewDateLessThanEqual(UUID userId, LocalDateTime referenceTime, Pageable pageable);
 
