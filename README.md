@@ -1,6 +1,6 @@
 # Echo - Spaced Repetition Memory Assistant
 
-Echo is a powerful backend service built with Spring Boot, designed to help users retain knowledge through an optimized Spaced Repetition System (SRS). It manages notes, topics, and "memory items" with a built-in scheduling algorithm to ensure you review what matters, exactly when you need to.
+Echo is a powerful backend service built with Spring Boot, designed to help users retain knowledge through an optimized Spaced Repetition System (SRS). It manages notes, topics, and memory items with a built-in scheduling algorithm to ensure you review what matters, exactly when you need to.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/blessed-winner/Echo)
 [![Java Version](https://img.shields.io/badge/java-21-orange)](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
@@ -18,23 +18,24 @@ Explore and test the Echo API through our hosted Swagger UI:
 
 ## Features
 
-- **Spaced Repetition Engine**: Uses a sophisticated algorithm (Ease Factor, Intervals, and Review Counts) to calculate the next optimal review date.
-- **Interval Preview**: Predict the interval produced by *Again*, *Hard*, *Good* and *Easy* before committing to an answer.
+- **Spaced Repetition Engine**: Uses a algorithm (Ease Factor, Intervals, and Review Counts) to calculate the next optimal review date.
+- **Interval Preview**: Predict the interval produced by Again, Hard, Good, and Easy before committing to an answer.
 - **Structured Organization**: Organize your learning into Topics, Notes, and Memory Items.
 - **Tagging System**: Flexible tagging for cross-referencing and filtering content.
-- **Search & Summaries**: Case-insensitive name search for topics and notes, plus summary endpoints for topics, notes, tags and reviews.
-- **Rescheduling**: Push a card forward by 1 hour, 3 hours, 1 day, 3 days or 1 week, and set a custom reminder time (for example `09:00`).
-- **Secure Authentication**: Robust JWT-based security with Access and Refresh token support.
+- **Dynamic Search**: Case-insensitive query endpoints (`/topics/search` and `/notes/search`) for real-time frontend search filtering.
+- **Automated Data Seeding**: Idempotent data seeder (`DataSeeder` & `SeedService`) that populates initial topics, notes, and memory items for local development and testing.
+- **Rescheduling**: Push a card forward by 1 hour, 3 hours, 1 day, 3 days or 1 week, and set a custom reminder time.
+- **Secure Authentication**: Robust JWT-based security with Access and Refresh token support, supporting both `HttpOnly` cookies and JSON payload fallbacks.
 - **Social Login**: Sign in with Google or GitHub through OAuth2; the callback issues the same JWT pair as a password login.
 - **Email Verification & Password Recovery**: Time-limited (15 minutes), single-use tokens stored hashed and delivered by SMTP. Unverified accounts cannot sign in.
 - **Rate Limiting**: Bucket4j throttling on sign-in (5 attempts / 2 minutes) and password reset (3 attempts / 10 minutes) per IP and account.
-- **Role-Based Access Control**: `USER` and `ADMIN` roles, with a dedicated admin surface.
-- **Audit Trail**: Authentication events (success, failure, blocked, rate-limit hit) are recorded with IP address, outcome and failure reason.
-- **Real-Time Notifications**: In-app notifications pushed over a STOMP WebSocket, with unread counts, mark-as-read, single delete and clear-all.
+- **Role-Based Access Control**: USER and ADMIN roles, with a dedicated admin surface.
+- **Audit Trail**: Authentication events (success, failure, blocked, rate-limit hit) are recorded with IP address, outcome, and failure reason.
+- **Real-Time Notifications**: In-app notifications pushed over a STOMP WebSocket, with unread counts, mark-as-read, single delete, and clear-all.
 - **Automated Reminders**: Per-item reminders, an hourly due-items check, a daily 08:00 summary, and a delivery queue that flushes every 60 seconds.
 - **Progress Tracking**: Real-time statistics including daily review counts, overdue items, upcoming items, and learning streaks.
-- **Analytics**: Retention rate, weekly activity, mastered items (5 or more successful reviews) and system-wide admin totals.
-- **Admin Console**: List, edit, enable, disable, promote, reset and force-verify user accounts.
+- **Analytics**: Retention rate, weekly activity, mastered items (5 or more successful reviews), and system-wide admin totals.
+- **Admin Console**: List, edit, enable, disable, promote, reset, and force-verify user accounts.
 - **API Documentation**: Fully documented with Swagger UI.
 
 ---
@@ -43,7 +44,7 @@ Explore and test the Echo API through our hosted Swagger UI:
 
 - **Backend**: Java 21, Spring Boot 3.4
 - **Security**: Spring Security, JWT (JJWT), OAuth2 (Google, GitHub)
-- **Database**: PostgreSQL
+- **Database**: PostgreSQL 17
 - **Migrations**: Flyway
 - **Mapping**: MapStruct
 - **Email**: Spring Mail (SMTP)
@@ -52,7 +53,7 @@ Explore and test the Echo API through our hosted Swagger UI:
 - **Utilities**: Lombok, springboot3-dotenv
 - **Documentation**: Springdoc OpenAPI (Swagger)
 - **Testing**: JUnit 5, Mockito, Spring Test, H2 (in-memory)
-- **Client**: React 19 + TypeScript + Vite (companion SPA, separate repository)
+- **Client**: React 19 + TypeScript + Vite (companion SPA client)
 - **Deployment**: Docker, Render-ready, GitHub Actions CI
 
 ---
@@ -70,11 +71,11 @@ Explore and test the Echo API through our hosted Swagger UI:
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/blessed-winner/Echo.git
-   cd Echo
+   cd Echo/backend
    ```
 
 2. **Configure Environment Variables**:
-   Create a .env file in the root directory or set the following variables:
+   Create a `.env` file in the `backend` directory or set the following variables:
    ```env
    DB_URL=jdbc:postgresql://localhost:5432/echo
    DB_USERNAME=your_username
@@ -106,7 +107,7 @@ Explore and test the Echo API through our hosted Swagger UI:
    ./mvnw clean install
    ./mvnw spring-boot:run
    ```
-   Flyway applies the migrations in `src/main/resources/db/migration` on startup. When the database contains no users, a data seeder populates it with demo data.
+   Flyway applies the migrations in `src/main/resources/db/migration` on startup. The idempotent `DataSeeder` initializes realistic topics, notes, and memory items for local development.
 
 4. **Access Swagger UI (Local)**:
    Open http://localhost:8080/swagger-ui/index.html to explore the API locally.
@@ -163,7 +164,7 @@ docker run -p 8080:8080 \
 | :--- | :--- | :--- |
 | `POST` | `/topics` | Create a topic |
 | `GET` | `/topics` | List all learning topics (paginated) |
-| `GET` | `/topics/search` | Search topics |
+| `GET` | `/topics/search` | Search topics by query (`?q=...`) |
 | `GET` | `/topics/{id}` | Get a single topic |
 | `PUT` | `/topics/{id}` | Update a topic |
 | `DELETE` | `/topics/{id}` | Delete a topic |
@@ -178,7 +179,7 @@ docker run -p 8080:8080 \
 | :--- | :--- | :--- |
 | `POST` | `/notes` | Create a note |
 | `GET` | `/notes` | List notes (paginated) |
-| `GET` | `/notes/search` | Search notes |
+| `GET` | `/notes/search` | Search notes by query (`?q=...`) |
 | `GET` | `/notes/{id}` | Get a single note |
 | `PUT` | `/notes/{id}` | Update a note |
 | `DELETE` | `/notes/{id}` | Delete a note |
@@ -249,9 +250,9 @@ docker run -p 8080:8080 \
 
 The application uses JWT Authentication.
 
-1. Obtain a token via /auth/login.
+1. Obtain a token via `/auth/login`.
 2. Include the token in the header of subsequent requests:
-   Authorization: Bearer <your_access_token>
+   `Authorization: Bearer <your_access_token>`
 
 Additional safeguards:
 
@@ -290,9 +291,9 @@ Echo generates and delivers reminders entirely on the server side:
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the Project
-2. Create your Feature Branch (git checkout -b feature/AmazingFeature)
-3. Commit your Changes (git commit -m 'Add some AmazingFeature')
-4. Push to the Branch (git push origin feature/AmazingFeature)
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
 ---
